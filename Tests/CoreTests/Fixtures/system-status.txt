@@ -1,0 +1,9 @@
+FIELD              VALUE
+status             running
+appRoot            /Users/yuf/Library/Application Support/com.apple.container/
+installRoot        /opt/homebrew/Cellar/container/1.0.0_1/
+logRoot            
+apiserver.version  container-apiserver version 1.0.0 (build: release, commit: unspeci)
+apiserver.commit   unspecified
+apiserver.build    release
+apiserver.appName  container-apiserver

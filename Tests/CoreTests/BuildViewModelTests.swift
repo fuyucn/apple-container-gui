@@ -1,0 +1,48 @@
+import Testing
+import Foundation
+@testable import Core
+
+@MainActor
+@Test func buildAccumulatesLogLinesAndSucceeds() async throws {
+    let service = MockContainerService(streamLines: ["STEP 1/3", "STEP 2/3", "Successfully built"])
+    let vm = BuildViewModel(service: service)
+
+    #expect(vm.status == .idle)
+
+    await vm.build(dockerfile: "Dockerfile", context: ".", tag: "myapp:latest")
+
+    #expect(vm.logLines == ["STEP 1/3", "STEP 2/3", "Successfully built"])
+    #expect(vm.status == .succeeded)
+    #expect(service.buildInvocations.count == 1)
+    #expect(service.buildInvocations.first?.tag == "myapp:latest")
+}
+
+@MainActor
+@Test func buildFailureSetsFailedStatusAndKeepsPartialLog() async throws {
+    let service = MockContainerService(
+        streamLines: ["STEP 1/3"],
+        streamError: ContainerError.commandFailed("build failed")
+    )
+    let vm = BuildViewModel(service: service)
+
+    await vm.build(dockerfile: "Dockerfile", context: ".", tag: "t:1")
+
+    #expect(vm.logLines == ["STEP 1/3"])
+    if case .failed(let message) = vm.status {
+        #expect(message.contains("build failed"))
+    } else {
+        Issue.record("expected .failed status, got \(vm.status)")
+    }
+}
+
+@MainActor
+@Test func buildResetsLogOnSecondRun() async throws {
+    let service = MockContainerService(streamLines: ["only line"])
+    let vm = BuildViewModel(service: service)
+
+    await vm.build(dockerfile: "Dockerfile", context: ".", tag: "a")
+    await vm.build(dockerfile: "Dockerfile", context: ".", tag: "b")
+
+    #expect(vm.logLines == ["only line"])
+    #expect(service.buildInvocations.count == 2)
+}

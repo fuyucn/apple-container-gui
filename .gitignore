@@ -1,0 +1,19 @@
+# SwiftPM
+.build/
+.swiftpm/
+
+# Xcode
+*.xcodeproj
+xcuserdata/
+*.xcuserstate
+DerivedData/
+
+# Build output
+AppleContainerGUI.app/
+
+# macOS
+.DS_Store
+*.icloud
+
+# Claude Code session data
+.claude/
