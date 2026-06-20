@@ -25,15 +25,10 @@ struct BuildView: View {
     @Bindable var imagesViewModel: ImagesViewModel
 
     // MARK: - Form input state
-
-    /// Absolute path to the chosen Dockerfile, or empty if none picked.
-    @State private var dockerfilePath: String = ""
-
-    /// Absolute path to the chosen build context directory, or empty.
-    @State private var contextPath: String = ""
-
-    /// Image tag for the built image, e.g. `myapp:latest`.
-    @State private var tag: String = ""
+    //
+    // The Dockerfile path, context path, and tag live on `viewModel` (not as
+    // view-local @State) so they survive this view being recreated when the
+    // user switches sidebar sections mid-build.
 
     /// Whether each file importer is presented. Each `.fileImporter` is attached
     /// to its OWN row view (not stacked on one view, which would shadow), and
@@ -55,10 +50,10 @@ struct BuildView: View {
             footer
         }
         .navigationTitle("Build Image")
-        .onDisappear {
-            // Tear down any in-flight build when leaving the section.
-            viewModel.cancel()
-        }
+        // NOTE: deliberately no `.onDisappear { cancel() }`. The build runs in
+        // the view model's stored Task (owned by RootView), so switching sidebar
+        // sections mid-build lets it keep running; returning shows live progress.
+        // The build is only stopped via the explicit Cancel button.
         .sheet(isPresented: $isRunSheetPresented) {
             RunContainerView(
                 viewModel: containersViewModel,
@@ -75,15 +70,15 @@ struct BuildView: View {
             Section("Dockerfile") {
                 filePickerRow(
                     placeholder: "Choose a Dockerfile…",
-                    path: dockerfilePath,
+                    path: viewModel.dockerfilePath,
                     systemImage: "doc.text",
                     isPresented: $showDockerfilePicker,
                     allowedContentTypes: [.item]
                 ) { url in
-                    dockerfilePath = url.path
+                    viewModel.dockerfilePath = url.path
                     // Default the context to the Dockerfile's directory if unset.
-                    if contextPath.isEmpty {
-                        contextPath = url.deletingLastPathComponent().path
+                    if viewModel.contextPath.isEmpty {
+                        viewModel.contextPath = url.deletingLastPathComponent().path
                     }
                 }
             }
@@ -91,17 +86,17 @@ struct BuildView: View {
             Section("Build Context") {
                 filePickerRow(
                     placeholder: "Choose a context directory…",
-                    path: contextPath,
+                    path: viewModel.contextPath,
                     systemImage: "folder",
                     isPresented: $showContextPicker,
                     allowedContentTypes: [.folder]
                 ) { url in
-                    contextPath = url.path
+                    viewModel.contextPath = url.path
                 }
             }
 
             Section {
-                TextField("e.g. myapp:latest", text: $tag)
+                TextField("e.g. myapp:latest", text: $viewModel.tag)
                     .textFieldStyle(.roundedBorder)
                     .disabled(isRunning)
             } header: {
@@ -229,9 +224,9 @@ struct BuildView: View {
             }
             Button {
                 viewModel.start(
-                    dockerfile: dockerfilePath,
-                    context: contextPath,
-                    tag: tag.trimmingCharacters(in: .whitespaces)
+                    dockerfile: viewModel.dockerfilePath,
+                    context: viewModel.contextPath,
+                    tag: viewModel.tag.trimmingCharacters(in: .whitespaces)
                 )
             } label: {
                 if isRunning {
@@ -272,7 +267,7 @@ struct BuildView: View {
 
     /// Build is enabled when both paths are chosen and no build is in flight.
     private var canBuild: Bool {
-        !dockerfilePath.isEmpty && !contextPath.isEmpty && !isRunning
+        !viewModel.dockerfilePath.isEmpty && !viewModel.contextPath.isEmpty && !isRunning
     }
 }
 

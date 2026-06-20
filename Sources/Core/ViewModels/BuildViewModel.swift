@@ -13,6 +13,13 @@ public final class BuildViewModel {
         case failed(String)
     }
 
+    /// Build form inputs. Held here (not as view-local `@State`) so they survive
+    /// the build view being torn down and recreated when the user switches
+    /// sidebar sections mid-build.
+    public var dockerfilePath: String = ""
+    public var contextPath: String = ""
+    public var tag: String = ""
+
     /// Accumulated build log lines from the current/most-recent build.
     public private(set) var logLines: [String] = []
 

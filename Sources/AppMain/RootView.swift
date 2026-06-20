@@ -107,12 +107,9 @@ struct RootView: View {
             }
             .navigationTitle("Apple Container GUI")
             .frame(minWidth: 180)
-        } content: {
-            content(for: selection)
-                .frame(minWidth: 280)
         } detail: {
-            detail(for: selection)
-                .frame(minWidth: 360, minHeight: 320)
+            sectionView(for: selection)
+                .frame(minWidth: 480, minHeight: 360)
         }
         .task {
             // Surface daemon status as soon as the window appears so the menu
@@ -121,18 +118,18 @@ struct RootView: View {
         }
     }
 
-    /// The content (middle) column: the selected section's primary view.
+    /// The selected section's full-width view. Single-pane sections (Activity
+    /// Monitor, Images, Build, Settings) fill the detail area with no trailing
+    /// "No Selection" panel; only Containers is master-detail, and it splits
+    /// *internally* (see `containersSection`) rather than via an app-level third
+    /// column.
     @ViewBuilder
-    private func content(for section: SidebarSection?) -> some View {
+    private func sectionView(for section: SidebarSection?) -> some View {
         switch section {
         case .activityMonitor:
             ActivityMonitorView(viewModel: activityMonitorViewModel)
         case .containers:
-            ContainerListView(
-                viewModel: containersViewModel,
-                imagesViewModel: imagesViewModel,
-                selectedID: $selectedContainerID
-            )
+            containersSection
         case .images:
             ImageListView(viewModel: imagesViewModel)
         case .build:
@@ -155,26 +152,30 @@ struct RootView: View {
         }
     }
 
-    /// The detail (trailing) column. Only the Containers section drives a
-    /// detail; other sections show a calm placeholder.
-    @ViewBuilder
-    private func detail(for section: SidebarSection?) -> some View {
-        switch section {
-        case .containers:
-            if let container = selectedContainer {
-                ContainerDetailView(container: container, logsViewModel: logsViewModel, service: service)
-            } else {
-                ContentUnavailableView(
-                    "No Selection",
-                    systemImage: "sidebar.right",
-                    description: Text("Select a container to see its details.")
-                )
-            }
-        default:
-            ContentUnavailableView(
-                "No Selection",
-                systemImage: "sidebar.right"
+    /// Containers is the only master-detail section: a list on the left and the
+    /// selected container's details on the right, split *within* the section
+    /// (an `HSplitView`, not a nested `NavigationSplitView`).
+    private var containersSection: some View {
+        HSplitView {
+            ContainerListView(
+                viewModel: containersViewModel,
+                imagesViewModel: imagesViewModel,
+                selectedID: $selectedContainerID
             )
+            .frame(minWidth: 280, idealWidth: 340)
+
+            Group {
+                if let container = selectedContainer {
+                    ContainerDetailView(container: container, logsViewModel: logsViewModel, service: service)
+                } else {
+                    ContentUnavailableView(
+                        "No Selection",
+                        systemImage: "sidebar.right",
+                        description: Text("Select a container to see its details.")
+                    )
+                }
+            }
+            .frame(minWidth: 360)
         }
     }
 
