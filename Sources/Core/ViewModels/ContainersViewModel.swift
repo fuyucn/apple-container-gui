@@ -64,6 +64,23 @@ public final class ContainersViewModel {
         await perform { _ = try await self.service.run(spec) }
     }
 
+    /// Remove all stopped containers (`prune`), then refresh.
+    public func prune() async {
+        await perform { try await self.service.pruneContainers() }
+    }
+
+    /// Export a container's filesystem to a tar archive at `path`. Does not
+    /// refresh the list (an export does not change container state); errors are
+    /// captured into `lastError`.
+    public func export(id: String, to path: String) async {
+        do {
+            try await service.exportContainer(id, to: path)
+            lastError = nil
+        } catch {
+            lastError = String(describing: error)
+        }
+    }
+
     private func perform(_ action: () async throws -> Void) async {
         do {
             try await action()

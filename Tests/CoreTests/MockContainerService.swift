@@ -37,6 +37,8 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _stoppedIDs: [String] = []
     private var _removedIDs: [String] = []
     private var _runSpecs: [RunSpec] = []
+    private var _pruneContainersCount = 0
+    private var _exportCalls: [(id: String, path: String)] = []
     private var _statsCalls: [[String]] = []
     private var _removedImageIDs: [String] = []
     private var _listVolumesCount = 0
@@ -100,6 +102,8 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var stopCalls: [String] { withLock { _stoppedIDs } }
     var removeCalls: [String] { withLock { _removedIDs } }
     var runSpecs: [RunSpec] { withLock { _runSpecs } }
+    var pruneContainersCalls: Int { withLock { _pruneContainersCount } }
+    var exportCalls: [(id: String, path: String)] { withLock { _exportCalls } }
     var statsCalls: [[String]] { withLock { _statsCalls } }
     var removeImageCalls: [String] { withLock { _removedImageIDs } }
     var listVolumesCalls: Int { withLock { _listVolumesCount } }
@@ -141,6 +145,16 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     func run(_ spec: RunSpec) async throws -> String {
         if let e = throwOnAction { throw e }
         return withLock { _runSpecs.append(spec); return "new-container-id" }
+    }
+
+    func pruneContainers() async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _pruneContainersCount += 1 }
+    }
+
+    func exportContainer(_ id: String, to path: String) async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _exportCalls.append((id, path)) }
     }
 
     func stats(_ ids: [String]) async throws -> [ContainerStats] {

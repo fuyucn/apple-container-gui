@@ -124,6 +124,13 @@ public protocol ContainerService: Sendable {
     /// the new container's id (trimmed stdout).
     func run(_ spec: RunSpec) async throws -> String
 
+    /// Remove all stopped containers (`prune`, a top-level subcommand).
+    func pruneContainers() async throws
+
+    /// Export a container's filesystem to a tar archive at `path`
+    /// (`export --output <path> <id>`).
+    func exportContainer(_ id: String, to path: String) async throws
+
     /// Resource-usage snapshots via `stats --no-stream --format json [<id>...]`.
     /// Passing an empty `ids` array samples all running containers. Each element
     /// is a CUMULATIVE-counter snapshot; callers derive rates from deltas.

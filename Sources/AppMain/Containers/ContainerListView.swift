@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 import Core
 
 /// The Containers section's list (content) column, bound to `ContainersViewModel`.
@@ -25,6 +26,9 @@ struct ContainerListView: View {
     /// Whether the Run Container sheet is presented.
     @State private var isPresentingRun = false
 
+    /// Whether the "Prune Stopped" confirmation dialog is presented.
+    @State private var isConfirmingPrune = false
+
     /// How often to poll the runtime while this view is on screen.
     private let pollInterval: Duration = .seconds(3)
 
@@ -35,11 +39,37 @@ struct ContainerListView: View {
             .toolbar {
                 ToolbarItem {
                     Button {
+                        Task { await viewModel.refresh() }
+                    } label: {
+                        Label("Refresh", systemImage: "arrow.clockwise")
+                    }
+                }
+                ToolbarItem {
+                    Button {
+                        isConfirmingPrune = true
+                    } label: {
+                        Label("Prune Stopped", systemImage: "trash.slash")
+                    }
+                }
+                ToolbarItem {
+                    Button {
                         isPresentingRun = true
                     } label: {
                         Label("Run Container", systemImage: "plus")
                     }
                 }
+            }
+            .confirmationDialog(
+                "Remove all stopped containers?",
+                isPresented: $isConfirmingPrune,
+                titleVisibility: .visible
+            ) {
+                Button("Prune Stopped", role: .destructive) {
+                    Task { await viewModel.prune() }
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This deletes every container that is not running. This cannot be undone.")
             }
             .sheet(isPresented: $isPresentingRun) {
                 RunContainerView(
@@ -55,6 +85,19 @@ struct ContainerListView: View {
             .onDisappear {
                 viewModel.stopPolling()
             }
+    }
+
+    /// Present an `NSSavePanel` to choose a `.tar` destination, then export the
+    /// container's filesystem there via the view model. The panel runs on the
+    /// main actor; the only logic (the CLI invocation) lives in the VM.
+    private func presentExportPanel(for container: Container) {
+        let panel = NSSavePanel()
+        panel.title = "Export Container Filesystem"
+        panel.allowedContentTypes = [UTType(filenameExtension: "tar") ?? .data]
+        panel.nameFieldStringValue = "\(container.id).tar"
+        panel.isExtensionHidden = false
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        Task { await viewModel.export(id: container.id, to: url.path) }
     }
 
     @ViewBuilder
@@ -113,6 +156,12 @@ struct ContainerListView: View {
             } label: {
                 Label("Stop", systemImage: "stop.fill")
             }
+            Button {
+                presentExportPanel(for: container)
+            } label: {
+                Label("Export…", systemImage: "square.and.arrow.up")
+            }
+            Divider()
             Button(role: .destructive) {
                 Task { await viewModel.remove(container.id, stopFirst: true) }
             } label: {
@@ -124,6 +173,12 @@ struct ContainerListView: View {
             } label: {
                 Label("Start", systemImage: "play.fill")
             }
+            Button {
+                presentExportPanel(for: container)
+            } label: {
+                Label("Export…", systemImage: "square.and.arrow.up")
+            }
+            Divider()
             Button(role: .destructive) {
                 Task { await viewModel.remove(container.id) }
             } label: {

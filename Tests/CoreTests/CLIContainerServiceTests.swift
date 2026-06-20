@@ -270,6 +270,41 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     }
 }
 
+// MARK: - prune (stopped containers) / export
+
+@Test func pruneContainersInvokesTopLevelPruneArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.pruneContainers()
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "prune"]])
+}
+
+@Test func pruneContainersThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "prune failed"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("prune failed")) {
+        try await service.pruneContainers()
+    }
+}
+
+@Test func exportContainerInvokesExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.exportContainer("acg-demo-web", to: "/Users/x/out.tar")
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "export",
+        "--output", "/Users/x/out.tar", "acg-demo-web",
+    ]])
+}
+
+@Test func exportContainerThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "no such container"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("no such container")) {
+        try await service.exportContainer("ghost", to: "/tmp/x.tar")
+    }
+}
+
 // MARK: - 3.4 listImages / removeImage
 
 @Test func listImagesInvokesExactArgvAndDecodes() async throws {

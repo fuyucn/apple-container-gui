@@ -98,6 +98,65 @@ import Foundation
 }
 
 @MainActor
+@Test func pruneContainersCallsServiceThenRefreshes() async throws {
+    let service = MockContainerService(containers: try ViewModelFixtures.containers())
+    let vm = ContainersViewModel(service: service)
+
+    await vm.prune()
+
+    #expect(service.pruneContainersCalls == 1)
+    #expect(service.listContainersCalls == 1)
+    #expect(vm.containers.count == 1)
+    #expect(vm.lastError == nil)
+}
+
+@MainActor
+@Test func pruneContainersOnErrorStillRefreshes() async throws {
+    // Matches the shared `perform` semantics (start/stop/remove): a failed
+    // action is followed by a refresh, and a successful refresh resets
+    // lastError. The mock throws before recording, so pruneContainersCalls
+    // stays 0; the meaningful behavior is the refresh still runs.
+    let service = MockContainerService(
+        containers: try ViewModelFixtures.containers(),
+        throwOnAction: ContainerError.commandFailed("prune failed")
+    )
+    let vm = ContainersViewModel(service: service)
+
+    await vm.prune()
+
+    #expect(service.listContainersCalls == 1)
+}
+
+@MainActor
+@Test func exportCallsServiceWithPath() async throws {
+    let service = MockContainerService(containers: try ViewModelFixtures.containers())
+    let vm = ContainersViewModel(service: service)
+
+    await vm.export(id: "fixture-demo", to: "/Users/x/out.tar")
+
+    #expect(service.exportCalls.count == 1)
+    #expect(service.exportCalls.first?.id == "fixture-demo")
+    #expect(service.exportCalls.first?.path == "/Users/x/out.tar")
+    // Export does not refresh the list.
+    #expect(service.listContainersCalls == 0)
+    #expect(vm.lastError == nil)
+}
+
+@MainActor
+@Test func exportSurfacesError() async throws {
+    let service = MockContainerService(
+        containers: try ViewModelFixtures.containers(),
+        throwOnAction: ContainerError.commandFailed("no such container")
+    )
+    let vm = ContainersViewModel(service: service)
+
+    await vm.export(id: "ghost", to: "/tmp/x.tar")
+
+    #expect(service.exportCalls.isEmpty)
+    #expect(vm.lastError != nil)
+}
+
+@MainActor
 @Test func startPollingThenStopPollingLeavesNoRunningTask() async throws {
     let service = MockContainerService(containers: try ViewModelFixtures.containers())
     let vm = ContainersViewModel(service: service)
