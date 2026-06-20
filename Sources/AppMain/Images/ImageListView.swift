@@ -25,6 +25,13 @@ struct ImageListView: View {
             .toolbar {
                 ToolbarItem {
                     Button {
+                        Task { await viewModel.refresh() }
+                    } label: {
+                        Label("Refresh", systemImage: "arrow.clockwise")
+                    }
+                }
+                ToolbarItem {
+                    Button {
                         isPresentingPull = true
                     } label: {
                         Label("Pull Image", systemImage: "plus")
@@ -34,9 +41,11 @@ struct ImageListView: View {
             .sheet(isPresented: $isPresentingPull) {
                 PullImageView(viewModel: viewModel)
             }
-            .task {
-                await viewModel.refresh()
-            }
+            // Refresh both when the view first appears AND whenever it reappears
+            // after a section switch. `.task` alone proved unreliable inside the
+            // split's detail column, so `.onAppear` backs it up.
+            .task { await viewModel.refresh() }
+            .onAppear { Task { await viewModel.refresh() } }
     }
 
     @ViewBuilder
