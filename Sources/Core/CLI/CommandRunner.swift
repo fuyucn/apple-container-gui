@@ -91,39 +91,53 @@ public actor ProcessCommandRunner: CommandRunner {
             process.standardOutput = outPipe
             process.standardError = errPipe
 
-            // Accumulate stderr so a non-zero exit can report it.
-            let errHandle = errPipe.fileHandleForReading
+            // BOTH stdout and stderr MUST be drained concurrently while the
+            // process runs. Tools like `container build` (BuildKit) write all
+            // their progress to stderr; if we only read stdout, the stderr pipe
+            // buffer (~64KB) fills, the child blocks writing to it, and the build
+            // hangs forever. So we line-buffer each stream separately and yield
+            // both — merging stderr gives the user the build progress too — while
+            // accumulating raw stderr text for the failure message.
+            let outBuffer = LineBuffer()
+            let errBuffer = LineBuffer()
+            let errLog = StderrLog()
 
-            // Line-buffer stdout across readabilityHandler chunks.
-            let buffer = LineBuffer()
             outPipe.fileHandleForReading.readabilityHandler = { handle in
                 let data = handle.availableData
                 guard !data.isEmpty else { return }
-                for line in buffer.append(data) {
+                for line in outBuffer.append(data) {
+                    continuation.yield(line)
+                }
+            }
+            errPipe.fileHandleForReading.readabilityHandler = { handle in
+                let data = handle.availableData
+                guard !data.isEmpty else { return }
+                errLog.append(data)
+                for line in errBuffer.append(data) {
                     continuation.yield(line)
                 }
             }
 
             process.terminationHandler = { proc in
                 outPipe.fileHandleForReading.readabilityHandler = nil
-                // Flush any trailing partial line.
-                if let last = buffer.flush() {
-                    continuation.yield(last)
-                }
+                errPipe.fileHandleForReading.readabilityHandler = nil
+                // Flush any trailing partial lines from both streams.
+                if let last = outBuffer.flush() { continuation.yield(last) }
+                if let last = errBuffer.flush() { continuation.yield(last) }
                 let status = proc.terminationStatus
                 if status == 0 {
                     continuation.finish()
                 } else {
-                    let errData = errHandle.readDataToEndOfFile()
                     continuation.finish(throwing: CommandStreamFailure(
                         exitCode: status,
-                        stderr: String(decoding: errData, as: UTF8.self)
+                        stderr: errLog.text()
                     ))
                 }
             }
 
             continuation.onTermination = { _ in
                 outPipe.fileHandleForReading.readabilityHandler = nil
+                errPipe.fileHandleForReading.readabilityHandler = nil
                 if process.isRunning {
                     process.terminate()
                 }
@@ -165,5 +179,23 @@ private final class LineBuffer: @unchecked Sendable {
         let line = String(decoding: data, as: UTF8.self)
         data.removeAll()
         return line
+    }
+}
+
+/// Thread-safe accumulator of raw stderr bytes, kept so a non-zero exit can
+/// report the full stderr. Locked because the stderr readability handler (one
+/// queue) and the termination handler (another) both touch it.
+private final class StderrLog: @unchecked Sendable {
+    private let lock = NSLock()
+    private var data = Data()
+
+    func append(_ chunk: Data) {
+        lock.lock(); defer { lock.unlock() }
+        data.append(chunk)
+    }
+
+    func text() -> String {
+        lock.lock(); defer { lock.unlock() }
+        return String(decoding: data, as: UTF8.self)
     }
 }

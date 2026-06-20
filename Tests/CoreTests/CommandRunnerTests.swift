@@ -70,6 +70,25 @@ import Foundation
     #expect(got == ["a", "b"])
 }
 
+@Test func processRunnerStreamDrainsHeavyStderrWithoutDeadlock() async throws {
+    // Regression: tools like `container build` write progress to stderr. If
+    // stderr is not drained while the process runs, the ~64KB pipe buffer fills,
+    // the child blocks writing, and the stream hangs forever. Emit far more than
+    // 64KB on stderr (20k lines) plus one stdout line; the stream must COMPLETE
+    // and surface the stderr lines (merged), not hang.
+    let runner = ProcessCommandRunner()
+    var count = 0
+    var sawStdout = false
+    for try await line in runner.stream(
+        "/bin/sh",
+        ["-c", "i=0; while [ $i -lt 20000 ]; do echo err$i 1>&2; i=$((i+1)); done; echo done"]
+    ) {
+        if line == "done" { sawStdout = true } else { count += 1 }
+    }
+    #expect(sawStdout)            // stdout line arrived
+    #expect(count == 20000)       // all stderr lines drained + merged (no deadlock)
+}
+
 @Test func processRunnerStreamThrowsOnNonZeroExit() async {
     let runner = ProcessCommandRunner()
     var threw = false
