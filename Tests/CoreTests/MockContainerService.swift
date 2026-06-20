@@ -18,6 +18,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
 
     // Seeded results.
     private var _containers: [Container]
+    private var _stats: [ContainerStats]
     private var _images: [ContainerImage]
     private var _imageConfig: ImageConfig?
     private var _daemonStatus: DaemonStatus
@@ -34,6 +35,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _stoppedIDs: [String] = []
     private var _removedIDs: [String] = []
     private var _runSpecs: [RunSpec] = []
+    private var _statsCalls: [[String]] = []
     private var _removedImageIDs: [String] = []
     private var _pulledRefs: [String] = []
     private var _imageConfigRefs: [String] = []
@@ -42,6 +44,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
 
     init(
         containers: [Container] = [],
+        stats: [ContainerStats] = [],
         images: [ContainerImage] = [],
         imageConfig: ImageConfig? = nil,
         daemonStatus: DaemonStatus = DaemonStatus(state: .stopped, appRoot: nil, installRoot: nil),
@@ -50,6 +53,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         throwOnAction: Error? = nil
     ) {
         self._containers = containers
+        self._stats = stats
         self._images = images
         self._imageConfig = imageConfig
         self._daemonStatus = daemonStatus
@@ -80,6 +84,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var stopCalls: [String] { withLock { _stoppedIDs } }
     var removeCalls: [String] { withLock { _removedIDs } }
     var runSpecs: [RunSpec] { withLock { _runSpecs } }
+    var statsCalls: [[String]] { withLock { _statsCalls } }
     var removeImageCalls: [String] { withLock { _removedImageIDs } }
     var pullCalls: [String] { withLock { _pulledRefs } }
     var imageConfigCalls: [String] { withLock { _imageConfigRefs } }
@@ -110,6 +115,11 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     func run(_ spec: RunSpec) async throws -> String {
         if let e = throwOnAction { throw e }
         return withLock { _runSpecs.append(spec); return "new-container-id" }
+    }
+
+    func stats(_ ids: [String]) async throws -> [ContainerStats] {
+        if let e = throwOnAction { throw e }
+        return withLock { _statsCalls.append(ids); return _stats }
     }
 
     func listImages() async throws -> [ContainerImage] {

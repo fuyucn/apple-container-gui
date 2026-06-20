@@ -124,6 +124,11 @@ public protocol ContainerService: Sendable {
     /// the new container's id (trimmed stdout).
     func run(_ spec: RunSpec) async throws -> String
 
+    /// Resource-usage snapshots via `stats --no-stream --format json [<id>...]`.
+    /// Passing an empty `ids` array samples all running containers. Each element
+    /// is a CUMULATIVE-counter snapshot; callers derive rates from deltas.
+    func stats(_ ids: [String]) async throws -> [ContainerStats]
+
     /// All locally available images via `image list --format json`.
     func listImages() async throws -> [ContainerImage]
 

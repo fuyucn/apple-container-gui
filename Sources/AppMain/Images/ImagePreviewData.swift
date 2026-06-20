@@ -103,6 +103,7 @@ private struct ImagePreviewService: ContainerService {
     func stop(_ id: String) async throws {}
     func remove(_ id: String) async throws {}
     func run(_ spec: RunSpec) async throws -> String { "preview-id" }
+    func stats(_ ids: [String]) async throws -> [ContainerStats] { [] }
     func listImages() async throws -> [ContainerImage] { images }
     func pullImage(_ ref: String) -> AsyncThrowingStream<String, Error> {
         let lines = pullLines

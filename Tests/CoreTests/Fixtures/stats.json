@@ -1,0 +1,13 @@
+[
+  {
+    "id": "v2-stats",
+    "cpuUsageUsec": 2071,
+    "memoryUsageBytes": 5148672,
+    "memoryLimitBytes": 1073741824,
+    "networkRxBytes": 142,
+    "networkTxBytes": 602,
+    "blockReadBytes": 4878336,
+    "blockWriteBytes": 0,
+    "numProcesses": 1
+  }
+]

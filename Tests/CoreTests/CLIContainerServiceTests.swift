@@ -44,6 +44,40 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     }
 }
 
+// MARK: - stats
+
+@Test func statsInvokesExactArgvWithIdsAndDecodes() async throws {
+    let json = try loadFixtureString("stats.json")
+    let mock = MockCommandRunner(result: .init(exitCode: 0, stdout: json, stderr: ""))
+    let service = makeService(mock)
+
+    let stats = try await service.stats(["v2-stats", "other"])
+
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "stats", "--no-stream", "--format", "json", "v2-stats", "other"]])
+    #expect(stats.count == 1)
+    #expect(stats.first?.id == "v2-stats")
+    #expect(stats.first?.cpuUsageUsec == 2071)
+    #expect(stats.first?.memoryUsageBytes == 5_148_672)
+}
+
+@Test func statsWithEmptyIdsOmitsIdArgs() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 0, stdout: "[]", stderr: ""))
+    let service = makeService(mock)
+
+    let stats = try await service.stats([])
+
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "stats", "--no-stream", "--format", "json"]])
+    #expect(stats.isEmpty)
+}
+
+@Test func statsThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "stats boom"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("stats boom")) {
+        try await service.stats([])
+    }
+}
+
 // MARK: - 3.3 start / stop / remove
 
 @Test func startInvokesExactArgv() async throws {

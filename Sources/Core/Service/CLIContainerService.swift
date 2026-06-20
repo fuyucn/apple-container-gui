@@ -92,6 +92,13 @@ public struct CLIContainerService: ContainerService {
         return result.stdout.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    public func stats(_ ids: [String]) async throws -> [ContainerStats] {
+        var args = ["stats", "--no-stream", "--format", "json"]
+        args.append(contentsOf: ids)
+        let result = try await runChecked(args)
+        return try decode([ContainerStats].self, from: result.stdout)
+    }
+
     // MARK: - Images
 
     public func listImages() async throws -> [ContainerImage] {
