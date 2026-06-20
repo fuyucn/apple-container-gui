@@ -217,8 +217,10 @@ public struct CLIContainerService: ContainerService {
 
     // MARK: - Logs
 
-    public func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {
+    public func logs(_ id: String, follow: Bool, boot: Bool, tail: Int?) -> AsyncThrowingStream<String, Error> {
         var args = ["logs"]
+        if boot { args.append("--boot") }
+        if let tail { args.append(contentsOf: ["-n", String(tail)]) }
         if follow { args.append("--follow") }
         args.append(id)
         return stream(args)

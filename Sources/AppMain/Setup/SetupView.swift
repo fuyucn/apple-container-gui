@@ -279,7 +279,7 @@ private struct PreviewSetupService: ContainerService {
     func listNetworks() async throws -> [ContainerNetwork] { [] }
     func createNetwork(name: String, internal isInternal: Bool, subnet: String?, labels: [String: String]) async throws {}
     func removeNetwork(_ name: String) async throws {}
-    func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {
+    func logs(_ id: String, follow: Bool, boot: Bool, tail: Int?) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { $0.finish() }
     }
     func daemonStatus() async throws -> DaemonStatus {

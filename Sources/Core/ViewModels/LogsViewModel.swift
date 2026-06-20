@@ -41,9 +41,11 @@ public final class LogsViewModel {
     }
 
     /// Begin streaming `id`'s logs, resetting prior output. Cancels any existing
-    /// stream first so there is never more than one running. Each line is
-    /// appended to `lines`; clean completion → `.finished`, an error → `.failed`.
-    public func start(id: String, follow: Bool = true) {
+    /// stream first so there is never more than one running. `boot: true` streams
+    /// the VM boot log (`--boot`); `tail` (when non-nil) limits to the last N
+    /// lines (`-n`). Each line is appended to `lines`; clean completion →
+    /// `.finished`, an error → `.failed`.
+    public func start(id: String, follow: Bool = true, boot: Bool = false, tail: Int? = nil) {
         streamTask?.cancel()
         lines = []
         status = .streaming
@@ -51,7 +53,7 @@ public final class LogsViewModel {
         let service = self.service
         streamTask = Task { [weak self] in
             do {
-                for try await line in service.logs(id, follow: follow) {
+                for try await line in service.logs(id, follow: follow, boot: boot, tail: tail) {
                     if Task.isCancelled { break }
                     self?.lines.append(line)
                 }

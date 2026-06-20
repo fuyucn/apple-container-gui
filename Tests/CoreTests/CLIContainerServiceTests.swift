@@ -712,6 +712,43 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     #expect(mock.calls == [["/opt/homebrew/bin/container", "logs", "--follow", "abc123"]])
 }
 
+@Test func logsBootFlagAddsBootToArgv() async throws {
+    let mock = MockCommandRunner(streamLines: ["boot1"])
+    let service = makeService(mock)
+
+    for try await _ in service.logs("abc123", follow: false, boot: true, tail: nil) {}
+
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "logs", "--boot", "abc123"]])
+}
+
+@Test func logsTailAddsDashNToArgv() async throws {
+    let mock = MockCommandRunner(streamLines: ["t1"])
+    let service = makeService(mock)
+
+    for try await _ in service.logs("abc123", follow: false, boot: false, tail: 100) {}
+
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "logs", "-n", "100", "abc123"]])
+}
+
+@Test func logsBootTailFollowCombineInOrder() async throws {
+    let mock = MockCommandRunner(streamLines: ["x"])
+    let service = makeService(mock)
+
+    for try await _ in service.logs("abc123", follow: true, boot: true, tail: 500) {}
+
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "logs", "--boot", "-n", "500", "--follow", "abc123"]])
+}
+
+@Test func logsConvenienceOverloadOmitsBootAndTail() async throws {
+    let mock = MockCommandRunner(streamLines: ["x"])
+    let service = makeService(mock)
+
+    // The follow-only convenience overload must not add --boot or -n.
+    for try await _ in service.logs("abc123", follow: true) {}
+
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "logs", "--follow", "abc123"]])
+}
+
 @Test func logsStreamErrorPathSurfaces() async throws {
     let mock = MockCommandRunner(
         streamLines: ["partial"],

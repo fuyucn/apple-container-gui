@@ -24,22 +24,68 @@ struct LogsView: View {
     /// change), and this view is a pure renderer of `viewModel`.
     var manageLifecycle: Bool = true
 
+    /// Whether to stream the VM boot log (`--boot`) instead of the container's
+    /// own output. Toggled by the control bar; changing it restarts the stream.
+    @State private var showBootLog = false
+
+    /// Tail selection: `nil` streams all output; otherwise the last N lines
+    /// (`-n N`). Changing it restarts the stream. `nil` represents "All".
+    @State private var tailLines: Int? = nil
+
+    /// The fixed tail choices offered by the picker.
+    private static let tailChoices: [Int] = [100, 500, 1000]
+
     var body: some View {
-        content
-            .navigationTitle("Logs — \(containerID)")
-            .task {
-                // Start the stream when the view appears; the view model stores
-                // the consuming Task so it can be cancelled on disappear. Skipped
-                // when the host manages the stream lifecycle.
-                if manageLifecycle {
-                    viewModel.start(id: containerID, follow: follow)
+        VStack(spacing: 0) {
+            controlBar
+            Divider()
+            content
+        }
+        .navigationTitle("Logs — \(containerID)")
+        .task {
+            // Start the stream when the view appears; the view model stores
+            // the consuming Task so it can be cancelled on disappear. Skipped
+            // when the host manages the stream lifecycle.
+            if manageLifecycle {
+                restartStream()
+            }
+        }
+        .onChange(of: showBootLog) { _, _ in restartStream() }
+        .onChange(of: tailLines) { _, _ in restartStream() }
+        .onDisappear {
+            if manageLifecycle {
+                viewModel.stop()
+            }
+        }
+    }
+
+    /// A compact bar with a "Boot log" toggle and a tail-lines picker. Holds no
+    /// business logic; its changes drive `restartStream()` via `onChange`.
+    private var controlBar: some View {
+        HStack(spacing: 16) {
+            Toggle("Boot log", isOn: $showBootLog)
+                .toggleStyle(.switch)
+                .controlSize(.small)
+
+            Picker("Lines", selection: $tailLines) {
+                Text("All").tag(Int?.none)
+                ForEach(Self.tailChoices, id: \.self) { n in
+                    Text("\(n)").tag(Int?.some(n))
                 }
             }
-            .onDisappear {
-                if manageLifecycle {
-                    viewModel.stop()
-                }
-            }
+            .pickerStyle(.segmented)
+            .fixedSize()
+
+            Spacer()
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 6)
+    }
+
+    /// Restart the stream with the current control-bar selections. The view
+    /// model cancels any in-flight stream before opening the new one.
+    private func restartStream() {
+        viewModel.start(id: containerID, follow: follow, boot: showBootLog, tail: tailLines)
     }
 
     @ViewBuilder
@@ -140,7 +186,7 @@ private struct CannedLogsService: ContainerService {
     func listNetworks() async throws -> [ContainerNetwork] { [] }
     func createNetwork(name: String, internal isInternal: Bool, subnet: String?, labels: [String: String]) async throws {}
     func removeNetwork(_ name: String) async throws {}
-    func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {
+    func logs(_ id: String, follow: Bool, boot: Bool, tail: Int?) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in
             continuation.yield("2026/06/17 19:33:38 [notice] nginx/1.27.0")
             continuation.yield("2026/06/17 19:33:38 [notice] using the \"epoll\" event method")

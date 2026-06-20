@@ -199,8 +199,13 @@ public protocol ContainerService: Sendable {
     /// Delete a network by name (`network delete <name>`).
     func removeNetwork(_ name: String) async throws
 
-    /// Stream a container's logs; `follow: true` tails new output.
-    func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error>
+    /// Stream a container's logs (`logs [--boot] [-n <tail>] [--follow] <id>`).
+    /// `follow: true` tails new output; `boot: true` shows the VM boot log
+    /// (`--boot`) instead of the container's own output; `tail` (when non-nil)
+    /// limits output to the last N lines (`-n <tail>`). Swift forbids default arg
+    /// values on protocol requirements, so the `logs(id, follow:)` convenience
+    /// (boot defaults false, tail nil) lives in the extension below.
+    func logs(_ id: String, follow: Bool, boot: Bool, tail: Int?) -> AsyncThrowingStream<String, Error>
 
     /// Current daemon status via `system status`.
     func daemonStatus() async throws -> DaemonStatus
@@ -241,6 +246,14 @@ extension ContainerService {
     /// Convenience: kill with the runtime's default signal.
     public func kill(_ id: String) async throws {
         try await kill(id, signal: nil)
+    }
+
+    /// Convenience: stream logs without a boot toggle or tail limit. Keeps
+    /// existing `logs(id, follow:)` call sites working now that the requirement
+    /// carries `boot`/`tail` (Swift forbids default arg values on protocol
+    /// requirements, so the defaults live here as an overload).
+    public func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {
+        logs(id, follow: follow, boot: false, tail: nil)
     }
 
     /// Convenience: a plain delete (no `-f`). Keeps existing `remove(id)` call

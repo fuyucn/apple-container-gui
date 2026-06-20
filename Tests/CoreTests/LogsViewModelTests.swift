@@ -78,6 +78,35 @@ private func eventually(
 }
 
 @MainActor
+@Test func logsStartThreadsBootAndTailToService() async throws {
+    let service = MockContainerService(streamLines: ["boot line"])
+    let vm = LogsViewModel(service: service)
+
+    vm.start(id: "c1", follow: false, boot: true, tail: 500)
+    await eventually { vm.status == .finished }
+
+    #expect(service.logsInvocations.count == 1)
+    let call = try #require(service.logsInvocations.first)
+    #expect(call.id == "c1")
+    #expect(call.follow == false)
+    #expect(call.boot == true)
+    #expect(call.tail == 500)
+}
+
+@MainActor
+@Test func logsStartDefaultsBootFalseTailNil() async throws {
+    let service = MockContainerService(streamLines: ["a"])
+    let vm = LogsViewModel(service: service)
+
+    vm.start(id: "c1")
+    await eventually { vm.status == .finished }
+
+    let call = try #require(service.logsInvocations.first)
+    #expect(call.boot == false)
+    #expect(call.tail == nil)
+}
+
+@MainActor
 @Test func logsStopCancelsAndIdlesWhileStreaming() async throws {
     // No lines + no error → makeStream finishes immediately with nil; to model a
     // still-open stream we instead assert stop() from the streaming state idles.

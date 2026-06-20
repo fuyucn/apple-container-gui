@@ -56,7 +56,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _pushedRefs: [String] = []
     private var _imageConfigRefs: [String] = []
     private var _buildInvocations: [(dockerfile: String, context: String, tag: String)] = []
-    private var _logsInvocations: [(id: String, follow: Bool)] = []
+    private var _logsInvocations: [(id: String, follow: Bool, boot: Bool, tail: Int?)] = []
 
     init(
         containers: [Container] = [],
@@ -123,7 +123,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var pushCalls: [String] { withLock { _pushedRefs } }
     var imageConfigCalls: [String] { withLock { _imageConfigRefs } }
     var buildInvocations: [(dockerfile: String, context: String, tag: String)] { withLock { _buildInvocations } }
-    var logsInvocations: [(id: String, follow: Bool)] { withLock { _logsInvocations } }
+    var logsInvocations: [(id: String, follow: Bool, boot: Bool, tail: Int?)] { withLock { _logsInvocations } }
 
     // MARK: - ContainerService
 
@@ -246,8 +246,8 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         withLock { _removedNetworkNames.append(name) }
     }
 
-    func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {
-        withLock { _logsInvocations.append((id, follow)) }
+    func logs(_ id: String, follow: Bool, boot: Bool, tail: Int?) -> AsyncThrowingStream<String, Error> {
+        withLock { _logsInvocations.append((id, follow, boot, tail)) }
         return makeStream()
     }
 
