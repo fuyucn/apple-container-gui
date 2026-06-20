@@ -44,8 +44,6 @@ struct BuildView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            header
-            Divider()
             // Side-by-side: configuration + action on the left, the build output
             // console on the right, so the form stays fully visible while logs
             // stream (a draggable divider lets the user rebalance).
@@ -83,29 +81,6 @@ struct BuildView: View {
         }
     }
 
-    // MARK: - Header
-
-    /// A title + subtitle banner that frames the page and sets expectations.
-    private var header: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "hammer.fill")
-                .font(.title2)
-                .foregroundStyle(.tint)
-                .frame(width: 30)
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Build Image")
-                    .font(.title3.weight(.semibold))
-                Text("Build an image from a Dockerfile, then Run it.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
-        .background(.bar)
-    }
-
     // MARK: - Form
 
     private var form: some View {
@@ -123,6 +98,11 @@ struct BuildView: View {
                     // Default the context to the Dockerfile's directory if unset.
                     if viewModel.contextPath.isEmpty {
                         viewModel.contextPath = url.deletingLastPathComponent().path
+                    }
+                    // Suggest an editable tag so the build doesn't fall back to a
+                    // bare UUID name; the user can change it.
+                    if viewModel.tag.isEmpty {
+                        viewModel.tag = BuildViewModel.suggestedTag(forDockerfileAt: url)
                     }
                 }
 
