@@ -17,6 +17,13 @@ struct BuildView: View {
     /// Task survives view re-creation while the Build section is shown.
     @Bindable var viewModel: BuildViewModel
 
+    /// Containers view model, threaded through so a successful build can present
+    /// the Run sheet prefilled with the built image tag.
+    @Bindable var containersViewModel: ContainersViewModel
+
+    /// Supplies local image suggestions to the presented Run sheet's picker.
+    @Bindable var imagesViewModel: ImagesViewModel
+
     // MARK: - Form input state
 
     /// Absolute path to the chosen Dockerfile, or empty if none picked.
@@ -36,6 +43,9 @@ struct BuildView: View {
     /// The two things this view can import.
     private enum ImporterKind { case dockerfile, context }
 
+    /// Whether the Run sheet (seeded with the built image) is presented.
+    @State private var isRunSheetPresented = false
+
     var body: some View {
         VStack(spacing: 0) {
             form
@@ -48,6 +58,13 @@ struct BuildView: View {
         .onDisappear {
             // Tear down any in-flight build when leaving the section.
             viewModel.cancel()
+        }
+        .sheet(isPresented: $isRunSheetPresented) {
+            RunContainerView(
+                viewModel: containersViewModel,
+                imagesViewModel: imagesViewModel,
+                initialImage: viewModel.builtImageTag
+            )
         }
     }
 
@@ -201,6 +218,11 @@ struct BuildView: View {
     private var footer: some View {
         HStack {
             statusLabel
+            if viewModel.status == .succeeded, viewModel.builtImageTag != nil {
+                Button("Run Image") {
+                    isRunSheetPresented = true
+                }
+            }
             Spacer()
             if isRunning {
                 Button("Cancel", role: .cancel) {
@@ -299,8 +321,13 @@ private struct CannedBuildService: ContainerService {
 }
 
 #Preview("Build") {
-    NavigationStack {
-        BuildView(viewModel: BuildViewModel(service: CannedBuildService()))
+    let service = CannedBuildService()
+    return NavigationStack {
+        BuildView(
+            viewModel: BuildViewModel(service: service),
+            containersViewModel: ContainersViewModel(service: service),
+            imagesViewModel: ImagesViewModel(service: service)
+        )
     }
     .frame(width: 620, height: 560)
 }

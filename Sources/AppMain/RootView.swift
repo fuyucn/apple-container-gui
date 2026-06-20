@@ -104,7 +104,11 @@ struct RootView: View {
         case .images:
             ImageListView(viewModel: imagesViewModel)
         case .build:
-            BuildView(viewModel: buildViewModel)
+            BuildView(
+                viewModel: buildViewModel,
+                containersViewModel: containersViewModel,
+                imagesViewModel: imagesViewModel
+            )
         case .settings:
             ContentUnavailableView(
                 "Settings",

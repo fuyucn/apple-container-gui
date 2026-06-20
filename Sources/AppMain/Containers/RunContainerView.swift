@@ -19,6 +19,10 @@ struct RunContainerView: View {
     /// empty) the image field is plain free text.
     var imagesViewModel: ImagesViewModel?
 
+    /// Optional image reference to prefill the image field with (e.g. a freshly
+    /// built tag), seeded into `image` on first appearance when it is still empty.
+    var initialImage: String? = nil
+
     @Environment(\.dismiss) private var dismiss
 
     // MARK: - Form input state
@@ -59,6 +63,11 @@ struct RunContainerView: View {
         }
         .frame(minWidth: 460, minHeight: 520)
         .task {
+            // Seed the image field from the prefill, only when the user has not
+            // already typed something, so reopening never clobbers input.
+            if image.isEmpty, let initialImage, !initialImage.isEmpty {
+                image = initialImage
+            }
             // Populate the image suggestion menu if a source was provided.
             await imagesViewModel?.refresh()
         }

@@ -36,6 +36,48 @@ import Foundation
 }
 
 @MainActor
+@Test func builtImageTagUsesRequestedTagAfterSuccess() async throws {
+    let service = MockContainerService(streamLines: ["STEP 1/2", "Successfully built resolved/name:1.0"])
+    let vm = BuildViewModel(service: service)
+
+    #expect(vm.builtImageTag == nil)
+
+    await vm.build(dockerfile: "Dockerfile", context: ".", tag: "myapp:latest")
+
+    #expect(vm.status == .succeeded)
+    #expect(vm.builtImageTag == "myapp:latest")
+}
+
+@MainActor
+@Test func builtImageTagFallsBackToLastLogLineWhenTagEmpty() async throws {
+    let service = MockContainerService(streamLines: ["STEP 1/2", "  ", "resolved/name:1.0", "  "])
+    let vm = BuildViewModel(service: service)
+
+    await vm.build(dockerfile: "Dockerfile", context: ".", tag: "")
+
+    #expect(vm.status == .succeeded)
+    #expect(vm.builtImageTag == "resolved/name:1.0")
+}
+
+@MainActor
+@Test func builtImageTagNilBeforeAndAfterFailedBuild() async throws {
+    let service = MockContainerService(
+        streamLines: ["STEP 1/3"],
+        streamError: ContainerError.commandFailed("build failed")
+    )
+    let vm = BuildViewModel(service: service)
+
+    #expect(vm.builtImageTag == nil)
+
+    await vm.build(dockerfile: "Dockerfile", context: ".", tag: "t:1")
+
+    if case .failed = vm.status {} else {
+        Issue.record("expected .failed status, got \(vm.status)")
+    }
+    #expect(vm.builtImageTag == nil)
+}
+
+@MainActor
 @Test func buildResetsLogOnSecondRun() async throws {
     let service = MockContainerService(streamLines: ["only line"])
     let vm = BuildViewModel(service: service)
