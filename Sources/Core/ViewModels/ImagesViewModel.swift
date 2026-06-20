@@ -9,6 +9,12 @@ public final class ImagesViewModel {
     /// Images as of the last refresh.
     public private(set) var images: [ContainerImage] = []
 
+    /// Names (`ContainerImage.name`) of images currently referenced by an
+    /// existing container, as of the last refresh. Computed by cross-referencing
+    /// the image list against `listContainers()` with reference normalization
+    /// (see `ImageUsage`). Drives the "In Use" vs other grouping in the UI.
+    public private(set) var inUseNames: Set<String> = []
+
     /// Accumulated progress lines from the most recent `pull`.
     public private(set) var pullLog: [String] = []
 
@@ -30,10 +36,19 @@ public final class ImagesViewModel {
         self.service = service
     }
 
-    /// Re-read the image list from the service.
+    /// Re-read the image list from the service, and recompute `inUseNames` by
+    /// also listing containers and cross-referencing their image references.
+    /// A failure to list containers does not fail the refresh: images still
+    /// load and `inUseNames` degrades to empty (everything shown ungrouped).
     public func refresh() async {
         do {
-            images = try await service.listImages()
+            let images = try await service.listImages()
+            self.images = images
+            let containers = (try? await service.listContainers()) ?? []
+            inUseNames = ImageUsage.inUseNames(
+                images: images,
+                containerReferences: containers.map(\.imageReference)
+            )
             lastError = nil
         } catch {
             lastError = String(describing: error)

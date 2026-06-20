@@ -898,3 +898,21 @@ private actor Counter {
         _ = try await service.execInvocation(id: "x", command: ["sh"])
     }
 }
+
+// MARK: - Debug shell into an image (throwaway container)
+
+@Test func imageShellInvocationBuildsThrowawayRunArgv() async throws {
+    let service = makeService(MockCommandRunner())
+    let inv = try await service.imageShellInvocation(ref: "alpine:latest")
+    #expect(inv.executable == "/opt/homebrew/bin/container")
+    // `run --rm -i -t <ref> sh` — `--rm` removes the container on shell exit.
+    #expect(inv.arguments == ["run", "--rm", "-i", "-t", "alpine:latest", "sh"])
+}
+
+@Test func imageShellInvocationThrowsBinaryNotFoundWhenUnresolved() async throws {
+    let cli = ContainerCLI(runner: MockCommandRunner(), overridePath: "/nonexistent/container")
+    let service = CLIContainerService(runner: MockCommandRunner(), cli: cli)
+    await #expect(throws: ContainerError.binaryNotFound) {
+        _ = try await service.imageShellInvocation(ref: "alpine:latest")
+    }
+}

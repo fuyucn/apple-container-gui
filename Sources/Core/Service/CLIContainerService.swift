@@ -260,6 +260,15 @@ public struct CLIContainerService: ContainerService {
         return ProcessInvocation(executable: path, arguments: args)
     }
 
+    public func imageShellInvocation(ref: String) async throws -> ProcessInvocation {
+        let path = try await binaryPath()
+        // `run --rm -i -t <ref> sh` spins up a throwaway container from the
+        // image, attaches an interactive PTY (matching the terminal widget's
+        // PTY), and removes the container on exit (`--rm`). Verified against
+        // `container run --help` (container v1.0.0).
+        return ProcessInvocation(executable: path, arguments: ["run", "--rm", "-i", "-t", ref, "sh"])
+    }
+
     // MARK: - Streaming helper
 
     /// Resolve the binary and forward the runner's stream. Because

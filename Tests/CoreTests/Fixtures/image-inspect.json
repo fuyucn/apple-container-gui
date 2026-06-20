@@ -1,30 +1,554 @@
 [
   {
-    "configuration": {
-      "creationDate": "2026-06-17T23:12:38Z",
-      "descriptor": {
-        "digest": "sha256:20316569d8f81a160065d7d2a5eeffc7ca97d79022462ee255fd23fa103a6b5c",
-        "mediaType": "application/vnd.oci.image.index.v1+json",
-        "size": 10333
+    "configuration" : {
+      "creationDate" : "2026-06-16T00:00:15Z",
+      "descriptor" : {
+        "digest" : "sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b",
+        "mediaType" : "application\/vnd.oci.image.index.v1+json",
+        "size" : 9218
       },
-      "name": "docker.io/library/nginx:alpine"
+      "name" : "docker.io\/library\/alpine:latest"
     },
-    "id": "20316569d8f81a160065d7d2a5eeffc7ca97d79022462ee255fd23fa103a6b5c",
-    "variants": [
+    "id" : "28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b",
+    "variants" : [
       {
-        "config": {
-          "architecture": "arm64",
-          "config": {
-            "Cmd": [
+        "config" : {
+          "architecture" : "amd64",
+          "config" : {
+            "Cmd" : [
+              "\/bin\/sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin"
+            ],
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-16T00:01:29.967161902Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:01:29.967161902Z",
+              "created_by" : "ADD alpine-minirootfs-3.24.1-x86_64.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:01:29.967161902Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:34884abbe92863fce933ed7c39c0e045631af0ed86d5cc0dfbdf9fdca426ce3c"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:79ff19e9084a00eece421b2523fb93e22d730e2c0e525905de047e848e56d95f",
+        "platform" : {
+          "architecture" : "amd64",
+          "os" : "linux"
+        },
+        "size" : 3848024
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:f5124fb579e27b9769a8ce0158cb650168246572098b5095ecbf8e605488afb6",
+              "sha256:56dceff11b3396976a334a95c6a2816e051a060123c719b35e4fc5104a962f7f"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:f21951a6120df0f5f9329311202f7869e7b70120f4748632d58753cff662b126",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 86390
+      },
+      {
+        "config" : {
+          "architecture" : "arm",
+          "config" : {
+            "Cmd" : [
+              "\/bin\/sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin"
+            ],
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-16T00:00:25.329026823Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:00:25.329026823Z",
+              "created_by" : "ADD alpine-minirootfs-3.24.1-armhf.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:00:25.329026823Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:78ed6782dc1bda42a805a54b6a8cf65a497ca4e409bc5bfe00e38ec85bdf826d"
+            ],
+            "type" : "layers"
+          },
+          "variant" : "v6"
+        },
+        "digest" : "sha256:bc301c70d7e7b929e5d3251d08ecc2e2894c22580958f79298052ed73ada4be0",
+        "platform" : {
+          "architecture" : "arm",
+          "os" : "linux",
+          "variant" : "v6"
+        },
+        "size" : 3555096
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:f5124fb579e27b9769a8ce0158cb650168246572098b5095ecbf8e605488afb6",
+              "sha256:56dceff11b3396976a334a95c6a2816e051a060123c719b35e4fc5104a962f7f"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:9ebfa72c35ca370f63e20c92dfa3ac11b67f753b193cc345aa2b23f89241227c",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 86118
+      },
+      {
+        "config" : {
+          "architecture" : "arm",
+          "config" : {
+            "Cmd" : [
+              "\/bin\/sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin"
+            ],
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-16T00:00:26.526765088Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:00:26.526765088Z",
+              "created_by" : "ADD alpine-minirootfs-3.24.1-armv7.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:00:26.526765088Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:1e30d7d82ee088ef08d915b4394ec1aa51a54d871dcd0770dc7503bee836e489"
+            ],
+            "type" : "layers"
+          },
+          "variant" : "v7"
+        },
+        "digest" : "sha256:48bf253520b161ff0f7bd9c6b2aded4126fa8ee2bc29386580b2a8a0322a1742",
+        "platform" : {
+          "architecture" : "arm",
+          "os" : "linux",
+          "variant" : "v7"
+        },
+        "size" : 3262261
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:f5124fb579e27b9769a8ce0158cb650168246572098b5095ecbf8e605488afb6",
+              "sha256:56dceff11b3396976a334a95c6a2816e051a060123c719b35e4fc5104a962f7f"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:b47a7a1760540077a1aefc00795604cd7e1b2acf556312118e10806f9a58d072",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 86390
+      },
+      {
+        "config" : {
+          "architecture" : "arm64",
+          "config" : {
+            "Cmd" : [
+              "\/bin\/sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin"
+            ],
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-16T00:01:20.474100947Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:01:20.474100947Z",
+              "created_by" : "ADD alpine-minirootfs-3.24.1-aarch64.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:01:20.474100947Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:b2848c02ac6ff53d265469b5b30f649f335e546a83330cd8916d54e65e640409"
+            ],
+            "type" : "layers"
+          },
+          "variant" : "v8"
+        },
+        "digest" : "sha256:e7a1a92a5bfeee40966aea60f0796b0e7917cc35591542701834f03a68fa3d18",
+        "platform" : {
+          "architecture" : "arm64",
+          "os" : "linux",
+          "variant" : "v8"
+        },
+        "size" : 4184689
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:f5124fb579e27b9769a8ce0158cb650168246572098b5095ecbf8e605488afb6",
+              "sha256:56dceff11b3396976a334a95c6a2816e051a060123c719b35e4fc5104a962f7f"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:d9dc32c63a23ac682a41ab2eae01051d2a4fbe472eefd109faf97be63a5216e5",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 86390
+      },
+      {
+        "config" : {
+          "architecture" : "386",
+          "config" : {
+            "Cmd" : [
+              "\/bin\/sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin"
+            ],
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-16T00:01:19.360099979Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:01:19.360099979Z",
+              "created_by" : "ADD alpine-minirootfs-3.24.1-x86.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:01:19.360099979Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:20868c90c269dd93125a9ddea2bec8b326ccfc8229d85a7456ee028a165b29b1"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:6f5908cdf811d574b30ec394e405ef74ee293bed5af1620a5187d604604a90a8",
+        "platform" : {
+          "architecture" : "386",
+          "os" : "linux"
+        },
+        "size" : 3671765
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:f5124fb579e27b9769a8ce0158cb650168246572098b5095ecbf8e605488afb6",
+              "sha256:56dceff11b3396976a334a95c6a2816e051a060123c719b35e4fc5104a962f7f"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:bf1792d3b17c3493e465c13b8357c5f60c2acc36cb69aab0813d4e7f1995ac2b",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 86390
+      },
+      {
+        "config" : {
+          "architecture" : "ppc64le",
+          "config" : {
+            "Cmd" : [
+              "\/bin\/sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin"
+            ],
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-16T00:00:15.017984356Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:00:15.017984356Z",
+              "created_by" : "ADD alpine-minirootfs-3.24.1-ppc64le.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:00:15.017984356Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:8c55296752dfcaf17e3fa825036cfe5050c55402025b508314048e741c9a5f16"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:a30366c2d2645b131e92b797b39357db29f197966c660db2767f143353000d6f",
+        "platform" : {
+          "architecture" : "ppc64le",
+          "os" : "linux"
+        },
+        "size" : 3815039
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:f5124fb579e27b9769a8ce0158cb650168246572098b5095ecbf8e605488afb6",
+              "sha256:56dceff11b3396976a334a95c6a2816e051a060123c719b35e4fc5104a962f7f"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:7a21929832908e662272c6e3333f68c662e3854ad4956e49d995251dcd9ccbfe",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 86390
+      },
+      {
+        "config" : {
+          "architecture" : "riscv64",
+          "config" : {
+            "Cmd" : [
+              "\/bin\/sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin"
+            ],
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-16T05:59:15.56408535Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T05:59:15.56408535Z",
+              "created_by" : "ADD alpine-minirootfs-3.24.1-riscv64.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T05:59:15.56408535Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:d806e99d43aeb11f79a974b2623809f37ead271ba59a954bd643342d3ae87e71"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:20a26477b54fb521bc8f633ea0af1f8f9b3dac5661739f857b381b117226919b",
+        "platform" : {
+          "architecture" : "riscv64",
+          "os" : "linux"
+        },
+        "size" : 3575994
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:f5124fb579e27b9769a8ce0158cb650168246572098b5095ecbf8e605488afb6",
+              "sha256:56dceff11b3396976a334a95c6a2816e051a060123c719b35e4fc5104a962f7f"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:83b3fe59c5ee68a257a6e179c792b9bd5b0aceb02ceb2813f14eef469a020c00",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 86390
+      },
+      {
+        "config" : {
+          "architecture" : "s390x",
+          "config" : {
+            "Cmd" : [
+              "\/bin\/sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin"
+            ],
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-16T00:00:21.879382071Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:00:21.879382071Z",
+              "created_by" : "ADD alpine-minirootfs-3.24.1-s390x.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-16T00:00:21.879382071Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:ff89eb082f59748c49390592d343caad75d5a0f38be634c4a5ff87b55add7c8d"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:4eea4e45f63fc6b38e5f653120aaf8a7c19043706f6d76070821495371e3017b",
+        "platform" : {
+          "architecture" : "s390x",
+          "os" : "linux"
+        },
+        "size" : 3710951
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:f5124fb579e27b9769a8ce0158cb650168246572098b5095ecbf8e605488afb6",
+              "sha256:56dceff11b3396976a334a95c6a2816e051a060123c719b35e4fc5104a962f7f"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:4a411cfbe9fc8bbe39859f835711f280d91a856a28a6ca01ef82ca298170c727",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 86390
+      }
+    ]
+  },
+  {
+    "configuration" : {
+      "creationDate" : "2026-06-17T23:12:38Z",
+      "descriptor" : {
+        "digest" : "sha256:20316569d8f81a160065d7d2a5eeffc7ca97d79022462ee255fd23fa103a6b5c",
+        "mediaType" : "application\/vnd.oci.image.index.v1+json",
+        "size" : 10333
+      },
+      "name" : "docker.io\/library\/nginx:alpine"
+    },
+    "id" : "20316569d8f81a160065d7d2a5eeffc7ca97d79022462ee255fd23fa103a6b5c",
+    "variants" : [
+      {
+        "config" : {
+          "architecture" : "amd64",
+          "config" : {
+            "Cmd" : [
               "nginx",
               "-g",
               "daemon off;"
             ],
-            "Entrypoint": [
-              "/docker-entrypoint.sh"
+            "Entrypoint" : [
+              "\/docker-entrypoint.sh"
             ],
-            "Env": [
-              "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin",
               "NGINX_VERSION=1.31.2",
               "PKG_RELEASE=1",
               "DYNPKG_RELEASE=1",
@@ -32,130 +556,692 @@
               "NJS_RELEASE=1",
               "ACME_VERSION=0.4.1"
             ],
-            "Labels": {
-              "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            "Labels" : {
+              "maintainer" : "NGINX Docker Maintainers <docker-maint@nginx.com>"
             },
-            "StopSignal": "SIGQUIT",
-            "WorkingDir": "/"
+            "StopSignal" : "SIGQUIT",
+            "WorkingDir" : "\/"
           },
-          "created": "2026-06-17T23:12:38.996330796Z",
-          "history": [
+          "created" : "2026-06-17T23:12:54.665523533Z",
+          "history" : [
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-04-15T20:01:25.793704917Z",
-              "created_by": "ADD alpine-minirootfs-3.23.4-aarch64.tar.gz / # buildkit"
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:01:40.139676757Z",
+              "created_by" : "ADD alpine-minirootfs-3.23.4-x86_64.tar.gz \/ # buildkit"
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-04-15T20:01:25.793704917Z",
-              "created_by": "CMD [\"/bin/sh\"]",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:01:40.139676757Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.554115019Z",
-              "created_by": "LABEL maintainer=NGINX Docker Maintainers <docker-maint@nginx.com>",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.511303294Z",
+              "created_by" : "LABEL maintainer=NGINX Docker Maintainers <docker-maint@nginx.com>",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.554115019Z",
-              "created_by": "ENV NGINX_VERSION=1.31.2",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.511303294Z",
+              "created_by" : "ENV NGINX_VERSION=1.31.2",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.554115019Z",
-              "created_by": "ENV PKG_RELEASE=1",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.511303294Z",
+              "created_by" : "ENV PKG_RELEASE=1",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.554115019Z",
-              "created_by": "ENV DYNPKG_RELEASE=1",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.511303294Z",
+              "created_by" : "ENV DYNPKG_RELEASE=1",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.554115019Z",
-              "created_by": "RUN /bin/sh -c set -x     && addgroup -g 101 -S nginx     && adduser -S -D -H -u 101 -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx     && apkArch=\"$(cat /etc/apk/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             set -x             && KEY_SHA512=\"e09fa32f0a0eab2b879ccbbc4d0e4fb9751486eedda75e35fac65802cc9faa266425edf83e261137a2f4d16281ce2c1a5f4502930fe75154723da014214f0655\"             && wget -O /tmp/nginx_signing.rsa.pub https://nginx.org/keys/nginx_signing.rsa.pub             && if echo \"$KEY_SHA512 */tmp/nginx_signing.rsa.pub\" | sha512sum -c -; then                 echo \"key verification succeeded!\";                 mv /tmp/nginx_signing.rsa.pub /etc/apk/keys/;             else                 echo \"key verification failed!\";                 exit 1;             fi             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg https://nginx.org/packages/mainline/alpine/v$(egrep -o '^[0-9]+\\.[0-9]+' /etc/alpine-release)/main\"                        ${nginxPackages/=/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file /dev/null -X \"https://nginx.org/packages/mainline/alpine/v$(egrep -o '^[0-9]+\\.[0-9]+' /etc/alpine-release)/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 bash                 alpine-sdk                 findutils                 curl             && su nobody -s /bin/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && make base                 && apk index --allow-untrusted -o ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz ${tempDir}/packages/alpine/${apkArch}/*.apk                 && abuild-sign -k ${tempDir}/.abuild/abuild-key.rsa ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz                 \"             && cp ${tempDir}/.abuild/abuild-key.rsa.pub /etc/apk/keys/             && apk del --no-network .build-deps             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg ${tempDir}/packages/alpine/\"                        ${nginxPackages/=/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file /dev/null -X ${tempDir}/packages/alpine/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"/etc/apk/keys/abuild-key.rsa.pub\" ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi     && apk add --no-cache gettext-envsubst     && apk add --no-cache tzdata     && ln -sf /dev/stdout /var/log/nginx/access.log     && ln -sf /dev/stderr /var/log/nginx/error.log     && mkdir /docker-entrypoint.d # buildkit"
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.511303294Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && addgroup -g 101 -S nginx     && adduser -S -D -H -u 101 -h \/var\/cache\/nginx -s \/sbin\/nologin -G nginx -g nginx nginx     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             set -x             && KEY_SHA512=\"e09fa32f0a0eab2b879ccbbc4d0e4fb9751486eedda75e35fac65802cc9faa266425edf83e261137a2f4d16281ce2c1a5f4502930fe75154723da014214f0655\"             && wget -O \/tmp\/nginx_signing.rsa.pub https:\/\/nginx.org\/keys\/nginx_signing.rsa.pub             && if echo \"$KEY_SHA512 *\/tmp\/nginx_signing.rsa.pub\" | sha512sum -c -; then                 echo \"key verification succeeded!\";                 mv \/tmp\/nginx_signing.rsa.pub \/etc\/apk\/keys\/;             else                 echo \"key verification failed!\";                 exit 1;             fi             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 bash                 alpine-sdk                 findutils                 curl             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && make base                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg ${tempDir}\/packages\/alpine\/\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache gettext-envsubst     && apk add --no-cache tzdata     && ln -sf \/dev\/stdout \/var\/log\/nginx\/access.log     && ln -sf \/dev\/stderr \/var\/log\/nginx\/error.log     && mkdir \/docker-entrypoint.d # buildkit"
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.578777539Z",
-              "created_by": "COPY docker-entrypoint.sh / # buildkit"
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.541127638Z",
+              "created_by" : "COPY docker-entrypoint.sh \/ # buildkit"
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.619819365Z",
-              "created_by": "COPY 10-listen-on-ipv6-by-default.sh /docker-entrypoint.d # buildkit"
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.575434532Z",
+              "created_by" : "COPY 10-listen-on-ipv6-by-default.sh \/docker-entrypoint.d # buildkit"
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.665681274Z",
-              "created_by": "COPY 15-local-resolvers.envsh /docker-entrypoint.d # buildkit"
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.605200944Z",
+              "created_by" : "COPY 15-local-resolvers.envsh \/docker-entrypoint.d # buildkit"
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.712621415Z",
-              "created_by": "COPY 20-envsubst-on-templates.sh /docker-entrypoint.d # buildkit"
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.633606667Z",
+              "created_by" : "COPY 20-envsubst-on-templates.sh \/docker-entrypoint.d # buildkit"
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.75789494Z",
-              "created_by": "COPY 30-tune-worker-processes.sh /docker-entrypoint.d # buildkit"
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.661471917Z",
+              "created_by" : "COPY 30-tune-worker-processes.sh \/docker-entrypoint.d # buildkit"
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.75789494Z",
-              "created_by": "ENTRYPOINT [\"/docker-entrypoint.sh\"]",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.661471917Z",
+              "created_by" : "ENTRYPOINT [\"\/docker-entrypoint.sh\"]",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.75789494Z",
-              "created_by": "EXPOSE map[80/tcp:{}]",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.661471917Z",
+              "created_by" : "EXPOSE map[80\/tcp:{}]",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.75789494Z",
-              "created_by": "STOPSIGNAL SIGQUIT",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.661471917Z",
+              "created_by" : "STOPSIGNAL SIGQUIT",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T22:32:23.75789494Z",
-              "created_by": "CMD [\"nginx\" \"-g\" \"daemon off;\"]",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:44:29.661471917Z",
+              "created_by" : "CMD [\"nginx\" \"-g\" \"daemon off;\"]",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T23:12:38.996330796Z",
-              "created_by": "ENV NJS_VERSION=0.9.9",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:12:54.665523533Z",
+              "created_by" : "ENV NJS_VERSION=0.9.9",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T23:12:38.996330796Z",
-              "created_by": "ENV NJS_RELEASE=1",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:12:54.665523533Z",
+              "created_by" : "ENV NJS_RELEASE=1",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T23:12:38.996330796Z",
-              "created_by": "ENV ACME_VERSION=0.4.1",
-              "empty_layer": true
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:12:54.665523533Z",
+              "created_by" : "ENV ACME_VERSION=0.4.1",
+              "empty_layer" : true
             },
             {
-              "comment": "buildkit.dockerfile.v0",
-              "created": "2026-06-17T23:12:38.996330796Z",
-              "created_by": "RUN /bin/sh -c set -x     && apkArch=\"$(cat /etc/apk/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE}         nginx-module-acme=${NGINX_VERSION}.${ACME_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             apk add -X \"https://nginx.org/packages/mainline/alpine/v$(egrep -o '^[0-9]+\\.[0-9]+' /etc/alpine-release)/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 libxslt-dev                 gd-dev                 geoip-dev                 libedit-dev                 bash                 alpine-sdk                 findutils                 curl                 cargo                 clang-libclang             && su nobody -s /bin/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https://github.com/nginx/pkg-oss/archive/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && export BUILDTARGET=\\\"module-geoip module-image-filter module-njs module-xslt module-acme\\\"                 && if [ \\\"\\$(apk --print-arch)\\\" = \\\"armhf\\\" ]; then BUILDTARGET=\\\"\\$( echo \\$BUILDTARGET | sed 's,module-acme,,' )\\\"; fi                 && make \\$BUILDTARGET                 && apk index --allow-untrusted -o ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz ${tempDir}/packages/alpine/${apkArch}/*.apk                 && abuild-sign -k ${tempDir}/.abuild/abuild-key.rsa ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz                 \"             && cp ${tempDir}/.abuild/abuild-key.rsa.pub /etc/apk/keys/             && apk del --no-network .build-deps             && if [ \"$apkArch\" = \"armhf\" ]; then nginxPackages=\"$( echo $nginxPackages | sed 's,nginx-module-acme=.*,,')\"; fi             && apk add -X ${tempDir}/packages/alpine/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"/etc/apk/keys/abuild-key.rsa.pub\" ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi     && apk add --no-cache curl ca-certificates # buildkit"
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:12:54.665523533Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE}         nginx-module-acme=${NGINX_VERSION}.${ACME_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             apk add -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 libxslt-dev                 gd-dev                 geoip-dev                 libedit-dev                 bash                 alpine-sdk                 findutils                 curl                 cargo                 clang-libclang             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && export BUILDTARGET=\\\"module-geoip module-image-filter module-njs module-xslt module-acme\\\"                 && if [ \\\"\\$(apk --print-arch)\\\" = \\\"armhf\\\" ]; then BUILDTARGET=\\\"\\$( echo \\$BUILDTARGET | sed 's,module-acme,,' )\\\"; fi                 && make \\$BUILDTARGET                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && if [ \"$apkArch\" = \"armhf\" ]; then nginxPackages=\"$( echo $nginxPackages | sed 's,nginx-module-acme=.*,,')\"; fi             && apk add -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache curl ca-certificates # buildkit"
             }
           ],
-          "os": "linux",
-          "rootfs": {
-            "diff_ids": [
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:29df493baa13de438d6d2ece3a8333032e0b7b9b9d8cce4ee82194da255f61e1",
+              "sha256:740439659ec729ee9f637d1c0d2bb1da36726f6fe1f26aef7c9867989554d602",
+              "sha256:cf8c574ec244b1033a59bd40d6aef9b5c77f9daabba1a79c2c2dfa9760d0232a",
+              "sha256:f13022d1356b77d6b905dd1283427b25dc8658ccef06017c8608aa0965e3c9ef",
+              "sha256:38f56d5424ad29c545587de295708b95d31910d0c8cf74df7c086a1e5641fd44",
+              "sha256:fa10e24a2bc907e2bd62105c7ef02b88079487e2377521e5e0b35b00111e2355",
+              "sha256:f95e278c8ea7891f6c555bd1c0c5247435d7e69e9566dd2d65b7428ab6173dc5",
+              "sha256:4b7144ac09dacd92f834108d568b74f9457514c9a59b5c53368f3fc203c05a1d"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:791fc301c0c48d31dc02800fb629c5d603a43303caad13c70cdddb555baca712",
+        "platform" : {
+          "architecture" : "amd64",
+          "os" : "linux"
+        },
+        "size" : 28540520
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:88f527e8c1458f66bb1f7635b77498a67c1ca5e6a3b9fe4ddef62d2dcbe5d377",
+              "sha256:68d92ba5fdd59c4f6c65fdebaa74470abcd49826a187b6396b73f6d5bcba1d5e"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:f62408bff7432092a8c0a77f5481908ab7f47636958f254c05c06e0bc9f18b9d",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 907196
+      },
+      {
+        "config" : {
+          "architecture" : "arm",
+          "config" : {
+            "Cmd" : [
+              "nginx",
+              "-g",
+              "daemon off;"
+            ],
+            "Entrypoint" : [
+              "\/docker-entrypoint.sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin",
+              "NGINX_VERSION=1.31.2",
+              "PKG_RELEASE=1",
+              "DYNPKG_RELEASE=1",
+              "NJS_VERSION=0.9.9",
+              "NJS_RELEASE=1",
+              "ACME_VERSION=0.4.1"
+            ],
+            "Labels" : {
+              "maintainer" : "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal" : "SIGQUIT",
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-17T23:17:11.437351077Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:02:13.218981402Z",
+              "created_by" : "ADD alpine-minirootfs-3.23.4-armhf.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:02:13.218981402Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.290547657Z",
+              "created_by" : "LABEL maintainer=NGINX Docker Maintainers <docker-maint@nginx.com>",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.290547657Z",
+              "created_by" : "ENV NGINX_VERSION=1.31.2",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.290547657Z",
+              "created_by" : "ENV PKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.290547657Z",
+              "created_by" : "ENV DYNPKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.290547657Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && addgroup -g 101 -S nginx     && adduser -S -D -H -u 101 -h \/var\/cache\/nginx -s \/sbin\/nologin -G nginx -g nginx nginx     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             set -x             && KEY_SHA512=\"e09fa32f0a0eab2b879ccbbc4d0e4fb9751486eedda75e35fac65802cc9faa266425edf83e261137a2f4d16281ce2c1a5f4502930fe75154723da014214f0655\"             && wget -O \/tmp\/nginx_signing.rsa.pub https:\/\/nginx.org\/keys\/nginx_signing.rsa.pub             && if echo \"$KEY_SHA512 *\/tmp\/nginx_signing.rsa.pub\" | sha512sum -c -; then                 echo \"key verification succeeded!\";                 mv \/tmp\/nginx_signing.rsa.pub \/etc\/apk\/keys\/;             else                 echo \"key verification failed!\";                 exit 1;             fi             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 bash                 alpine-sdk                 findutils                 curl             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && make base                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg ${tempDir}\/packages\/alpine\/\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache gettext-envsubst     && apk add --no-cache tzdata     && ln -sf \/dev\/stdout \/var\/log\/nginx\/access.log     && ln -sf \/dev\/stderr \/var\/log\/nginx\/error.log     && mkdir \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.318377099Z",
+              "created_by" : "COPY docker-entrypoint.sh \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.33858278Z",
+              "created_by" : "COPY 10-listen-on-ipv6-by-default.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.360436863Z",
+              "created_by" : "COPY 15-local-resolvers.envsh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.38356107Z",
+              "created_by" : "COPY 20-envsubst-on-templates.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.407411484Z",
+              "created_by" : "COPY 30-tune-worker-processes.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.407411484Z",
+              "created_by" : "ENTRYPOINT [\"\/docker-entrypoint.sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.407411484Z",
+              "created_by" : "EXPOSE map[80\/tcp:{}]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.407411484Z",
+              "created_by" : "STOPSIGNAL SIGQUIT",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:30:32.407411484Z",
+              "created_by" : "CMD [\"nginx\" \"-g\" \"daemon off;\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:17:11.437351077Z",
+              "created_by" : "ENV NJS_VERSION=0.9.9",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:17:11.437351077Z",
+              "created_by" : "ENV NJS_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:17:11.437351077Z",
+              "created_by" : "ENV ACME_VERSION=0.4.1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:17:11.437351077Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE}         nginx-module-acme=${NGINX_VERSION}.${ACME_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             apk add -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 libxslt-dev                 gd-dev                 geoip-dev                 libedit-dev                 bash                 alpine-sdk                 findutils                 curl                 cargo                 clang-libclang             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && export BUILDTARGET=\\\"module-geoip module-image-filter module-njs module-xslt module-acme\\\"                 && if [ \\\"\\$(apk --print-arch)\\\" = \\\"armhf\\\" ]; then BUILDTARGET=\\\"\\$( echo \\$BUILDTARGET | sed 's,module-acme,,' )\\\"; fi                 && make \\$BUILDTARGET                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && if [ \"$apkArch\" = \"armhf\" ]; then nginxPackages=\"$( echo $nginxPackages | sed 's,nginx-module-acme=.*,,')\"; fi             && apk add -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache curl ca-certificates # buildkit"
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:beb4b51427b04a4477286376ec15035fdd12fa5ba4fc19cd96cb348bf8dfad3b",
+              "sha256:0eda36082e527fbaea9c7946636658bd9f950dc6c6a0e82700eb78a1cc66e80c",
+              "sha256:7360bbbac9e20681ab7ee7256367dffc226c444d24e8dea8d00e2ef3ac79b65e",
+              "sha256:f5b5f44031bde2ada6a9941d02d1b1593d59114eaf9dbbc0ebb7c3bc05bb4797",
+              "sha256:4abcfc55cc8544027a92d4278847a150db25bf594ea6c19c91ba51ebf423bc69",
+              "sha256:6fc6f733bfeb116ab9afc76af737959cca9fefc7a9e66707151dcaf8aae9dbfc",
+              "sha256:ad079bf766796e9c0c935be4b0e6a609beafaaede0a103f9acce9d3e6c3e0dba",
+              "sha256:0d00c9b5108a6d2f2d4de2ce0e4f78d1ab7834e133b8647115d00ece1a715ceb"
+            ],
+            "type" : "layers"
+          },
+          "variant" : "v6"
+        },
+        "digest" : "sha256:eff8b457eaf22b95bf4092a094305369cd9923ef050e8f23107c039693b63970",
+        "platform" : {
+          "architecture" : "arm",
+          "os" : "linux",
+          "variant" : "v6"
+        },
+        "size" : 21762833
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:88f527e8c1458f66bb1f7635b77498a67c1ca5e6a3b9fe4ddef62d2dcbe5d377",
+              "sha256:68d92ba5fdd59c4f6c65fdebaa74470abcd49826a187b6396b73f6d5bcba1d5e"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:bb2be11300c401ca604abbaa9808737bb85f61d6eda90d684626bf1d58b07761",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 906923
+      },
+      {
+        "config" : {
+          "architecture" : "arm",
+          "config" : {
+            "Cmd" : [
+              "nginx",
+              "-g",
+              "daemon off;"
+            ],
+            "Entrypoint" : [
+              "\/docker-entrypoint.sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin",
+              "NGINX_VERSION=1.31.2",
+              "PKG_RELEASE=1",
+              "DYNPKG_RELEASE=1",
+              "NJS_VERSION=0.9.9",
+              "NJS_RELEASE=1",
+              "ACME_VERSION=0.4.1"
+            ],
+            "Labels" : {
+              "maintainer" : "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal" : "SIGQUIT",
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-17T23:19:59.301839218Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:01:47.757157876Z",
+              "created_by" : "ADD alpine-minirootfs-3.23.4-armv7.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:01:47.757157876Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.808417511Z",
+              "created_by" : "LABEL maintainer=NGINX Docker Maintainers <docker-maint@nginx.com>",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.808417511Z",
+              "created_by" : "ENV NGINX_VERSION=1.31.2",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.808417511Z",
+              "created_by" : "ENV PKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.808417511Z",
+              "created_by" : "ENV DYNPKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.808417511Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && addgroup -g 101 -S nginx     && adduser -S -D -H -u 101 -h \/var\/cache\/nginx -s \/sbin\/nologin -G nginx -g nginx nginx     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             set -x             && KEY_SHA512=\"e09fa32f0a0eab2b879ccbbc4d0e4fb9751486eedda75e35fac65802cc9faa266425edf83e261137a2f4d16281ce2c1a5f4502930fe75154723da014214f0655\"             && wget -O \/tmp\/nginx_signing.rsa.pub https:\/\/nginx.org\/keys\/nginx_signing.rsa.pub             && if echo \"$KEY_SHA512 *\/tmp\/nginx_signing.rsa.pub\" | sha512sum -c -; then                 echo \"key verification succeeded!\";                 mv \/tmp\/nginx_signing.rsa.pub \/etc\/apk\/keys\/;             else                 echo \"key verification failed!\";                 exit 1;             fi             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 bash                 alpine-sdk                 findutils                 curl             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && make base                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg ${tempDir}\/packages\/alpine\/\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache gettext-envsubst     && apk add --no-cache tzdata     && ln -sf \/dev\/stdout \/var\/log\/nginx\/access.log     && ln -sf \/dev\/stderr \/var\/log\/nginx\/error.log     && mkdir \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.83326809Z",
+              "created_by" : "COPY docker-entrypoint.sh \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.85505446Z",
+              "created_by" : "COPY 10-listen-on-ipv6-by-default.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.876494772Z",
+              "created_by" : "COPY 15-local-resolvers.envsh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.897626676Z",
+              "created_by" : "COPY 20-envsubst-on-templates.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.917778283Z",
+              "created_by" : "COPY 30-tune-worker-processes.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.917778283Z",
+              "created_by" : "ENTRYPOINT [\"\/docker-entrypoint.sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.917778283Z",
+              "created_by" : "EXPOSE map[80\/tcp:{}]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.917778283Z",
+              "created_by" : "STOPSIGNAL SIGQUIT",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:31:24.917778283Z",
+              "created_by" : "CMD [\"nginx\" \"-g\" \"daemon off;\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:19:59.301839218Z",
+              "created_by" : "ENV NJS_VERSION=0.9.9",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:19:59.301839218Z",
+              "created_by" : "ENV NJS_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:19:59.301839218Z",
+              "created_by" : "ENV ACME_VERSION=0.4.1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:19:59.301839218Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE}         nginx-module-acme=${NGINX_VERSION}.${ACME_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             apk add -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 libxslt-dev                 gd-dev                 geoip-dev                 libedit-dev                 bash                 alpine-sdk                 findutils                 curl                 cargo                 clang-libclang             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && export BUILDTARGET=\\\"module-geoip module-image-filter module-njs module-xslt module-acme\\\"                 && if [ \\\"\\$(apk --print-arch)\\\" = \\\"armhf\\\" ]; then BUILDTARGET=\\\"\\$( echo \\$BUILDTARGET | sed 's,module-acme,,' )\\\"; fi                 && make \\$BUILDTARGET                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && if [ \"$apkArch\" = \"armhf\" ]; then nginxPackages=\"$( echo $nginxPackages | sed 's,nginx-module-acme=.*,,')\"; fi             && apk add -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache curl ca-certificates # buildkit"
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:24968217ae1389980d9ef6bcf2ef827ef3d8d943c36624735122598675a08249",
+              "sha256:8d40fc3ca3e775172cbbd9b90f2e04afc82c733e126e5f1d4961206cf1206126",
+              "sha256:d1e69836ed47055f884b3c2b9e8fa5b32e9684c1d86c2d4c877f60798c614273",
+              "sha256:4c44bb555cfa121c5d8e65a801ee85241a591d8eddcb82899382498a075f6dd9",
+              "sha256:0e717567fb1ba5cabccb763da244b7933212030d1a122a857ffb18e7655a68b3",
+              "sha256:f4300c521809fe820a860618d654add61dece50ba9a4dacdb4f4d4746a97fa4d",
+              "sha256:c09c06bea245d84f5c1d50edc5abe87e1b16bb42cb3a4108dba8dfef2f0f518a",
+              "sha256:d6c87cf6b3eb655b82d55a13d6eb0f7a7a39fff7dd43931d497a359ab757cc4f"
+            ],
+            "type" : "layers"
+          },
+          "variant" : "v7"
+        },
+        "digest" : "sha256:f5f1d5eeb35515d61be9cac4d7f5103b59b87a140d9fc75484c76614d27c595a",
+        "platform" : {
+          "architecture" : "arm",
+          "os" : "linux",
+          "variant" : "v7"
+        },
+        "size" : 23659795
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:88f527e8c1458f66bb1f7635b77498a67c1ca5e6a3b9fe4ddef62d2dcbe5d377",
+              "sha256:68d92ba5fdd59c4f6c65fdebaa74470abcd49826a187b6396b73f6d5bcba1d5e"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:1c04d90658693f5bb5ea2b0f6ea34e93e2c16805477e52be5b1218e352d9c913",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 907196
+      },
+      {
+        "config" : {
+          "architecture" : "arm64",
+          "config" : {
+            "Cmd" : [
+              "nginx",
+              "-g",
+              "daemon off;"
+            ],
+            "Entrypoint" : [
+              "\/docker-entrypoint.sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin",
+              "NGINX_VERSION=1.31.2",
+              "PKG_RELEASE=1",
+              "DYNPKG_RELEASE=1",
+              "NJS_VERSION=0.9.9",
+              "NJS_RELEASE=1",
+              "ACME_VERSION=0.4.1"
+            ],
+            "Labels" : {
+              "maintainer" : "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal" : "SIGQUIT",
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-17T23:12:38.996330796Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:01:25.793704917Z",
+              "created_by" : "ADD alpine-minirootfs-3.23.4-aarch64.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:01:25.793704917Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.554115019Z",
+              "created_by" : "LABEL maintainer=NGINX Docker Maintainers <docker-maint@nginx.com>",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.554115019Z",
+              "created_by" : "ENV NGINX_VERSION=1.31.2",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.554115019Z",
+              "created_by" : "ENV PKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.554115019Z",
+              "created_by" : "ENV DYNPKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.554115019Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && addgroup -g 101 -S nginx     && adduser -S -D -H -u 101 -h \/var\/cache\/nginx -s \/sbin\/nologin -G nginx -g nginx nginx     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             set -x             && KEY_SHA512=\"e09fa32f0a0eab2b879ccbbc4d0e4fb9751486eedda75e35fac65802cc9faa266425edf83e261137a2f4d16281ce2c1a5f4502930fe75154723da014214f0655\"             && wget -O \/tmp\/nginx_signing.rsa.pub https:\/\/nginx.org\/keys\/nginx_signing.rsa.pub             && if echo \"$KEY_SHA512 *\/tmp\/nginx_signing.rsa.pub\" | sha512sum -c -; then                 echo \"key verification succeeded!\";                 mv \/tmp\/nginx_signing.rsa.pub \/etc\/apk\/keys\/;             else                 echo \"key verification failed!\";                 exit 1;             fi             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 bash                 alpine-sdk                 findutils                 curl             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && make base                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg ${tempDir}\/packages\/alpine\/\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache gettext-envsubst     && apk add --no-cache tzdata     && ln -sf \/dev\/stdout \/var\/log\/nginx\/access.log     && ln -sf \/dev\/stderr \/var\/log\/nginx\/error.log     && mkdir \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.578777539Z",
+              "created_by" : "COPY docker-entrypoint.sh \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.619819365Z",
+              "created_by" : "COPY 10-listen-on-ipv6-by-default.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.665681274Z",
+              "created_by" : "COPY 15-local-resolvers.envsh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.712621415Z",
+              "created_by" : "COPY 20-envsubst-on-templates.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.75789494Z",
+              "created_by" : "COPY 30-tune-worker-processes.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.75789494Z",
+              "created_by" : "ENTRYPOINT [\"\/docker-entrypoint.sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.75789494Z",
+              "created_by" : "EXPOSE map[80\/tcp:{}]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.75789494Z",
+              "created_by" : "STOPSIGNAL SIGQUIT",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:32:23.75789494Z",
+              "created_by" : "CMD [\"nginx\" \"-g\" \"daemon off;\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:12:38.996330796Z",
+              "created_by" : "ENV NJS_VERSION=0.9.9",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:12:38.996330796Z",
+              "created_by" : "ENV NJS_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:12:38.996330796Z",
+              "created_by" : "ENV ACME_VERSION=0.4.1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:12:38.996330796Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE}         nginx-module-acme=${NGINX_VERSION}.${ACME_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             apk add -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 libxslt-dev                 gd-dev                 geoip-dev                 libedit-dev                 bash                 alpine-sdk                 findutils                 curl                 cargo                 clang-libclang             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && export BUILDTARGET=\\\"module-geoip module-image-filter module-njs module-xslt module-acme\\\"                 && if [ \\\"\\$(apk --print-arch)\\\" = \\\"armhf\\\" ]; then BUILDTARGET=\\\"\\$( echo \\$BUILDTARGET | sed 's,module-acme,,' )\\\"; fi                 && make \\$BUILDTARGET                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && if [ \"$apkArch\" = \"armhf\" ]; then nginxPackages=\"$( echo $nginxPackages | sed 's,nginx-module-acme=.*,,')\"; fi             && apk add -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache curl ca-certificates # buildkit"
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
               "sha256:a8d26d037006414043b277ecb95287692d0960219289d9e27b0bcea0ce233b02",
               "sha256:020fb50b100d72e726b1ae2c3a275d973fcee21e6808b23ef9327a09bf58868e",
               "sha256:79431cf6cd9ea30be760cec7210fc770dc83501d5dc47b06852a4682fe589906",
@@ -165,37 +1251,783 @@
               "sha256:8070703fb0bae5be6a94ecd9bfa32ac1ad68c7cef94c557fb355948807c3645b",
               "sha256:fde343fbf1f8e3c81fe24e5cc102a3763ed4d4192f6abdc361400797d7f83711"
             ],
-            "type": "layers"
+            "type" : "layers"
           },
-          "variant": "v8"
+          "variant" : "v8"
         },
-        "digest": "sha256:e3573bbeaf27fc648133d1c35b5d981f962f332fab1b4e0c653173fdabb73366",
-        "platform": {
-          "architecture": "arm64",
-          "os": "linux",
-          "variant": "v8"
+        "digest" : "sha256:e3573bbeaf27fc648133d1c35b5d981f962f332fab1b4e0c653173fdabb73366",
+        "platform" : {
+          "architecture" : "arm64",
+          "os" : "linux",
+          "variant" : "v8"
         },
-        "size": 28712438
+        "size" : 28712438
       },
       {
-        "config": {
-          "architecture": "unknown",
-          "config": {},
-          "os": "unknown",
-          "rootfs": {
-            "diff_ids": [
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
               "sha256:88f527e8c1458f66bb1f7635b77498a67c1ca5e6a3b9fe4ddef62d2dcbe5d377",
               "sha256:68d92ba5fdd59c4f6c65fdebaa74470abcd49826a187b6396b73f6d5bcba1d5e"
             ],
-            "type": "layers"
+            "type" : "layers"
           }
         },
-        "digest": "sha256:f62408bff7432092a8c0a77f5481908ab7f47636958f254c05c06e0bc9f18b9d",
-        "platform": {
-          "architecture": "unknown",
-          "os": "unknown"
+        "digest" : "sha256:cdecc790ca6612ed00449c946fb0b75e2874dd3265e12e4d2edd2218a7b3ca7f",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
         },
-        "size": 907196
+        "size" : 907196
+      },
+      {
+        "config" : {
+          "architecture" : "386",
+          "config" : {
+            "Cmd" : [
+              "nginx",
+              "-g",
+              "daemon off;"
+            ],
+            "Entrypoint" : [
+              "\/docker-entrypoint.sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin",
+              "NGINX_VERSION=1.31.2",
+              "PKG_RELEASE=1",
+              "DYNPKG_RELEASE=1",
+              "NJS_VERSION=0.9.9",
+              "NJS_RELEASE=1",
+              "ACME_VERSION=0.4.1"
+            ],
+            "Labels" : {
+              "maintainer" : "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal" : "SIGQUIT",
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-17T23:16:39.125218336Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T21:33:20.096651861Z",
+              "created_by" : "ADD alpine-minirootfs-3.23.4-x86.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T21:33:20.096651861Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.781265761Z",
+              "created_by" : "LABEL maintainer=NGINX Docker Maintainers <docker-maint@nginx.com>",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.781265761Z",
+              "created_by" : "ENV NGINX_VERSION=1.31.2",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.781265761Z",
+              "created_by" : "ENV PKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.781265761Z",
+              "created_by" : "ENV DYNPKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.781265761Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && addgroup -g 101 -S nginx     && adduser -S -D -H -u 101 -h \/var\/cache\/nginx -s \/sbin\/nologin -G nginx -g nginx nginx     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             set -x             && KEY_SHA512=\"e09fa32f0a0eab2b879ccbbc4d0e4fb9751486eedda75e35fac65802cc9faa266425edf83e261137a2f4d16281ce2c1a5f4502930fe75154723da014214f0655\"             && wget -O \/tmp\/nginx_signing.rsa.pub https:\/\/nginx.org\/keys\/nginx_signing.rsa.pub             && if echo \"$KEY_SHA512 *\/tmp\/nginx_signing.rsa.pub\" | sha512sum -c -; then                 echo \"key verification succeeded!\";                 mv \/tmp\/nginx_signing.rsa.pub \/etc\/apk\/keys\/;             else                 echo \"key verification failed!\";                 exit 1;             fi             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 bash                 alpine-sdk                 findutils                 curl             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && make base                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg ${tempDir}\/packages\/alpine\/\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache gettext-envsubst     && apk add --no-cache tzdata     && ln -sf \/dev\/stdout \/var\/log\/nginx\/access.log     && ln -sf \/dev\/stderr \/var\/log\/nginx\/error.log     && mkdir \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.801863068Z",
+              "created_by" : "COPY docker-entrypoint.sh \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.819836052Z",
+              "created_by" : "COPY 10-listen-on-ipv6-by-default.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.837295991Z",
+              "created_by" : "COPY 15-local-resolvers.envsh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.856208927Z",
+              "created_by" : "COPY 20-envsubst-on-templates.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.875704245Z",
+              "created_by" : "COPY 30-tune-worker-processes.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.875704245Z",
+              "created_by" : "ENTRYPOINT [\"\/docker-entrypoint.sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.875704245Z",
+              "created_by" : "EXPOSE map[80\/tcp:{}]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.875704245Z",
+              "created_by" : "STOPSIGNAL SIGQUIT",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T22:29:17.875704245Z",
+              "created_by" : "CMD [\"nginx\" \"-g\" \"daemon off;\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:16:39.125218336Z",
+              "created_by" : "ENV NJS_VERSION=0.9.9",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:16:39.125218336Z",
+              "created_by" : "ENV NJS_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:16:39.125218336Z",
+              "created_by" : "ENV ACME_VERSION=0.4.1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:16:39.125218336Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE}         nginx-module-acme=${NGINX_VERSION}.${ACME_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             apk add -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 libxslt-dev                 gd-dev                 geoip-dev                 libedit-dev                 bash                 alpine-sdk                 findutils                 curl                 cargo                 clang-libclang             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && export BUILDTARGET=\\\"module-geoip module-image-filter module-njs module-xslt module-acme\\\"                 && if [ \\\"\\$(apk --print-arch)\\\" = \\\"armhf\\\" ]; then BUILDTARGET=\\\"\\$( echo \\$BUILDTARGET | sed 's,module-acme,,' )\\\"; fi                 && make \\$BUILDTARGET                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && if [ \"$apkArch\" = \"armhf\" ]; then nginxPackages=\"$( echo $nginxPackages | sed 's,nginx-module-acme=.*,,')\"; fi             && apk add -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache curl ca-certificates # buildkit"
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:71c8e60695322179902ff436589f568cdcf2a1df1ae2a8b9b27b1686e79d4f6b",
+              "sha256:4fa86d842d34db9ef38ecc455e33fb37de07dce5d84edf3f2d4f0ee8441c3e57",
+              "sha256:23b7bad15a398eec8a6aee25b72a45eec8867169bc3035890f130ba60fbf29d4",
+              "sha256:5477f6b48e66f1a94ebd4491ba88fe79900a0a7633629f81848f9cc1207c8e24",
+              "sha256:6677950b49e5c9d48266e2b9b221bc16991d38b993422ac7c92d60ac50fba841",
+              "sha256:b8134835ab57e29e01fb26bd76924cdc3564a400d872b867bdb036176b0fd5b3",
+              "sha256:cc86728fee0162e6c27925829abe22f657fb083bcdb8267507eed026396cc69b",
+              "sha256:bf02f78bca281905814a8ad0198490848e41d0df89f5070733367eb34f2127f4"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:27b97eea83b3082e0f8e295a39c3a4f666462a7c441d012a39632eb753d13956",
+        "platform" : {
+          "architecture" : "386",
+          "os" : "linux"
+        },
+        "size" : 27650992
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:88f527e8c1458f66bb1f7635b77498a67c1ca5e6a3b9fe4ddef62d2dcbe5d377",
+              "sha256:68d92ba5fdd59c4f6c65fdebaa74470abcd49826a187b6396b73f6d5bcba1d5e"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:4a16912f10c61671aca1c1244fb9cfccfb2872e1d9e26f170ce9467c04891020",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 907196
+      },
+      {
+        "config" : {
+          "architecture" : "ppc64le",
+          "config" : {
+            "Cmd" : [
+              "nginx",
+              "-g",
+              "daemon off;"
+            ],
+            "Entrypoint" : [
+              "\/docker-entrypoint.sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin",
+              "NGINX_VERSION=1.31.2",
+              "PKG_RELEASE=1",
+              "DYNPKG_RELEASE=1",
+              "NJS_VERSION=0.9.9",
+              "NJS_RELEASE=1",
+              "ACME_VERSION=0.4.1"
+            ],
+            "Labels" : {
+              "maintainer" : "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal" : "SIGQUIT",
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-18T00:19:21.138054123Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:00:31.583772409Z",
+              "created_by" : "ADD alpine-minirootfs-3.23.4-ppc64le.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:00:31.583772409Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:50.676207945Z",
+              "created_by" : "LABEL maintainer=NGINX Docker Maintainers <docker-maint@nginx.com>",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:50.676207945Z",
+              "created_by" : "ENV NGINX_VERSION=1.31.2",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:50.676207945Z",
+              "created_by" : "ENV PKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:50.676207945Z",
+              "created_by" : "ENV DYNPKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:50.676207945Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && addgroup -g 101 -S nginx     && adduser -S -D -H -u 101 -h \/var\/cache\/nginx -s \/sbin\/nologin -G nginx -g nginx nginx     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             set -x             && KEY_SHA512=\"e09fa32f0a0eab2b879ccbbc4d0e4fb9751486eedda75e35fac65802cc9faa266425edf83e261137a2f4d16281ce2c1a5f4502930fe75154723da014214f0655\"             && wget -O \/tmp\/nginx_signing.rsa.pub https:\/\/nginx.org\/keys\/nginx_signing.rsa.pub             && if echo \"$KEY_SHA512 *\/tmp\/nginx_signing.rsa.pub\" | sha512sum -c -; then                 echo \"key verification succeeded!\";                 mv \/tmp\/nginx_signing.rsa.pub \/etc\/apk\/keys\/;             else                 echo \"key verification failed!\";                 exit 1;             fi             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 bash                 alpine-sdk                 findutils                 curl             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && make base                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg ${tempDir}\/packages\/alpine\/\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache gettext-envsubst     && apk add --no-cache tzdata     && ln -sf \/dev\/stdout \/var\/log\/nginx\/access.log     && ln -sf \/dev\/stderr \/var\/log\/nginx\/error.log     && mkdir \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:50.961240839Z",
+              "created_by" : "COPY docker-entrypoint.sh \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:51.266282125Z",
+              "created_by" : "COPY 10-listen-on-ipv6-by-default.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:51.606363102Z",
+              "created_by" : "COPY 15-local-resolvers.envsh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:52.063276793Z",
+              "created_by" : "COPY 20-envsubst-on-templates.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:52.342489957Z",
+              "created_by" : "COPY 30-tune-worker-processes.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:52.342489957Z",
+              "created_by" : "ENTRYPOINT [\"\/docker-entrypoint.sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:52.342489957Z",
+              "created_by" : "EXPOSE map[80\/tcp:{}]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:52.342489957Z",
+              "created_by" : "STOPSIGNAL SIGQUIT",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:23:52.342489957Z",
+              "created_by" : "CMD [\"nginx\" \"-g\" \"daemon off;\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-18T00:19:21.138054123Z",
+              "created_by" : "ENV NJS_VERSION=0.9.9",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-18T00:19:21.138054123Z",
+              "created_by" : "ENV NJS_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-18T00:19:21.138054123Z",
+              "created_by" : "ENV ACME_VERSION=0.4.1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-18T00:19:21.138054123Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE}         nginx-module-acme=${NGINX_VERSION}.${ACME_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             apk add -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 libxslt-dev                 gd-dev                 geoip-dev                 libedit-dev                 bash                 alpine-sdk                 findutils                 curl                 cargo                 clang-libclang             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && export BUILDTARGET=\\\"module-geoip module-image-filter module-njs module-xslt module-acme\\\"                 && if [ \\\"\\$(apk --print-arch)\\\" = \\\"armhf\\\" ]; then BUILDTARGET=\\\"\\$( echo \\$BUILDTARGET | sed 's,module-acme,,' )\\\"; fi                 && make \\$BUILDTARGET                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && if [ \"$apkArch\" = \"armhf\" ]; then nginxPackages=\"$( echo $nginxPackages | sed 's,nginx-module-acme=.*,,')\"; fi             && apk add -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache curl ca-certificates # buildkit"
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:16ad2e9888cb37331718730c675f2692807080f906e726d30b26d6805fde2695",
+              "sha256:3efbfbfbfcb6d0a03a5701cd46553e4dcacc5aa598a43ade0806e47588b9a888",
+              "sha256:87acafc76ebc233a91d81a0aef4472a7563f8e4c13604192884665e14ed17ee6",
+              "sha256:ec7180efa3d7da259f7a88fe95ea1d961c6a8f0af051ba90ae3c96d0d920a8d7",
+              "sha256:de39a6ebde4030a322faa7a50f8d2a5eb70942b22d5b697373baccaa46ed5e79",
+              "sha256:4c0d0d042c13796611c136271c26a614d2de21ebbca6d1d9f175bb56951931a4",
+              "sha256:5d7181e82bbc1b6eefb122fafffda0f3c2de1f722207c02fb7894aeb875c9f82",
+              "sha256:4ef4854defd652df0a65ff6d7335a2dd5d035bfd060424d85069ff1a54532bfe"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:e5c2265fc4c5b6057e1d0ceb9b3c0914cb93fc889a7fab05864088d5375a6c9d",
+        "platform" : {
+          "architecture" : "ppc64le",
+          "os" : "linux"
+        },
+        "size" : 28741954
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:88f527e8c1458f66bb1f7635b77498a67c1ca5e6a3b9fe4ddef62d2dcbe5d377",
+              "sha256:68d92ba5fdd59c4f6c65fdebaa74470abcd49826a187b6396b73f6d5bcba1d5e"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:5d8a9aa08e48051a390205d5739995e01a49c6b39b6cb8a9d945b6d8bc79a643",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 907196
+      },
+      {
+        "config" : {
+          "architecture" : "riscv64",
+          "config" : {
+            "Cmd" : [
+              "nginx",
+              "-g",
+              "daemon off;"
+            ],
+            "Entrypoint" : [
+              "\/docker-entrypoint.sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin",
+              "NGINX_VERSION=1.31.2",
+              "PKG_RELEASE=1",
+              "DYNPKG_RELEASE=1",
+              "NJS_VERSION=0.9.9",
+              "NJS_RELEASE=1",
+              "ACME_VERSION=0.4.1"
+            ],
+            "Labels" : {
+              "maintainer" : "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal" : "SIGQUIT",
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-19T22:42:41.888995431Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:30:47.395559134Z",
+              "created_by" : "ADD alpine-minirootfs-3.23.4-riscv64.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:30:47.395559134Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:05.775188047Z",
+              "created_by" : "LABEL maintainer=NGINX Docker Maintainers <docker-maint@nginx.com>",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:05.775188047Z",
+              "created_by" : "ENV NGINX_VERSION=1.31.2",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:05.775188047Z",
+              "created_by" : "ENV PKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:05.775188047Z",
+              "created_by" : "ENV DYNPKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:05.775188047Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && addgroup -g 101 -S nginx     && adduser -S -D -H -u 101 -h \/var\/cache\/nginx -s \/sbin\/nologin -G nginx -g nginx nginx     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             set -x             && KEY_SHA512=\"e09fa32f0a0eab2b879ccbbc4d0e4fb9751486eedda75e35fac65802cc9faa266425edf83e261137a2f4d16281ce2c1a5f4502930fe75154723da014214f0655\"             && wget -O \/tmp\/nginx_signing.rsa.pub https:\/\/nginx.org\/keys\/nginx_signing.rsa.pub             && if echo \"$KEY_SHA512 *\/tmp\/nginx_signing.rsa.pub\" | sha512sum -c -; then                 echo \"key verification succeeded!\";                 mv \/tmp\/nginx_signing.rsa.pub \/etc\/apk\/keys\/;             else                 echo \"key verification failed!\";                 exit 1;             fi             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 bash                 alpine-sdk                 findutils                 curl             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && make base                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg ${tempDir}\/packages\/alpine\/\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache gettext-envsubst     && apk add --no-cache tzdata     && ln -sf \/dev\/stdout \/var\/log\/nginx\/access.log     && ln -sf \/dev\/stderr \/var\/log\/nginx\/error.log     && mkdir \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:05.971389419Z",
+              "created_by" : "COPY docker-entrypoint.sh \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:06.142793744Z",
+              "created_by" : "COPY 10-listen-on-ipv6-by-default.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:06.310197062Z",
+              "created_by" : "COPY 15-local-resolvers.envsh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:06.47283737Z",
+              "created_by" : "COPY 20-envsubst-on-templates.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:06.634514677Z",
+              "created_by" : "COPY 30-tune-worker-processes.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:06.634514677Z",
+              "created_by" : "ENTRYPOINT [\"\/docker-entrypoint.sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:06.634514677Z",
+              "created_by" : "EXPOSE map[80\/tcp:{}]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:06.634514677Z",
+              "created_by" : "STOPSIGNAL SIGQUIT",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T15:48:06.634514677Z",
+              "created_by" : "CMD [\"nginx\" \"-g\" \"daemon off;\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T22:42:41.888995431Z",
+              "created_by" : "ENV NJS_VERSION=0.9.9",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T22:42:41.888995431Z",
+              "created_by" : "ENV NJS_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T22:42:41.888995431Z",
+              "created_by" : "ENV ACME_VERSION=0.4.1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-19T22:42:41.888995431Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE}         nginx-module-acme=${NGINX_VERSION}.${ACME_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             apk add -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 libxslt-dev                 gd-dev                 geoip-dev                 libedit-dev                 bash                 alpine-sdk                 findutils                 curl                 cargo                 clang-libclang             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && export BUILDTARGET=\\\"module-geoip module-image-filter module-njs module-xslt module-acme\\\"                 && if [ \\\"\\$(apk --print-arch)\\\" = \\\"armhf\\\" ]; then BUILDTARGET=\\\"\\$( echo \\$BUILDTARGET | sed 's,module-acme,,' )\\\"; fi                 && make \\$BUILDTARGET                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && if [ \"$apkArch\" = \"armhf\" ]; then nginxPackages=\"$( echo $nginxPackages | sed 's,nginx-module-acme=.*,,')\"; fi             && apk add -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache curl ca-certificates # buildkit"
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:33492836cbc20eae505778fc17ad2af9d4f4099676ae19195cbca716b45c62de",
+              "sha256:fbabb0f508c3d7ac9fbe68063feef2128e7bf46252c02ee92485f32141e3cf42",
+              "sha256:805c3c72a7fef61b607bfbe6ed2cb32a63f6122d4047885cd2e4e0fc0febf81e",
+              "sha256:22e9c92c6d169d4db5899041e49f982c8a40946dd5bdc984f6c33cf296435cc8",
+              "sha256:f01587c84125b9d075574e010cfe3381c27fbae1b7871cb88f66635aeb7d8400",
+              "sha256:4f02b081270ac75b88e71eccde1e95e22737ab632395c55f3a61825cf333447f",
+              "sha256:176b57756d49151f26e792a10cc061e4d2c15bc75d09757a3d5f880253419a4f",
+              "sha256:42963533b543921cf9e1e47c2e42e807f9197dc1760c94eaf1d7dbfe2b70cd5b"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:6f5047c254f859bc18d58dd9c8ce9dd5d641a494612ba8bbdd10b46579c1054a",
+        "platform" : {
+          "architecture" : "riscv64",
+          "os" : "linux"
+        },
+        "size" : 25735627
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:88f527e8c1458f66bb1f7635b77498a67c1ca5e6a3b9fe4ddef62d2dcbe5d377",
+              "sha256:68d92ba5fdd59c4f6c65fdebaa74470abcd49826a187b6396b73f6d5bcba1d5e"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:1fe7328e1ccf3a21f1258495f9925988877405bae17ea5477378b2b3831dc230",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 907196
+      },
+      {
+        "config" : {
+          "architecture" : "s390x",
+          "config" : {
+            "Cmd" : [
+              "nginx",
+              "-g",
+              "daemon off;"
+            ],
+            "Entrypoint" : [
+              "\/docker-entrypoint.sh"
+            ],
+            "Env" : [
+              "PATH=\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin",
+              "NGINX_VERSION=1.31.2",
+              "PKG_RELEASE=1",
+              "DYNPKG_RELEASE=1",
+              "NJS_VERSION=0.9.9",
+              "NJS_RELEASE=1",
+              "ACME_VERSION=0.4.1"
+            ],
+            "Labels" : {
+              "maintainer" : "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal" : "SIGQUIT",
+            "WorkingDir" : "\/"
+          },
+          "created" : "2026-06-17T23:15:40.499652916Z",
+          "history" : [
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:00:34.352576652Z",
+              "created_by" : "ADD alpine-minirootfs-3.23.4-s390x.tar.gz \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-04-15T20:00:34.352576652Z",
+              "created_by" : "CMD [\"\/bin\/sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.001215783Z",
+              "created_by" : "LABEL maintainer=NGINX Docker Maintainers <docker-maint@nginx.com>",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.001215783Z",
+              "created_by" : "ENV NGINX_VERSION=1.31.2",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.001215783Z",
+              "created_by" : "ENV PKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.001215783Z",
+              "created_by" : "ENV DYNPKG_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.001215783Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && addgroup -g 101 -S nginx     && adduser -S -D -H -u 101 -h \/var\/cache\/nginx -s \/sbin\/nologin -G nginx -g nginx nginx     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             set -x             && KEY_SHA512=\"e09fa32f0a0eab2b879ccbbc4d0e4fb9751486eedda75e35fac65802cc9faa266425edf83e261137a2f4d16281ce2c1a5f4502930fe75154723da014214f0655\"             && wget -O \/tmp\/nginx_signing.rsa.pub https:\/\/nginx.org\/keys\/nginx_signing.rsa.pub             && if echo \"$KEY_SHA512 *\/tmp\/nginx_signing.rsa.pub\" | sha512sum -c -; then                 echo \"key verification succeeded!\";                 mv \/tmp\/nginx_signing.rsa.pub \/etc\/apk\/keys\/;             else                 echo \"key verification failed!\";                 exit 1;             fi             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 bash                 alpine-sdk                 findutils                 curl             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && make base                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && DEPS=$(apk query --summarize depends --recursive --no-cache                        --repository \"@nginxorg ${tempDir}\/packages\/alpine\/\"                        ${nginxPackages\/=\/@nginxorg=})             && apk add --no-cache $DEPS             && apk add --repositories-file \/dev\/null -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache gettext-envsubst     && apk add --no-cache tzdata     && ln -sf \/dev\/stdout \/var\/log\/nginx\/access.log     && ln -sf \/dev\/stderr \/var\/log\/nginx\/error.log     && mkdir \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.050605924Z",
+              "created_by" : "COPY docker-entrypoint.sh \/ # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.093750473Z",
+              "created_by" : "COPY 10-listen-on-ipv6-by-default.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.142166442Z",
+              "created_by" : "COPY 15-local-resolvers.envsh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.186078441Z",
+              "created_by" : "COPY 20-envsubst-on-templates.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.237488227Z",
+              "created_by" : "COPY 30-tune-worker-processes.sh \/docker-entrypoint.d # buildkit"
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.237488227Z",
+              "created_by" : "ENTRYPOINT [\"\/docker-entrypoint.sh\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.237488227Z",
+              "created_by" : "EXPOSE map[80\/tcp:{}]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.237488227Z",
+              "created_by" : "STOPSIGNAL SIGQUIT",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:02:28.237488227Z",
+              "created_by" : "CMD [\"nginx\" \"-g\" \"daemon off;\"]",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:15:40.499652916Z",
+              "created_by" : "ENV NJS_VERSION=0.9.9",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:15:40.499652916Z",
+              "created_by" : "ENV NJS_RELEASE=1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:15:40.499652916Z",
+              "created_by" : "ENV ACME_VERSION=0.4.1",
+              "empty_layer" : true
+            },
+            {
+              "comment" : "buildkit.dockerfile.v0",
+              "created" : "2026-06-17T23:15:40.499652916Z",
+              "created_by" : "RUN \/bin\/sh -c set -x     && apkArch=\"$(cat \/etc\/apk\/arch)\"     && nginxPackages=\"         nginx=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-xslt=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-geoip=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-image-filter=${NGINX_VERSION}-r${DYNPKG_RELEASE}         nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_RELEASE}         nginx-module-acme=${NGINX_VERSION}.${ACME_VERSION}-r${PKG_RELEASE}     \"     && apk add --no-cache --virtual .checksum-deps         openssl     && case \"$apkArch\" in         x86_64|aarch64)             apk add -X \"https:\/\/nginx.org\/packages\/mainline\/alpine\/v$(egrep -o '^[0-9]+\\.[0-9]+' \/etc\/alpine-release)\/main\" --no-cache $nginxPackages             ;;         *)             set -x             && tempDir=\"$(mktemp -d)\"             && chown nobody:nobody $tempDir             && apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre2-dev                 zlib-dev                 linux-headers                 libxslt-dev                 gd-dev                 geoip-dev                 libedit-dev                 bash                 alpine-sdk                 findutils                 curl                 cargo                 clang-libclang             && su nobody -s \/bin\/sh -c \"                 export HOME=${tempDir}                 && cd ${tempDir}                 && curl -f -L -O https:\/\/github.com\/nginx\/pkg-oss\/archive\/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && PKGOSSCHECKSUM=\\\"4bba39eed68bcc887d119ec5079e9824c0a0e4602e6443bee1df396eb9181437eae481e83d533475951e39675d6e1ff54901bdd208262c4b34e74f5c7984e82c *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\"                 && if [ \\\"\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\" = \\\"\\$PKGOSSCHECKSUM\\\" ]; then                     echo \\\"pkg-oss tarball checksum verification succeeded!\\\";                 else                     echo \\\"pkg-oss tarball checksum verification failed!\\\";                     exit 1;                 fi                 && tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 && cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 && cd alpine                 && export BUILDTARGET=\\\"module-geoip module-image-filter module-njs module-xslt module-acme\\\"                 && if [ \\\"\\$(apk --print-arch)\\\" = \\\"armhf\\\" ]; then BUILDTARGET=\\\"\\$( echo \\$BUILDTARGET | sed 's,module-acme,,' )\\\"; fi                 && make \\$BUILDTARGET                 && apk index --allow-untrusted -o ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz ${tempDir}\/packages\/alpine\/${apkArch}\/*.apk                 && abuild-sign -k ${tempDir}\/.abuild\/abuild-key.rsa ${tempDir}\/packages\/alpine\/${apkArch}\/APKINDEX.tar.gz                 \"             && cp ${tempDir}\/.abuild\/abuild-key.rsa.pub \/etc\/apk\/keys\/             && apk del --no-network .build-deps             && if [ \"$apkArch\" = \"armhf\" ]; then nginxPackages=\"$( echo $nginxPackages | sed 's,nginx-module-acme=.*,,')\"; fi             && apk add -X ${tempDir}\/packages\/alpine\/ --no-cache $nginxPackages             ;;     esac     && apk del --no-network .checksum-deps     && if [ -n \"$tempDir\" ]; then rm -rf \"$tempDir\"; fi     && if [ -f \"\/etc\/apk\/keys\/abuild-key.rsa.pub\" ]; then rm -f \/etc\/apk\/keys\/abuild-key.rsa.pub; fi     && apk add --no-cache curl ca-certificates # buildkit"
+            }
+          ],
+          "os" : "linux",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:662bd014c77173c375239742a62164a08f129a73f3d9c2207652aa89c90da532",
+              "sha256:62badd04ee50dfc713839fd3a72534fbd4fa9c5cfda1cd668df969830161c164",
+              "sha256:92a9108109d966b27999f6d1cb0be8e1d3460cd8884e41ed52a24e2e02da0315",
+              "sha256:1a03fdcf4a5d9244390ab7f5009451b3cc62242f4a88c827f4b79b2eba958bc2",
+              "sha256:75521ea38898e3068b56ad2a75a11bb7c4b31f5b78a23affb99eeb0945bbb251",
+              "sha256:c2272531c09a65c41ca90195b2b75ffd92359ad77ed9ba06e090899e8ab6bab9",
+              "sha256:93c5343f6ef2371fcc23823cd1b8ecf1b315719aff930d05fd3cc43af55d23c4",
+              "sha256:6864a874a063c8b1de9de898554d4986f7e4591352d9b9d8793b62bbc4bc3e09"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:b6e189534f90b8a8c9c0a74b8383b15bf44c606becdd6c33ac2d7544a2450f1b",
+        "platform" : {
+          "architecture" : "s390x",
+          "os" : "linux"
+        },
+        "size" : 28407107
+      },
+      {
+        "config" : {
+          "architecture" : "unknown",
+          "config" : {
+
+          },
+          "os" : "unknown",
+          "rootfs" : {
+            "diff_ids" : [
+              "sha256:88f527e8c1458f66bb1f7635b77498a67c1ca5e6a3b9fe4ddef62d2dcbe5d377",
+              "sha256:68d92ba5fdd59c4f6c65fdebaa74470abcd49826a187b6396b73f6d5bcba1d5e"
+            ],
+            "type" : "layers"
+          }
+        },
+        "digest" : "sha256:9323c9a6ca7a67681dd7273dc4d94189457dc08686362f4dd0dd2770ed9cc857",
+        "platform" : {
+          "architecture" : "unknown",
+          "os" : "unknown"
+        },
+        "size" : 907196
       }
     ]
   }

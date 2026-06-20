@@ -15,6 +15,33 @@ import Foundation
 }
 
 @MainActor
+@Test func imagesRefreshComputesInUseNamesFromContainers() async throws {
+    // The image fixture is alpine:latest; the container fixture references
+    // docker.io/library/alpine:latest. Refresh must mark it in use.
+    let service = MockContainerService(
+        containers: try ViewModelFixtures.containers(),
+        images: try ViewModelFixtures.images()
+    )
+    let vm = ImagesViewModel(service: service)
+
+    await vm.refresh()
+
+    #expect(service.listContainersCalls == 1)
+    #expect(vm.inUseNames.contains("docker.io/library/alpine:latest"))
+}
+
+@MainActor
+@Test func imagesRefreshInUseEmptyWhenNoContainers() async throws {
+    let service = MockContainerService(images: try ViewModelFixtures.images())
+    let vm = ImagesViewModel(service: service)
+
+    await vm.refresh()
+
+    #expect(vm.images.count == 1)
+    #expect(vm.inUseNames.isEmpty)
+}
+
+@MainActor
 @Test func removeImageCallsServiceThenRefreshes() async throws {
     let service = MockContainerService(images: try ViewModelFixtures.images())
     let vm = ImagesViewModel(service: service)

@@ -222,6 +222,14 @@ public protocol ContainerService: Sendable {
     /// hand-assembling CLI arguments. Throws `binaryNotFound` if the `container`
     /// binary cannot be located.
     func execInvocation(id: String, command: [String]) async throws -> ProcessInvocation
+
+    /// Resolve the executable + argv for an interactive *debug shell* into a
+    /// throwaway container created from an image, i.e.
+    /// `container run --rm -i -t <ref> sh`. `--rm` removes the container when the
+    /// shell exits so nothing is left behind. The terminal UI hands the result
+    /// to a PTY-backed process. Throws `binaryNotFound` if the `container`
+    /// binary cannot be located.
+    func imageShellInvocation(ref: String) async throws -> ProcessInvocation
 }
 
 extension ContainerService {
@@ -277,6 +285,15 @@ extension ContainerService {
         var args = ["exec", "-i", "-t", id]
         args.append(contentsOf: command)
         return ProcessInvocation(executable: "container", arguments: args)
+    }
+
+    /// Default debug-shell invocation builder for conformers (mocks/preview
+    /// services) that don't resolve a real binary. Uses the canonical relative
+    /// argv (`run --rm -i -t <ref> sh`) with a placeholder `container`
+    /// executable. `CLIContainerService` overrides this to resolve the real
+    /// binary path.
+    public func imageShellInvocation(ref: String) async throws -> ProcessInvocation {
+        ProcessInvocation(executable: "container", arguments: ["run", "--rm", "-i", "-t", ref, "sh"])
     }
 
     /// Default config lookup for conformers (mocks/preview services) that do not
