@@ -28,11 +28,13 @@ struct BuildView: View {
     /// Image tag for the built image, e.g. `myapp:latest`.
     @State private var tag: String = ""
 
-    /// Whether the Dockerfile file importer is presented.
-    @State private var showingDockerfileImporter = false
+    /// Which file importer is currently presented, if any. A SINGLE importer is
+    /// used for both targets: SwiftUI only honors one `.fileImporter` per view,
+    /// so two stacked importers shadow each other (the first never opens).
+    @State private var activeImporter: ImporterKind?
 
-    /// Whether the context directory importer is presented.
-    @State private var showingContextImporter = false
+    /// The two things this view can import.
+    private enum ImporterKind { case dockerfile, context }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -59,7 +61,7 @@ struct BuildView: View {
                     path: dockerfilePath,
                     systemImage: "doc.text"
                 ) {
-                    showingDockerfileImporter = true
+                    activeImporter = .dockerfile
                 }
             }
 
@@ -69,7 +71,7 @@ struct BuildView: View {
                     path: contextPath,
                     systemImage: "folder"
                 ) {
-                    showingContextImporter = true
+                    activeImporter = .context
                 }
             }
 
@@ -85,25 +87,27 @@ struct BuildView: View {
         }
         .formStyle(.grouped)
         .fileImporter(
-            isPresented: $showingDockerfileImporter,
-            allowedContentTypes: [.item],
+            isPresented: Binding(
+                get: { activeImporter != nil },
+                set: { if !$0 { activeImporter = nil } }
+            ),
+            allowedContentTypes: activeImporter == .context ? [.folder] : [.item],
             allowsMultipleSelection: false
         ) { result in
-            if case .success(let urls) = result, let url = urls.first {
+            let target = activeImporter
+            defer { activeImporter = nil }
+            guard case .success(let urls) = result, let url = urls.first else { return }
+            switch target {
+            case .dockerfile:
                 dockerfilePath = url.path
                 // Default the context to the Dockerfile's directory if unset.
                 if contextPath.isEmpty {
                     contextPath = url.deletingLastPathComponent().path
                 }
-            }
-        }
-        .fileImporter(
-            isPresented: $showingContextImporter,
-            allowedContentTypes: [.folder],
-            allowsMultipleSelection: false
-        ) { result in
-            if case .success(let urls) = result, let url = urls.first {
+            case .context:
                 contextPath = url.path
+            case nil:
+                break
             }
         }
     }
