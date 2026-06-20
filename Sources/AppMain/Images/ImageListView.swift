@@ -197,26 +197,29 @@ struct ImageListView: View {
         .padding(.vertical, 10)
     }
 
-    /// The grouped, selection-bound list: In Use, then Images, then Dangling.
+    /// The grouped, selection-bound list, distinguishing images by use:
+    /// "In Use" (referenced by an existing container) and "Idle" (not). Untagged
+    /// digest/UUID images are split out under "Dangling" within the idle set,
+    /// since they are the cleanup candidates. Each section header shows its count.
     private var imageList: some View {
         let inUse = visibleImages.filter { viewModel.inUseNames.contains($0.name) }
-        let rest = visibleImages.filter { !viewModel.inUseNames.contains($0.name) }
-        let dangling = rest.filter { ImageGrouping.isDangling($0.name) }
-        let tagged = rest.filter { !ImageGrouping.isDangling($0.name) }
+        let idle = visibleImages.filter { !viewModel.inUseNames.contains($0.name) }
+        let idleTagged = idle.filter { !ImageGrouping.isDangling($0.name) }
+        let dangling = idle.filter { ImageGrouping.isDangling($0.name) }
 
         return List(selection: $selectedID) {
             if !inUse.isEmpty {
-                Section("In Use") {
+                Section("In Use — \(inUse.count)") {
                     ForEach(inUse) { row(for: $0) }
                 }
             }
-            if !tagged.isEmpty {
-                Section("Images") {
-                    ForEach(tagged) { row(for: $0) }
+            if !idleTagged.isEmpty {
+                Section("Idle — \(idleTagged.count)") {
+                    ForEach(idleTagged) { row(for: $0) }
                 }
             }
             if !dangling.isEmpty {
-                Section("Dangling") {
+                Section("Dangling — \(dangling.count)") {
                     ForEach(dangling) { row(for: $0) }
                 }
             }
