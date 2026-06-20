@@ -143,6 +143,19 @@ public protocol ContainerService: Sendable {
     /// Delete an image by reference (or id/digest).
     func removeImage(_ id: String) async throws
 
+    /// All volumes via `volume list --format json`.
+    func listVolumes() async throws -> [ContainerVolume]
+
+    /// Create a volume by `name`. When `size` is set (e.g. `"64M"`) it is passed
+    /// via `-s`; each `labels` entry is passed via `--label k=v`.
+    func createVolume(name: String, size: String?, labels: [String: String]) async throws
+
+    /// Delete a volume by name (`volume delete <name>`).
+    func removeVolume(_ name: String) async throws
+
+    /// Remove all unused volumes (`volume prune`).
+    func pruneVolumes() async throws
+
     /// Stream a container's logs; `follow: true` tails new output.
     func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error>
 

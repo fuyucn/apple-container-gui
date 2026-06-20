@@ -113,6 +113,10 @@ private struct ImagePreviewService: ContainerService {
         }
     }
     func removeImage(_ id: String) async throws {}
+    func listVolumes() async throws -> [ContainerVolume] { [] }
+    func createVolume(name: String, size: String?, labels: [String: String]) async throws {}
+    func removeVolume(_ name: String) async throws {}
+    func pruneVolumes() async throws {}
     func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { $0.finish() }
     }

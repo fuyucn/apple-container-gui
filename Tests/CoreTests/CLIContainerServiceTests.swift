@@ -330,6 +330,87 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     }
 }
 
+// MARK: - Volumes
+
+@Test func listVolumesInvokesExactArgvAndDecodes() async throws {
+    let json = try loadFixtureString("volumes.json")
+    let mock = MockCommandRunner(result: .init(exitCode: 0, stdout: json, stderr: ""))
+    let service = makeService(mock)
+
+    let volumes = try await service.listVolumes()
+
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "volume", "list", "--format", "json"]])
+    #expect(volumes.count == 1)
+    #expect(volumes.first?.id == "acg-v3-probe")
+    #expect(volumes.first?.name == "acg-v3-probe")
+    #expect(volumes.first?.driver == "local")
+    #expect(volumes.first?.sizeInBytes == 67_108_864)
+    #expect(volumes.first?.configuration.options?["size"] == "64M")
+}
+
+@Test func listVolumesThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "daemon down"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("daemon down")) {
+        try await service.listVolumes()
+    }
+}
+
+@Test func createVolumeWithSizeAndLabelsBuildsExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+
+    try await service.createVolume(name: "data", size: "64M", labels: ["env": "prod", "app": "web"])
+
+    // -s before labels; labels emitted in sorted-key order (app before env); name last.
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "volume", "create",
+        "-s", "64M",
+        "--label", "app=web",
+        "--label", "env=prod",
+        "data",
+    ]])
+}
+
+@Test func createVolumeWithoutSizeOmitsSizeFlag() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+
+    try await service.createVolume(name: "data", size: nil, labels: [:])
+
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "volume", "create", "data"]])
+}
+
+@Test func createVolumeThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "already exists"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("already exists")) {
+        try await service.createVolume(name: "data", size: nil, labels: [:])
+    }
+}
+
+@Test func removeVolumeInvokesDeleteArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.removeVolume("data")
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "volume", "delete", "data"]])
+}
+
+@Test func removeVolumeThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "no such volume"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("no such volume")) {
+        try await service.removeVolume("ghost")
+    }
+}
+
+@Test func pruneVolumesInvokesExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.pruneVolumes()
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "volume", "prune"]])
+}
+
 // MARK: - 3.5 daemonStatus / startDaemon
 
 @Test func daemonStatusInvokesExactArgvAndParses() async throws {

@@ -20,6 +20,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _containers: [Container]
     private var _stats: [ContainerStats]
     private var _images: [ContainerImage]
+    private var _volumes: [ContainerVolume]
     private var _imageConfig: ImageConfig?
     private var _daemonStatus: DaemonStatus
     private let streamLines: [String]
@@ -37,6 +38,10 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _runSpecs: [RunSpec] = []
     private var _statsCalls: [[String]] = []
     private var _removedImageIDs: [String] = []
+    private var _listVolumesCount = 0
+    private var _createdVolumes: [(name: String, size: String?, labels: [String: String])] = []
+    private var _removedVolumeNames: [String] = []
+    private var _pruneVolumesCount = 0
     private var _pulledRefs: [String] = []
     private var _imageConfigRefs: [String] = []
     private var _buildInvocations: [(dockerfile: String, context: String, tag: String)] = []
@@ -46,6 +51,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         containers: [Container] = [],
         stats: [ContainerStats] = [],
         images: [ContainerImage] = [],
+        volumes: [ContainerVolume] = [],
         imageConfig: ImageConfig? = nil,
         daemonStatus: DaemonStatus = DaemonStatus(state: .stopped, appRoot: nil, installRoot: nil),
         streamLines: [String] = [],
@@ -55,6 +61,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         self._containers = containers
         self._stats = stats
         self._images = images
+        self._volumes = volumes
         self._imageConfig = imageConfig
         self._daemonStatus = daemonStatus
         self.streamLines = streamLines
@@ -86,6 +93,10 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var runSpecs: [RunSpec] { withLock { _runSpecs } }
     var statsCalls: [[String]] { withLock { _statsCalls } }
     var removeImageCalls: [String] { withLock { _removedImageIDs } }
+    var listVolumesCalls: Int { withLock { _listVolumesCount } }
+    var createVolumeCalls: [(name: String, size: String?, labels: [String: String])] { withLock { _createdVolumes } }
+    var removeVolumeCalls: [String] { withLock { _removedVolumeNames } }
+    var pruneVolumesCalls: Int { withLock { _pruneVolumesCount } }
     var pullCalls: [String] { withLock { _pulledRefs } }
     var imageConfigCalls: [String] { withLock { _imageConfigRefs } }
     var buildInvocations: [(dockerfile: String, context: String, tag: String)] { withLock { _buildInvocations } }
@@ -142,6 +153,25 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     func removeImage(_ id: String) async throws {
         if let e = throwOnAction { throw e }
         withLock { _removedImageIDs.append(id) }
+    }
+
+    func listVolumes() async throws -> [ContainerVolume] {
+        withLock { _listVolumesCount += 1; return _volumes }
+    }
+
+    func createVolume(name: String, size: String?, labels: [String: String]) async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _createdVolumes.append((name, size, labels)) }
+    }
+
+    func removeVolume(_ name: String) async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _removedVolumeNames.append(name) }
+    }
+
+    func pruneVolumes() async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _pruneVolumesCount += 1 }
     }
 
     func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {

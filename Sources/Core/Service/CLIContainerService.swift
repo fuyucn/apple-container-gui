@@ -128,6 +128,32 @@ public struct CLIContainerService: ContainerService {
         stream(["image", "pull", ref])
     }
 
+    // MARK: - Volumes
+
+    public func listVolumes() async throws -> [ContainerVolume] {
+        let result = try await runChecked(["volume", "list", "--format", "json"])
+        return try decode([ContainerVolume].self, from: result.stdout)
+    }
+
+    public func createVolume(name: String, size: String?, labels: [String: String]) async throws {
+        var args = ["volume", "create"]
+        if let size { args.append(contentsOf: ["-s", size]) }
+        // Sorted keys → deterministic argv.
+        for key in labels.keys.sorted() {
+            args.append(contentsOf: ["--label", "\(key)=\(labels[key]!)"])
+        }
+        args.append(name)
+        _ = try await runChecked(args)
+    }
+
+    public func removeVolume(_ name: String) async throws {
+        _ = try await runChecked(["volume", "delete", name])
+    }
+
+    public func pruneVolumes() async throws {
+        _ = try await runChecked(["volume", "prune"])
+    }
+
     // MARK: - Logs
 
     public func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {
