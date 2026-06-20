@@ -2,6 +2,27 @@ import Testing
 import Foundation
 @testable import Core
 
+@Test func suggestedTagDerivesPackageFromParentDirWith5CharSuffix() {
+    let url = URL(fileURLWithPath: "/Users/yuf/Developer/video-screenshot/Dockerfile")
+    let tag = BuildViewModel.suggestedTag(forDockerfileAt: url)
+
+    #expect(tag.hasPrefix("video-screenshot-"))
+    #expect(tag.hasSuffix(":latest"))
+    // "<package>-<5 chars>:latest" → strip prefix and ":latest", 5 chars remain.
+    let suffix = tag.dropFirst("video-screenshot-".count).dropLast(":latest".count)
+    #expect(suffix.count == 5)
+    #expect(suffix.allSatisfy { $0.isLetter || $0.isNumber })
+    // Two calls differ in the random suffix (unique-ish).
+    #expect(BuildViewModel.suggestedTag(forDockerfileAt: url) != tag)
+}
+
+@Test func suggestedTagSanitizesNonAlnumDirName() {
+    let url = URL(fileURLWithPath: "/tmp/My App (v2)/Dockerfile")
+    let tag = BuildViewModel.suggestedTag(forDockerfileAt: url)
+    #expect(tag.hasPrefix("my-app-v2-"))
+    #expect(tag.hasSuffix(":latest"))
+}
+
 @MainActor
 @Test func buildAccumulatesLogLinesAndSucceeds() async throws {
     let service = MockContainerService(streamLines: ["STEP 1/3", "STEP 2/3", "Successfully built"])

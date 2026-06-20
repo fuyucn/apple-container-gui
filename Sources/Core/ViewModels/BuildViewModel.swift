@@ -125,7 +125,7 @@ public final class BuildViewModel {
     /// `<package>-<5 chars>:latest`, where `<package>` is the Dockerfile's parent
     /// directory name sanitized to a valid lowercase image name and `<5 chars>`
     /// is a short unique suffix (last 5 of a UUID). The user can edit it freely.
-    public static func suggestedTag(forDockerfileAt url: URL) -> String {
+    nonisolated public static func suggestedTag(forDockerfileAt url: URL) -> String {
         let dirName = url.deletingLastPathComponent().lastPathComponent
         let package = sanitizedImageName(dirName)
         let suffix = String(
@@ -140,7 +140,7 @@ public final class BuildViewModel {
 
     /// Lowercase and reduce `name` to characters valid in an OCI image name
     /// component (`a-z0-9._-`), collapsing runs of separators and trimming them.
-    private static func sanitizedImageName(_ name: String) -> String {
+    nonisolated private static func sanitizedImageName(_ name: String) -> String {
         let lowered = name.lowercased()
         var out = ""
         var lastWasSep = false
