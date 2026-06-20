@@ -59,15 +59,32 @@ public actor ProcessCommandRunner: CommandRunner {
         process.standardError = errPipe
 
         return try await withCheckedThrowingContinuation { continuation in
+            // Drain BOTH pipes concurrently WHILE the process runs. Reading only
+            // in terminationHandler deadlocks: if the child writes more than a
+            // pipe buffer (~64KB) to stdout or stderr, it blocks on write, never
+            // exits, and terminationHandler never fires. `container image list`
+            // emits well over 64KB (full per-image OCI configs), which hung the
+            // whole Images view. Accumulate via readability handlers instead.
+            let sink = OutputSink()
+            outPipe.fileHandleForReading.readabilityHandler = { handle in
+                let data = handle.availableData
+                if data.isEmpty { handle.readabilityHandler = nil } else { sink.appendOut(data) }
+            }
+            errPipe.fileHandleForReading.readabilityHandler = { handle in
+                let data = handle.availableData
+                if data.isEmpty { handle.readabilityHandler = nil } else { sink.appendErr(data) }
+            }
             process.terminationHandler = { proc in
-                let outData = outPipe.fileHandleForReading.readDataToEndOfFile()
-                let errData = errPipe.fileHandleForReading.readDataToEndOfFile()
-                let result = CommandResult(
+                outPipe.fileHandleForReading.readabilityHandler = nil
+                errPipe.fileHandleForReading.readabilityHandler = nil
+                // Grab anything still buffered (safe now — the process has exited).
+                sink.appendOut(outPipe.fileHandleForReading.readDataToEndOfFile())
+                sink.appendErr(errPipe.fileHandleForReading.readDataToEndOfFile())
+                continuation.resume(returning: CommandResult(
                     exitCode: proc.terminationStatus,
-                    stdout: String(decoding: outData, as: UTF8.self),
-                    stderr: String(decoding: errData, as: UTF8.self)
-                )
-                continuation.resume(returning: result)
+                    stdout: sink.outText,
+                    stderr: sink.errText
+                ))
             }
             do {
                 try process.run()
@@ -180,6 +197,20 @@ private final class LineBuffer: @unchecked Sendable {
         data.removeAll()
         return line
     }
+}
+
+/// Thread-safe accumulator of stdout + stderr bytes for `run()`. Locked because
+/// the two pipe readability handlers (each on its own queue) and the termination
+/// handler all touch it concurrently.
+private final class OutputSink: @unchecked Sendable {
+    private let lock = NSLock()
+    private var out = Data()
+    private var err = Data()
+
+    func appendOut(_ d: Data) { lock.lock(); out.append(d); lock.unlock() }
+    func appendErr(_ d: Data) { lock.lock(); err.append(d); lock.unlock() }
+    var outText: String { lock.lock(); defer { lock.unlock() }; return String(decoding: out, as: UTF8.self) }
+    var errText: String { lock.lock(); defer { lock.unlock() }; return String(decoding: err, as: UTF8.self) }
 }
 
 /// Thread-safe accumulator of raw stderr bytes, kept so a non-zero exit can

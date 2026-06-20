@@ -61,6 +61,20 @@ import Foundation
     #expect(r.exitCode == 3)
 }
 
+@Test func processRunnerRunDrainsLargeStdoutWithoutDeadlock() async throws {
+    // Regression: run() read stdout/stderr only in terminationHandler. A child
+    // emitting more than the ~64KB pipe buffer blocks on write and never exits,
+    // so the handler never fires and run() hangs forever. `container image list`
+    // emits well over 64KB (full OCI configs), which hung the Images view. Emit
+    // ~290KB on stdout; run() must COMPLETE and capture all of it.
+    let runner = ProcessCommandRunner()
+    let r = try await runner.run("/bin/sh", ["-c", "seq 1 50000"])
+    #expect(r.exitCode == 0)
+    #expect(r.stdout.hasPrefix("1\n2\n3\n"))
+    #expect(r.stdout.hasSuffix("50000\n"))
+    #expect(r.stdout.split(separator: "\n").count == 50000)
+}
+
 @Test func processRunnerStreamsLines() async throws {
     let runner = ProcessCommandRunner()
     var got: [String] = []
