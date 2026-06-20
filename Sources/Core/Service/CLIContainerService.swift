@@ -154,6 +154,29 @@ public struct CLIContainerService: ContainerService {
         _ = try await runChecked(["volume", "prune"])
     }
 
+    // MARK: - Networks
+
+    public func listNetworks() async throws -> [ContainerNetwork] {
+        let result = try await runChecked(["network", "list", "--format", "json"])
+        return try decode([ContainerNetwork].self, from: result.stdout)
+    }
+
+    public func createNetwork(name: String, internal isInternal: Bool, subnet: String?, labels: [String: String]) async throws {
+        var args = ["network", "create"]
+        if isInternal { args.append("--internal") }
+        if let subnet { args.append(contentsOf: ["--subnet", subnet]) }
+        // Sorted keys → deterministic argv.
+        for key in labels.keys.sorted() {
+            args.append(contentsOf: ["--label", "\(key)=\(labels[key]!)"])
+        }
+        args.append(name)
+        _ = try await runChecked(args)
+    }
+
+    public func removeNetwork(_ name: String) async throws {
+        _ = try await runChecked(["network", "delete", name])
+    }
+
     // MARK: - Logs
 
     public func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {

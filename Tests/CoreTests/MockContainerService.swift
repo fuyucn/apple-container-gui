@@ -21,6 +21,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _stats: [ContainerStats]
     private var _images: [ContainerImage]
     private var _volumes: [ContainerVolume]
+    private var _networks: [ContainerNetwork]
     private var _imageConfig: ImageConfig?
     private var _daemonStatus: DaemonStatus
     private let streamLines: [String]
@@ -42,6 +43,9 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _createdVolumes: [(name: String, size: String?, labels: [String: String])] = []
     private var _removedVolumeNames: [String] = []
     private var _pruneVolumesCount = 0
+    private var _listNetworksCount = 0
+    private var _createdNetworks: [(name: String, isInternal: Bool, subnet: String?, labels: [String: String])] = []
+    private var _removedNetworkNames: [String] = []
     private var _pulledRefs: [String] = []
     private var _imageConfigRefs: [String] = []
     private var _buildInvocations: [(dockerfile: String, context: String, tag: String)] = []
@@ -52,6 +56,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         stats: [ContainerStats] = [],
         images: [ContainerImage] = [],
         volumes: [ContainerVolume] = [],
+        networks: [ContainerNetwork] = [],
         imageConfig: ImageConfig? = nil,
         daemonStatus: DaemonStatus = DaemonStatus(state: .stopped, appRoot: nil, installRoot: nil),
         streamLines: [String] = [],
@@ -62,6 +67,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         self._stats = stats
         self._images = images
         self._volumes = volumes
+        self._networks = networks
         self._imageConfig = imageConfig
         self._daemonStatus = daemonStatus
         self.streamLines = streamLines
@@ -97,6 +103,9 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var createVolumeCalls: [(name: String, size: String?, labels: [String: String])] { withLock { _createdVolumes } }
     var removeVolumeCalls: [String] { withLock { _removedVolumeNames } }
     var pruneVolumesCalls: Int { withLock { _pruneVolumesCount } }
+    var listNetworksCalls: Int { withLock { _listNetworksCount } }
+    var createNetworkCalls: [(name: String, isInternal: Bool, subnet: String?, labels: [String: String])] { withLock { _createdNetworks } }
+    var removeNetworkCalls: [String] { withLock { _removedNetworkNames } }
     var pullCalls: [String] { withLock { _pulledRefs } }
     var imageConfigCalls: [String] { withLock { _imageConfigRefs } }
     var buildInvocations: [(dockerfile: String, context: String, tag: String)] { withLock { _buildInvocations } }
@@ -172,6 +181,20 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     func pruneVolumes() async throws {
         if let e = throwOnAction { throw e }
         withLock { _pruneVolumesCount += 1 }
+    }
+
+    func listNetworks() async throws -> [ContainerNetwork] {
+        withLock { _listNetworksCount += 1; return _networks }
+    }
+
+    func createNetwork(name: String, internal isInternal: Bool, subnet: String?, labels: [String: String]) async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _createdNetworks.append((name, isInternal, subnet, labels)) }
+    }
+
+    func removeNetwork(_ name: String) async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _removedNetworkNames.append(name) }
     }
 
     func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {

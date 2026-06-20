@@ -156,6 +156,17 @@ public protocol ContainerService: Sendable {
     /// Remove all unused volumes (`volume prune`).
     func pruneVolumes() async throws
 
+    /// All networks via `network list --format json`.
+    func listNetworks() async throws -> [ContainerNetwork]
+
+    /// Create a network by `name`. When `internal` is true the `--internal`
+    /// flag is passed; when `subnet` is set (e.g. `"10.0.0.0/24"`) it is passed
+    /// via `--subnet`; each `labels` entry is passed via `--label k=v`.
+    func createNetwork(name: String, internal isInternal: Bool, subnet: String?, labels: [String: String]) async throws
+
+    /// Delete a network by name (`network delete <name>`).
+    func removeNetwork(_ name: String) async throws
+
     /// Stream a container's logs; `follow: true` tails new output.
     func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error>
 

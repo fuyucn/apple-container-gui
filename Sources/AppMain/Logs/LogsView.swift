@@ -130,6 +130,9 @@ private struct CannedLogsService: ContainerService {
     func createVolume(name: String, size: String?, labels: [String: String]) async throws {}
     func removeVolume(_ name: String) async throws {}
     func pruneVolumes() async throws {}
+    func listNetworks() async throws -> [ContainerNetwork] { [] }
+    func createNetwork(name: String, internal isInternal: Bool, subnet: String?, labels: [String: String]) async throws {}
+    func removeNetwork(_ name: String) async throws {}
     func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in
             continuation.yield("2026/06/17 19:33:38 [notice] nginx/1.27.0")

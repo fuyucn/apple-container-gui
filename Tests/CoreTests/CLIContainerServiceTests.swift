@@ -411,6 +411,80 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     #expect(mock.calls == [["/opt/homebrew/bin/container", "volume", "prune"]])
 }
 
+// MARK: - Networks
+
+@Test func listNetworksInvokesExactArgvAndDecodes() async throws {
+    let json = try loadFixtureString("networks.json")
+    let mock = MockCommandRunner(result: .init(exitCode: 0, stdout: json, stderr: ""))
+    let service = makeService(mock)
+
+    let networks = try await service.listNetworks()
+
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "network", "list", "--format", "json"]])
+    #expect(networks.count == 1)
+    #expect(networks.first?.id == "default")
+    #expect(networks.first?.name == "default")
+    #expect(networks.first?.gateway == "192.168.64.1")
+    #expect(networks.first?.subnet == "192.168.64.0/24")
+}
+
+@Test func listNetworksThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "daemon down"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("daemon down")) {
+        try await service.listNetworks()
+    }
+}
+
+@Test func createNetworkWithInternalSubnetAndLabelsBuildsExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+
+    try await service.createNetwork(name: "net", internal: true, subnet: "10.0.0.0/24", labels: ["env": "prod", "app": "web"])
+
+    // --internal first, then --subnet, then labels in sorted-key order (app before env), name last.
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "network", "create",
+        "--internal",
+        "--subnet", "10.0.0.0/24",
+        "--label", "app=web",
+        "--label", "env=prod",
+        "net",
+    ]])
+}
+
+@Test func createNetworkWithoutInternalOrSubnetOmitsFlags() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+
+    try await service.createNetwork(name: "net", internal: false, subnet: nil, labels: [:])
+
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "network", "create", "net"]])
+}
+
+@Test func createNetworkThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "already exists"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("already exists")) {
+        try await service.createNetwork(name: "net", internal: false, subnet: nil, labels: [:])
+    }
+}
+
+@Test func removeNetworkInvokesDeleteArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.removeNetwork("net")
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "network", "delete", "net"]])
+}
+
+@Test func removeNetworkThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "no such network"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("no such network")) {
+        try await service.removeNetwork("ghost")
+    }
+}
+
 // MARK: - 3.5 daemonStatus / startDaemon
 
 @Test func daemonStatusInvokesExactArgvAndParses() async throws {

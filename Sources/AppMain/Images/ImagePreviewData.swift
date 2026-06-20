@@ -117,6 +117,9 @@ private struct ImagePreviewService: ContainerService {
     func createVolume(name: String, size: String?, labels: [String: String]) async throws {}
     func removeVolume(_ name: String) async throws {}
     func pruneVolumes() async throws {}
+    func listNetworks() async throws -> [ContainerNetwork] { [] }
+    func createNetwork(name: String, internal isInternal: Bool, subnet: String?, labels: [String: String]) async throws {}
+    func removeNetwork(_ name: String) async throws {}
     func logs(_ id: String, follow: Bool) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { $0.finish() }
     }

@@ -24,4 +24,8 @@ enum ViewModelFixtures {
     static func volumes() throws -> [ContainerVolume] {
         try JSONDecoder().decode([ContainerVolume].self, from: load("volumes.json"))
     }
+
+    static func networks() throws -> [ContainerNetwork] {
+        try JSONDecoder().decode([ContainerNetwork].self, from: load("networks.json"))
+    }
 }
