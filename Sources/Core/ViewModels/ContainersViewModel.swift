@@ -58,12 +58,25 @@ public final class ContainersViewModel {
     /// Remove a container, then refresh. When `stopFirst` is true (a running
     /// container), gracefully `stop` it before deleting — a plain delete fails
     /// on a running container, and stopping first lets it shut down cleanly
-    /// (SIGTERM with a grace period) rather than being force-killed.
-    public func remove(_ id: String, stopFirst: Bool = false) async {
+    /// (SIGTERM with a grace period) rather than being force-killed. When
+    /// `force` is true, skip the graceful stop and pass `-f` to the runtime so
+    /// it removes a running container outright; `force` takes precedence over
+    /// `stopFirst`.
+    public func remove(_ id: String, stopFirst: Bool = false, force: Bool = false) async {
         await perform {
-            if stopFirst { try await self.service.stop(id) }
-            try await self.service.remove(id)
+            if force {
+                try await self.service.remove(id, force: true)
+            } else {
+                if stopFirst { try await self.service.stop(id) }
+                try await self.service.remove(id)
+            }
         }
+    }
+
+    /// Delete all containers (running and stopped) via `delete --all`, then
+    /// refresh.
+    public func deleteAll() async {
+        await perform { try await self.service.deleteAll() }
     }
 
     /// Create and run a new container from `spec`, then refresh so the UI shows

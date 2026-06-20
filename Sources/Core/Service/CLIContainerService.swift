@@ -75,8 +75,15 @@ public struct CLIContainerService: ContainerService {
         _ = try await runChecked(args)
     }
 
-    public func remove(_ id: String) async throws {
-        _ = try await runChecked(["delete", id])
+    public func remove(_ id: String, force: Bool) async throws {
+        var args = ["delete"]
+        if force { args.append("-f") }
+        args.append(id)
+        _ = try await runChecked(args)
+    }
+
+    public func deleteAll() async throws {
+        _ = try await runChecked(["delete", "--all"])
     }
 
     public func run(_ spec: RunSpec) async throws -> String {

@@ -122,11 +122,18 @@ public protocol ContainerService: Sendable {
     /// `-s`; nil uses the runtime's default kill signal.
     func kill(_ id: String, signal: String?) async throws
 
-    /// Delete a stopped container by id (`container delete`). A running
-    /// container must be stopped first (see `ContainersViewModel.remove`),
-    /// since a plain delete fails on a running container with an
-    /// `invalidState` error. This stays a single, predictable CLI call.
-    func remove(_ id: String) async throws
+    /// Delete a container by id (`container delete [-f]`). A plain delete
+    /// (`force: false`) fails on a running container with an `invalidState`
+    /// error, so callers stop it first (see `ContainersViewModel.remove`).
+    /// Passing `force: true` adds `-f`, which removes a running container
+    /// outright without a graceful stop. Swift forbids default arg values on
+    /// protocol requirements, so the `remove(id)` convenience (force defaults
+    /// to false) lives in the extension below.
+    func remove(_ id: String, force: Bool) async throws
+
+    /// Delete all containers, running and stopped (`container delete --all`).
+    /// Used by the list's "Delete All" action.
+    func deleteAll() async throws
 
     /// Create and run a new container from `spec` via `container run`, returning
     /// the new container's id (trimmed stdout).
@@ -234,6 +241,13 @@ extension ContainerService {
     /// Convenience: kill with the runtime's default signal.
     public func kill(_ id: String) async throws {
         try await kill(id, signal: nil)
+    }
+
+    /// Convenience: a plain delete (no `-f`). Keeps existing `remove(id)` call
+    /// sites working now that the requirement carries `force` (Swift forbids
+    /// default arg values on protocol requirements, so the default lives here).
+    public func remove(_ id: String) async throws {
+        try await remove(id, force: false)
     }
 
     /// Convenience: an interactive shell (`sh`) exec invocation.

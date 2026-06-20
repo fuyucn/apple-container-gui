@@ -148,6 +148,28 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     #expect(mock.calls == [["/opt/homebrew/bin/container", "delete", "abc123"]])
 }
 
+@Test func removeWithForceAddsForceFlagToArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.remove("abc123", force: true)
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "delete", "-f", "abc123"]])
+}
+
+@Test func deleteAllInvokesDeleteAllArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.deleteAll()
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "delete", "--all"]])
+}
+
+@Test func deleteAllThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "delete all failed"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("delete all failed")) {
+        try await service.deleteAll()
+    }
+}
+
 
 @Test func startThrowsCommandFailedOnNonZeroExit() async throws {
     let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "no such container"))

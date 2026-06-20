@@ -212,7 +212,8 @@ private struct PreviewEmptyService: ContainerService {
     func start(_ id: String) async throws {}
     func stop(_ id: String, signal: String?, timeout: Int?) async throws {}
     func kill(_ id: String, signal: String?) async throws {}
-    func remove(_ id: String) async throws {}
+    func remove(_ id: String, force: Bool) async throws {}
+    func deleteAll() async throws {}
     func run(_ spec: RunSpec) async throws -> String { "preview-id" }
     func pruneContainers() async throws {}
     func exportContainer(_ id: String, to path: String) async throws {}

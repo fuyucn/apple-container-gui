@@ -29,6 +29,9 @@ struct ContainerListView: View {
     /// Whether the "Prune Stopped" confirmation dialog is presented.
     @State private var isConfirmingPrune = false
 
+    /// Whether the "Delete All" confirmation dialog is presented.
+    @State private var isConfirmingDeleteAll = false
+
     /// Search text; filters the list by container name (id) or image reference,
     /// case-insensitive. Empty means no name/image filtering. View-local — pure
     /// presentation, no Core change.
@@ -142,6 +145,13 @@ struct ContainerListView: View {
                     }
                 }
                 ToolbarItem {
+                    Button(role: .destructive) {
+                        isConfirmingDeleteAll = true
+                    } label: {
+                        Label("Delete All", systemImage: "trash")
+                    }
+                }
+                ToolbarItem {
                     Button {
                         isPresentingRun = true
                     } label: {
@@ -160,6 +170,18 @@ struct ContainerListView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("This deletes every container that is not running. This cannot be undone.")
+            }
+            .confirmationDialog(
+                "Delete all containers?",
+                isPresented: $isConfirmingDeleteAll,
+                titleVisibility: .visible
+            ) {
+                Button("Delete All", role: .destructive) {
+                    Task { await viewModel.deleteAll() }
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This force-deletes every container, including running ones. This cannot be undone.")
             }
             .sheet(isPresented: $isPresentingRun) {
                 RunContainerView(
@@ -288,6 +310,11 @@ struct ContainerListView: View {
                 Task { await viewModel.remove(container.id, stopFirst: true) }
             } label: {
                 Label("Delete", systemImage: "trash")
+            }
+            Button(role: .destructive) {
+                Task { await viewModel.remove(container.id, force: true) }
+            } label: {
+                Label("Force Delete", systemImage: "trash.fill")
             }
         } else {
             Button {

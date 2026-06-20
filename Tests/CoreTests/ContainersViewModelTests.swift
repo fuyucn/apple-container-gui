@@ -86,7 +86,8 @@ import Foundation
 
     await vm.remove("fixture-demo")
 
-    #expect(service.removeCalls == ["fixture-demo"])
+    #expect(service.removeCalls.map(\.id) == ["fixture-demo"])
+    #expect(service.removeCalls.first?.force == false)
     #expect(service.stopCalls.isEmpty)
     #expect(service.listContainersCalls == 1)
 }
@@ -99,8 +100,35 @@ import Foundation
     await vm.remove("fixture-demo", stopFirst: true)
 
     #expect(service.stopCalls.map(\.id) == ["fixture-demo"])
-    #expect(service.removeCalls == ["fixture-demo"])
+    #expect(service.removeCalls.map(\.id) == ["fixture-demo"])
+    #expect(service.removeCalls.first?.force == false)
     #expect(service.listContainersCalls == 1)
+}
+
+@MainActor
+@Test func removeForceDeletesWithoutStoppingFirst() async throws {
+    let service = MockContainerService(containers: try ViewModelFixtures.containers())
+    let vm = ContainersViewModel(service: service)
+
+    await vm.remove("fixture-demo", force: true)
+
+    // Force skips the graceful stop and passes force through to the service.
+    #expect(service.stopCalls.isEmpty)
+    #expect(service.removeCalls.map(\.id) == ["fixture-demo"])
+    #expect(service.removeCalls.first?.force == true)
+    #expect(service.listContainersCalls == 1)
+}
+
+@MainActor
+@Test func deleteAllCallsServiceThenRefreshes() async throws {
+    let service = MockContainerService(containers: try ViewModelFixtures.containers())
+    let vm = ContainersViewModel(service: service)
+
+    await vm.deleteAll()
+
+    #expect(service.deleteAllCalls == 1)
+    #expect(service.listContainersCalls == 1)
+    #expect(vm.lastError == nil)
 }
 
 @MainActor
