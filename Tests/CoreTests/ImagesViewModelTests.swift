@@ -80,6 +80,29 @@ import Foundation
 }
 
 @MainActor
+@Test func exportImageCallsServiceWithRefAndPath() async throws {
+    let service = MockContainerService(images: try ViewModelFixtures.images())
+    let vm = ImagesViewModel(service: service)
+
+    await vm.exportImage(ref: "docker.io/library/alpine:latest", to: "/tmp/alpine.tar")
+
+    #expect(service.saveImageCalls.count == 1)
+    #expect(service.saveImageCalls.first?.ref == "docker.io/library/alpine:latest")
+    #expect(service.saveImageCalls.first?.path == "/tmp/alpine.tar")
+    #expect(vm.lastError == nil)
+}
+
+@MainActor
+@Test func exportImageSurfacesError() async throws {
+    let service = MockContainerService(throwOnAction: ContainerError.commandFailed("no such image"))
+    let vm = ImagesViewModel(service: service)
+
+    await vm.exportImage(ref: "ghost:latest", to: "/tmp/ghost.tar")
+
+    #expect(vm.lastError != nil)
+}
+
+@MainActor
 @Test func pullAccumulatesStreamLines() async throws {
     let service = MockContainerService(
         images: try ViewModelFixtures.images(),

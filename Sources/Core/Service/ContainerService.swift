@@ -175,6 +175,12 @@ public protocol ContainerService: Sendable {
     /// Push an image by reference, streaming progress lines as they arrive.
     func pushImage(_ ref: String) -> AsyncThrowingStream<String, Error>
 
+    /// Save an image to an OCI-compatible tar archive at `path`
+    /// (`image save --output <path> <ref>`). A no-op default extension impl below
+    /// lets preview/stub conformers inherit it unchanged; `CLIContainerService`
+    /// overrides it to shell out and the test mock overrides it to record calls.
+    func saveImage(_ ref: String, to path: String) async throws
+
     /// All volumes via `volume list --format json`.
     func listVolumes() async throws -> [ContainerVolume]
 
@@ -286,6 +292,11 @@ extension ContainerService {
         args.append(contentsOf: command)
         return ProcessInvocation(executable: "container", arguments: args)
     }
+
+    /// No-op default `saveImage` for conformers (mocks/preview services) that do
+    /// not shell out. `CLIContainerService` overrides this with the real
+    /// `image save` invocation; the test mock overrides it to record the call.
+    public func saveImage(_ ref: String, to path: String) async throws {}
 
     /// Default debug-shell invocation builder for conformers (mocks/preview
     /// services) that don't resolve a real binary. Uses the canonical relative

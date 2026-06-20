@@ -78,6 +78,18 @@ public final class ImagesViewModel {
         }
     }
 
+    /// Export an image to an OCI tar archive at `path` (`image save`). Does not
+    /// refresh the list (an export does not change the image set); errors are
+    /// captured into `lastError`.
+    public func exportImage(ref: String, to path: String) async {
+        do {
+            try await service.saveImage(ref, to: path)
+            lastError = nil
+        } catch {
+            lastError = String(describing: error)
+        }
+    }
+
     /// Remove all unused images (`image prune`), then refresh.
     public func prune() async {
         do {
