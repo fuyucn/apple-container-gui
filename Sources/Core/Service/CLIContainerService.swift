@@ -60,8 +60,19 @@ public struct CLIContainerService: ContainerService {
         _ = try await runChecked(["start", id])
     }
 
-    public func stop(_ id: String) async throws {
-        _ = try await runChecked(["stop", id])
+    public func stop(_ id: String, signal: String?, timeout: Int?) async throws {
+        var args = ["stop"]
+        if let signal { args.append(contentsOf: ["-s", signal]) }
+        if let timeout { args.append(contentsOf: ["-t", String(timeout)]) }
+        args.append(id)
+        _ = try await runChecked(args)
+    }
+
+    public func kill(_ id: String, signal: String?) async throws {
+        var args = ["kill"]
+        if let signal { args.append(contentsOf: ["-s", signal]) }
+        args.append(id)
+        _ = try await runChecked(args)
     }
 
     public func remove(_ id: String) async throws {

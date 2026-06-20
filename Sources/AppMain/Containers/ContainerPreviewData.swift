@@ -95,7 +95,8 @@ private struct PreviewService: ContainerService {
 
     func listContainers() async throws -> [Container] { containers }
     func start(_ id: String) async throws {}
-    func stop(_ id: String) async throws {}
+    func stop(_ id: String, signal: String?, timeout: Int?) async throws {}
+    func kill(_ id: String, signal: String?) async throws {}
     func remove(_ id: String) async throws {}
     func run(_ spec: RunSpec) async throws -> String { "preview-id" }
     func pruneContainers() async throws {}

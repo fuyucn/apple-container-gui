@@ -255,6 +255,10 @@ struct ContainerListView: View {
             }
     }
 
+    /// Signals exposed by the Kill submenu, matching the `container` CLI's
+    /// accepted `-s` values. View-local presentation only.
+    private static let killSignals = ["KILL", "TERM", "HUP", "INT", "USR1"]
+
     @ViewBuilder
     private func actions(for container: Container) -> some View {
         if container.state == .running {
@@ -262,6 +266,17 @@ struct ContainerListView: View {
                 Task { await viewModel.stop(container.id) }
             } label: {
                 Label("Stop", systemImage: "stop.fill")
+            }
+            Menu {
+                ForEach(Self.killSignals, id: \.self) { signal in
+                    Button(role: .destructive) {
+                        Task { await viewModel.kill(container.id, signal: signal) }
+                    } label: {
+                        Text("SIG\(signal)")
+                    }
+                }
+            } label: {
+                Label("Kill", systemImage: "bolt.fill")
             }
             Button {
                 presentExportPanel(for: container)

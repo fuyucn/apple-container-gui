@@ -42,9 +42,17 @@ public final class ContainersViewModel {
         await perform { try await self.service.start(id) }
     }
 
-    /// Stop a container, then refresh.
-    public func stop(_ id: String) async {
-        await perform { try await self.service.stop(id) }
+    /// Gracefully stop a container, then refresh. Optionally pass a `signal`
+    /// (`-s`) and a `timeout` in seconds (`-t`); both default to nil so
+    /// `stop(id)` keeps the runtime's default graceful behavior.
+    public func stop(_ id: String, signal: String? = nil, timeout: Int? = nil) async {
+        await perform { try await self.service.stop(id, signal: signal, timeout: timeout) }
+    }
+
+    /// Forcibly signal a container (`kill`), then refresh. Optionally pass a
+    /// `signal` (`-s`); nil uses the runtime's default kill signal.
+    public func kill(_ id: String, signal: String? = nil) async {
+        await perform { try await self.service.kill(id, signal: signal) }
     }
 
     /// Remove a container, then refresh. When `stopFirst` is true (a running

@@ -34,7 +34,8 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _daemonStatusCount = 0
     private var _startedDaemonCount = 0
     private var _startedIDs: [String] = []
-    private var _stoppedIDs: [String] = []
+    private var _stoppedCalls: [(id: String, signal: String?, timeout: Int?)] = []
+    private var _killedCalls: [(id: String, signal: String?)] = []
     private var _removedIDs: [String] = []
     private var _runSpecs: [RunSpec] = []
     private var _pruneContainersCount = 0
@@ -99,7 +100,8 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var daemonStatusCalls: Int { withLock { _daemonStatusCount } }
     var startDaemonCalls: Int { withLock { _startedDaemonCount } }
     var startCalls: [String] { withLock { _startedIDs } }
-    var stopCalls: [String] { withLock { _stoppedIDs } }
+    var stopCalls: [(id: String, signal: String?, timeout: Int?)] { withLock { _stoppedCalls } }
+    var killCalls: [(id: String, signal: String?)] { withLock { _killedCalls } }
     var removeCalls: [String] { withLock { _removedIDs } }
     var runSpecs: [RunSpec] { withLock { _runSpecs } }
     var pruneContainersCalls: Int { withLock { _pruneContainersCount } }
@@ -132,9 +134,14 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         withLock { _startedIDs.append(id) }
     }
 
-    func stop(_ id: String) async throws {
+    func stop(_ id: String, signal: String?, timeout: Int?) async throws {
         if let e = throwOnAction { throw e }
-        withLock { _stoppedIDs.append(id) }
+        withLock { _stoppedCalls.append((id, signal, timeout)) }
+    }
+
+    func kill(_ id: String, signal: String?) async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _killedCalls.append((id, signal)) }
     }
 
     func remove(_ id: String) async throws {

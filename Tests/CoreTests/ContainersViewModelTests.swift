@@ -23,9 +23,48 @@ import Foundation
 
     await vm.stop("fixture-demo")
 
-    #expect(service.stopCalls == ["fixture-demo"])
+    #expect(service.stopCalls.map(\.id) == ["fixture-demo"])
     // Refresh ran after the action: containers populated, listContainers called once.
     #expect(vm.containers.count == 1)
+    #expect(service.listContainersCalls == 1)
+}
+
+@MainActor
+@Test func stopWithSignalAndTimeoutForwardsToService() async throws {
+    let service = MockContainerService(containers: try ViewModelFixtures.containers())
+    let vm = ContainersViewModel(service: service)
+
+    await vm.stop("fixture-demo", signal: "TERM", timeout: 10)
+
+    #expect(service.stopCalls.count == 1)
+    #expect(service.stopCalls.first?.id == "fixture-demo")
+    #expect(service.stopCalls.first?.signal == "TERM")
+    #expect(service.stopCalls.first?.timeout == 10)
+    #expect(service.listContainersCalls == 1)
+}
+
+@MainActor
+@Test func killCallsServiceThenRefreshes() async throws {
+    let service = MockContainerService(containers: try ViewModelFixtures.containers())
+    let vm = ContainersViewModel(service: service)
+
+    await vm.kill("fixture-demo", signal: "KILL")
+
+    #expect(service.killCalls.count == 1)
+    #expect(service.killCalls.first?.id == "fixture-demo")
+    #expect(service.killCalls.first?.signal == "KILL")
+    #expect(service.listContainersCalls == 1)
+}
+
+@MainActor
+@Test func killWithoutSignalForwardsNilSignal() async throws {
+    let service = MockContainerService(containers: try ViewModelFixtures.containers())
+    let vm = ContainersViewModel(service: service)
+
+    await vm.kill("fixture-demo")
+
+    #expect(service.killCalls.count == 1)
+    #expect(service.killCalls.first?.signal == nil)
     #expect(service.listContainersCalls == 1)
 }
 
@@ -48,7 +87,7 @@ import Foundation
     await vm.remove("fixture-demo")
 
     #expect(service.removeCalls == ["fixture-demo"])
-    #expect(service.stopCalls == [])
+    #expect(service.stopCalls.isEmpty)
     #expect(service.listContainersCalls == 1)
 }
 
@@ -59,7 +98,7 @@ import Foundation
 
     await vm.remove("fixture-demo", stopFirst: true)
 
-    #expect(service.stopCalls == ["fixture-demo"])
+    #expect(service.stopCalls.map(\.id) == ["fixture-demo"])
     #expect(service.removeCalls == ["fixture-demo"])
     #expect(service.listContainersCalls == 1)
 }

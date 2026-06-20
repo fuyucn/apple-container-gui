@@ -94,6 +94,53 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     #expect(mock.calls == [["/opt/homebrew/bin/container", "stop", "abc123"]])
 }
 
+@Test func stopWithSignalAndTimeoutBuildsExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.stop("abc123", signal: "TERM", timeout: 30)
+    // -s before -t, then the id last.
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "stop",
+        "-s", "TERM", "-t", "30", "abc123",
+    ]])
+}
+
+@Test func stopWithSignalOnlyOmitsTimeout() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.stop("abc123", signal: "HUP")
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "stop", "-s", "HUP", "abc123"]])
+}
+
+@Test func stopWithTimeoutOnlyOmitsSignal() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.stop("abc123", timeout: 5)
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "stop", "-t", "5", "abc123"]])
+}
+
+@Test func killWithoutSignalBuildsExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.kill("abc123")
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "kill", "abc123"]])
+}
+
+@Test func killWithSignalBuildsExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.kill("abc123", signal: "KILL")
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "kill", "-s", "KILL", "abc123"]])
+}
+
+@Test func killThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "kill failed"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("kill failed")) {
+        try await service.kill("ghost")
+    }
+}
+
 @Test func removeInvokesDeleteArgv() async throws {
     let mock = MockCommandRunner()
     let service = makeService(mock)

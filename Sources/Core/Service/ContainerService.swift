@@ -111,8 +111,16 @@ public protocol ContainerService: Sendable {
     /// Start a stopped container by id.
     func start(_ id: String) async throws
 
-    /// Stop a running container by id.
-    func stop(_ id: String) async throws
+    /// Gracefully stop a running container by id (`stop`). Optionally pass a
+    /// `signal` (e.g. `"TERM"`, `"HUP"`) sent via `-s`, and a `timeout` in
+    /// seconds (`-t`) to wait before the runtime escalates. Both default to nil,
+    /// so `stop(id)` keeps the runtime's default graceful behavior.
+    func stop(_ id: String, signal: String?, timeout: Int?) async throws
+
+    /// Forcibly signal a running container by id (`kill`). Optionally pass a
+    /// `signal` (e.g. `"KILL"`, `"TERM"`, `"HUP"`, `"INT"`, `"USR1"`) sent via
+    /// `-s`; nil uses the runtime's default kill signal.
+    func kill(_ id: String, signal: String?) async throws
 
     /// Delete a stopped container by id (`container delete`). A running
     /// container must be stopped first (see `ContainersViewModel.remove`),
@@ -205,6 +213,29 @@ public protocol ContainerService: Sendable {
 }
 
 extension ContainerService {
+    /// Convenience: stop with the runtime's default graceful behavior. Keeps
+    /// existing `stop(id)` call sites working now that the requirement carries
+    /// `signal`/`timeout` (Swift forbids default arg values on protocol
+    /// requirements, so the defaults live here as an overload).
+    public func stop(_ id: String) async throws {
+        try await stop(id, signal: nil, timeout: nil)
+    }
+
+    /// Convenience: stop with only a `signal` (timeout left to the runtime).
+    public func stop(_ id: String, signal: String?) async throws {
+        try await stop(id, signal: signal, timeout: nil)
+    }
+
+    /// Convenience: stop with only a `timeout` (default signal).
+    public func stop(_ id: String, timeout: Int?) async throws {
+        try await stop(id, signal: nil, timeout: timeout)
+    }
+
+    /// Convenience: kill with the runtime's default signal.
+    public func kill(_ id: String) async throws {
+        try await kill(id, signal: nil)
+    }
+
     /// Convenience: an interactive shell (`sh`) exec invocation.
     public func execShellInvocation(id: String) async throws -> ProcessInvocation {
         try await execInvocation(id: id, command: ["sh"])
