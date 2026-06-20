@@ -23,6 +23,7 @@ struct AppMainApp: App {
     @State private var appViewModel: AppViewModel
     @State private var logsViewModel: LogsViewModel
     @State private var buildViewModel: BuildViewModel
+    @State private var activityMonitorViewModel: ActivityMonitorViewModel
 
     /// Drives the launch-time setup gate (binary + daemon readiness). Owned here
     /// so its `check()` Task and state survive scene/view re-creation.
@@ -45,6 +46,7 @@ struct AppMainApp: App {
         _appViewModel = State(initialValue: AppViewModel(service: service))
         _logsViewModel = State(initialValue: LogsViewModel(service: service))
         _buildViewModel = State(initialValue: BuildViewModel(service: service))
+        _activityMonitorViewModel = State(initialValue: ActivityMonitorViewModel(service: service))
         _setupCoordinator = State(initialValue: SetupCoordinator(service: service, cli: cli))
         self.service = service
     }
@@ -58,6 +60,7 @@ struct AppMainApp: App {
                 appViewModel: appViewModel,
                 logsViewModel: logsViewModel,
                 buildViewModel: buildViewModel,
+                activityMonitorViewModel: activityMonitorViewModel,
                 service: service
             )
         }
@@ -127,6 +130,7 @@ private struct RootGateView: View {
     @Bindable var appViewModel: AppViewModel
     @Bindable var logsViewModel: LogsViewModel
     @Bindable var buildViewModel: BuildViewModel
+    @Bindable var activityMonitorViewModel: ActivityMonitorViewModel
     let service: any ContainerService
 
     var body: some View {
@@ -138,6 +142,7 @@ private struct RootGateView: View {
                     appViewModel: appViewModel,
                     logsViewModel: logsViewModel,
                     buildViewModel: buildViewModel,
+                    activityMonitorViewModel: activityMonitorViewModel,
                     service: service
                 )
             } else {

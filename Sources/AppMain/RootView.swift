@@ -4,6 +4,7 @@ import Core
 /// The sidebar sections of the app. `Identifiable` + `CaseIterable` so the
 /// sidebar `List` can enumerate them; each carries an SF Symbol + label.
 enum SidebarSection: String, Identifiable, CaseIterable {
+    case activityMonitor
     case containers
     case images
     case build
@@ -13,6 +14,7 @@ enum SidebarSection: String, Identifiable, CaseIterable {
 
     var label: String {
         switch self {
+        case .activityMonitor: return "Activity Monitor"
         case .containers: return "Containers"
         case .images: return "Images"
         case .build: return "Build"
@@ -22,10 +24,28 @@ enum SidebarSection: String, Identifiable, CaseIterable {
 
     var systemImage: String {
         switch self {
+        case .activityMonitor: return "chart.line.uptrend.xyaxis"
         case .containers: return "shippingbox"
         case .images: return "square.stack.3d.up"
         case .build: return "hammer"
         case .settings: return "gearshape"
+        }
+    }
+}
+
+/// A titled group of sidebar sections, so the sidebar `List` can render a
+/// `Section("General")` header above the general entries and a `Section`
+/// grouping the resource (Containers / Images / Build / Settings) entries.
+enum SidebarGroup: String, Identifiable, CaseIterable {
+    case general = "General"
+    case resources = "Resources"
+
+    var id: String { rawValue }
+
+    var sections: [SidebarSection] {
+        switch self {
+        case .general: return [.activityMonitor]
+        case .resources: return [.containers, .images, .build, .settings]
         }
     }
 }
@@ -59,6 +79,10 @@ struct RootView: View {
     /// streaming `Task` survives while the section is shown.
     @Bindable var buildViewModel: BuildViewModel
 
+    /// View model driving the Activity Monitor section's stats polling. Owned
+    /// here so its poll `Task` is created once and survives view re-creation.
+    @Bindable var activityMonitorViewModel: ActivityMonitorViewModel
+
     /// Shared service, forwarded to the detail's Terminal tab so it can resolve
     /// the `container exec` invocation from Core.
     let service: any ContainerService
@@ -71,9 +95,15 @@ struct RootView: View {
 
     var body: some View {
         NavigationSplitView {
-            List(SidebarSection.allCases, selection: $selection) { section in
-                Label(section.label, systemImage: section.systemImage)
-                    .tag(section)
+            List(selection: $selection) {
+                ForEach(SidebarGroup.allCases) { group in
+                    Section(group.rawValue) {
+                        ForEach(group.sections) { section in
+                            Label(section.label, systemImage: section.systemImage)
+                                .tag(section)
+                        }
+                    }
+                }
             }
             .navigationTitle("Apple Container GUI")
             .frame(minWidth: 180)
@@ -95,6 +125,8 @@ struct RootView: View {
     @ViewBuilder
     private func content(for section: SidebarSection?) -> some View {
         switch section {
+        case .activityMonitor:
+            ActivityMonitorView(viewModel: activityMonitorViewModel)
         case .containers:
             ContainerListView(
                 viewModel: containersViewModel,
@@ -197,6 +229,7 @@ private struct PreviewEmptyService: ContainerService {
         appViewModel: AppViewModel(service: service),
         logsViewModel: LogsViewModel(service: service),
         buildViewModel: BuildViewModel(service: service),
+        activityMonitorViewModel: ActivityMonitorViewModel(service: service),
         service: service
     )
 }
