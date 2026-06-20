@@ -105,6 +105,11 @@ struct RootView: View {
     /// section. Owned here so the single split's detail column can resolve it.
     @State private var selectedContainerID: Container.ID?
 
+    /// Selected image name, driving the detail pane for the Images section.
+    /// Owned here so the Images master-detail split can resolve it
+    /// (`ContainerImage.name` is the identity).
+    @State private var selectedImageID: String?
+
     var body: some View {
         NavigationSplitView {
             List(selection: $selection) {
@@ -143,7 +148,7 @@ struct RootView: View {
         case .containers:
             containersSection
         case .images:
-            ImageListView(viewModel: imagesViewModel)
+            imagesSection
         case .volumes:
             VolumeListView(viewModel: volumesViewModel)
         case .networks:
@@ -195,11 +200,45 @@ struct RootView: View {
         }
     }
 
+    /// Images is master-detail like Containers: the image list on the left and
+    /// the selected image's tabbed detail (Info + Terminal) on the right, split
+    /// *within* the section (an `HSplitView`, not a nested `NavigationSplitView`).
+    private var imagesSection: some View {
+        HSplitView {
+            ImageListView(
+                viewModel: imagesViewModel,
+                selectedID: $selectedImageID,
+                service: service
+            )
+            .frame(minWidth: 280, idealWidth: 340)
+
+            Group {
+                if let image = selectedImage {
+                    ImageDetailView(image: image, viewModel: imagesViewModel, service: service)
+                } else {
+                    ContentUnavailableView(
+                        "No Selection",
+                        systemImage: "sidebar.right",
+                        description: Text("Select an image to see its details.")
+                    )
+                }
+            }
+            .frame(minWidth: 360)
+        }
+    }
+
     /// The currently selected container resolved from the live list, or nil if
     /// nothing is selected or the selection has since disappeared.
     private var selectedContainer: Container? {
         guard let selectedContainerID else { return nil }
         return containersViewModel.containers.first { $0.id == selectedContainerID }
+    }
+
+    /// The currently selected image resolved from the live list, or nil if
+    /// nothing is selected or the selection has since disappeared.
+    private var selectedImage: ContainerImage? {
+        guard let selectedImageID else { return nil }
+        return imagesViewModel.images.first { $0.name == selectedImageID }
     }
 }
 
