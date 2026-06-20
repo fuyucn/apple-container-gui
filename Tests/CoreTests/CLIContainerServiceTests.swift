@@ -274,6 +274,28 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     }
 }
 
+@Test func imageConfigInvokesInspectArgvAndParsesEnv() async throws {
+    // `image inspect` takes no --format flag; the CLI emits the same JSON shape
+    // as `image list`, so we feed the inspect fixture through the mock runner.
+    let json = try loadFixtureString("image-inspect.json")
+    let mock = MockCommandRunner(result: .init(exitCode: 0, stdout: json, stderr: ""))
+    let service = makeService(mock)
+
+    let config = try await service.imageConfig("docker.io/library/nginx:alpine")
+
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "image", "inspect", "docker.io/library/nginx:alpine"]])
+    #expect(config.env["NGINX_VERSION"] == "1.31.2")
+    #expect(config.exposedPorts.isEmpty)
+}
+
+@Test func imageConfigThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "image not found"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("image not found")) {
+        _ = try await service.imageConfig("ghost:latest")
+    }
+}
+
 // MARK: - 3.5 daemonStatus / startDaemon
 
 @Test func daemonStatusInvokesExactArgvAndParses() async throws {

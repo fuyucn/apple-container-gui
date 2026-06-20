@@ -45,6 +45,18 @@ public final class ImagesViewModel {
         await refresh()
     }
 
+    /// Fetch an image's run-time defaults (suggested env + exposed ports) for
+    /// prefilling the Run sheet. Failures degrade to an empty `ImageConfig`
+    /// (plain form) rather than surfacing an error, since prefill is a
+    /// convenience: a missing/un-inspectable image should not block the form.
+    public func imageConfig(for ref: String) async -> ImageConfig {
+        do {
+            return try await service.imageConfig(ref)
+        } catch {
+            return ImageConfig()
+        }
+    }
+
     /// Pull an image, accumulating each streamed progress line into `pullLog`.
     /// On success, refreshes the image list so the new image appears.
     public func pull(_ ref: String) async {

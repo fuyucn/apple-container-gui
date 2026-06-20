@@ -43,6 +43,10 @@ struct RunContainerView: View {
     /// True while a run is in flight, to disable the form + show progress.
     @State private var isRunning = false
 
+    /// Guards one-time prefill from the initial image's config so re-renders or
+    /// the image-list refresh never re-seed (and clobber the user's edits).
+    @State private var didPrefill = false
+
     /// The error captured from the view model after the most recent run attempt.
     @State private var runError: String?
 
@@ -77,6 +81,7 @@ struct RunContainerView: View {
             }
             // Populate the image suggestion menu if a source was provided.
             await imagesViewModel?.refresh()
+            await prefillFromImageConfig()
         }
         .fileImporter(
             isPresented: Binding(
@@ -268,6 +273,40 @@ struct RunContainerView: View {
     /// run is currently in flight.
     private var canRun: Bool {
         !image.trimmingCharacters(in: .whitespaces).isEmpty && !isRunning
+    }
+
+    // MARK: - Prefill
+
+    /// One-time, non-destructive prefill of the env + port rows from the image's
+    /// own run-time config (like Docker Desktop / OrbStack). Fetched via the
+    /// images view model; degrades to the plain form when no config is
+    /// available. Only seeds rows the user has not yet started filling.
+    private func prefillFromImageConfig() async {
+        guard !didPrefill, let imagesViewModel else { return }
+        let ref = image.trimmingCharacters(in: .whitespaces)
+        guard !ref.isEmpty else { return }
+        didPrefill = true
+
+        let config = await imagesViewModel.imageConfig(for: ref)
+        let (envRows, portRows) = Self.prefillRows(from: config)
+
+        // Non-destructive: only seed when the user has not added their own rows.
+        if envVars.isEmpty { envVars = envRows }
+        if ports.isEmpty { ports = portRows }
+    }
+
+    /// Pure mapping from an `ImageConfig` to seeded form rows: every env default
+    /// becomes a `KEY=value` row (sorted by key for a stable order), and every
+    /// exposed port becomes a `host:container` row mapped 1:1 (e.g. 7860 ->
+    /// 7860). Kept static + pure so it is unit-testable without a view.
+    fileprivate static func prefillRows(from config: ImageConfig) -> (env: [EnvRow], ports: [PortRow]) {
+        let envRows = config.env.keys.sorted().map { key in
+            EnvRow(key: key, value: config.env[key] ?? "")
+        }
+        let portRows = config.exposedPorts.map { port in
+            PortRow(host: String(port), container: String(port))
+        }
+        return (envRows, portRows)
     }
 
     // MARK: - Actions

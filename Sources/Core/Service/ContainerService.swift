@@ -127,6 +127,11 @@ public protocol ContainerService: Sendable {
     /// All locally available images via `image list --format json`.
     func listImages() async throws -> [ContainerImage]
 
+    /// An image's run-time defaults (suggested env, and exposed ports if the
+    /// runtime reports them) via `image inspect <ref>`. Used to prefill the Run
+    /// sheet. Throws `commandFailed` if the image is not found locally.
+    func imageConfig(_ ref: String) async throws -> ImageConfig
+
     /// Pull an image by reference, streaming progress lines as they arrive.
     func pullImage(_ ref: String) -> AsyncThrowingStream<String, Error>
 
@@ -168,5 +173,18 @@ extension ContainerService {
         var args = ["exec", "-i", "-t", id]
         args.append(contentsOf: command)
         return ProcessInvocation(executable: "container", arguments: args)
+    }
+
+    /// Default config lookup for conformers (mocks/preview services) that do not
+    /// shell out: reuse `listImages`, find the matching image by name, and
+    /// derive its `ImageConfig`. Returns an empty config when not found, so the
+    /// Run sheet degrades to a plain form. `CLIContainerService` overrides this
+    /// with a targeted `image inspect`.
+    public func imageConfig(_ ref: String) async throws -> ImageConfig {
+        let images = try await listImages()
+        guard let match = images.first(where: { $0.name == ref }) else {
+            return ImageConfig()
+        }
+        return ImageConfig(runtimeConfig: match.defaultRuntimeConfig)
     }
 }

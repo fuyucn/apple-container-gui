@@ -99,6 +99,20 @@ public struct CLIContainerService: ContainerService {
         return try decode([ContainerImage].self, from: result.stdout)
     }
 
+    /// Run-time defaults for an image via `image inspect <ref>`. Apple's
+    /// `container` `image inspect` takes no `--format` flag (verified: it
+    /// rejects `--format`) and emits the same `[ContainerImage]` JSON array as
+    /// `image list`, including the per-variant `config.config` blob carrying
+    /// `Env`. Exposed ports are not reported by the runtime, so
+    /// `ImageConfig.exposedPorts` is currently always empty.
+    public func imageConfig(_ ref: String) async throws -> ImageConfig {
+        let result = try await runChecked(["image", "inspect", ref])
+        let images = try decode([ContainerImage].self, from: result.stdout)
+        // `inspect <ref>` returns a single-element array for one ref.
+        let match = images.first { $0.name == ref } ?? images.first
+        return ImageConfig(runtimeConfig: match?.defaultRuntimeConfig)
+    }
+
     public func removeImage(_ id: String) async throws {
         _ = try await runChecked(["image", "delete", id])
     }

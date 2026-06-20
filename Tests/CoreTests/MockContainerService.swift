@@ -19,6 +19,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     // Seeded results.
     private var _containers: [Container]
     private var _images: [ContainerImage]
+    private var _imageConfig: ImageConfig?
     private var _daemonStatus: DaemonStatus
     private let streamLines: [String]
     private let streamError: Error?
@@ -35,12 +36,14 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _runSpecs: [RunSpec] = []
     private var _removedImageIDs: [String] = []
     private var _pulledRefs: [String] = []
+    private var _imageConfigRefs: [String] = []
     private var _buildInvocations: [(dockerfile: String, context: String, tag: String)] = []
     private var _logsInvocations: [(id: String, follow: Bool)] = []
 
     init(
         containers: [Container] = [],
         images: [ContainerImage] = [],
+        imageConfig: ImageConfig? = nil,
         daemonStatus: DaemonStatus = DaemonStatus(state: .stopped, appRoot: nil, installRoot: nil),
         streamLines: [String] = [],
         streamError: Error? = nil,
@@ -48,6 +51,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     ) {
         self._containers = containers
         self._images = images
+        self._imageConfig = imageConfig
         self._daemonStatus = daemonStatus
         self.streamLines = streamLines
         self.streamError = streamError
@@ -78,6 +82,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var runSpecs: [RunSpec] { withLock { _runSpecs } }
     var removeImageCalls: [String] { withLock { _removedImageIDs } }
     var pullCalls: [String] { withLock { _pulledRefs } }
+    var imageConfigCalls: [String] { withLock { _imageConfigRefs } }
     var buildInvocations: [(dockerfile: String, context: String, tag: String)] { withLock { _buildInvocations } }
     var logsInvocations: [(id: String, follow: Bool)] { withLock { _logsInvocations } }
 
@@ -109,6 +114,14 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
 
     func listImages() async throws -> [ContainerImage] {
         withLock { _listImagesCount += 1; return _images }
+    }
+
+    func imageConfig(_ ref: String) async throws -> ImageConfig {
+        if let e = throwOnAction { throw e }
+        return withLock {
+            _imageConfigRefs.append(ref)
+            return _imageConfig ?? ImageConfig()
+        }
     }
 
     func pullImage(_ ref: String) -> AsyncThrowingStream<String, Error> {

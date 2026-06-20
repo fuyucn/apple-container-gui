@@ -27,6 +27,32 @@ import Foundation
 }
 
 @MainActor
+@Test func imageConfigSeamReturnsServiceConfig() async throws {
+    let seeded = ImageConfig(env: ["NGINX_VERSION": "1.31.2", "PATH": "/usr/bin"], exposedPorts: [80])
+    let service = MockContainerService(imageConfig: seeded)
+    let vm = ImagesViewModel(service: service)
+
+    let config = await vm.imageConfig(for: "docker.io/library/nginx:alpine")
+
+    #expect(service.imageConfigCalls == ["docker.io/library/nginx:alpine"])
+    #expect(config.env["NGINX_VERSION"] == "1.31.2")
+    #expect(config.exposedPorts == [80])
+}
+
+@MainActor
+@Test func imageConfigSeamDegradesToEmptyOnError() async throws {
+    // Prefill is a convenience: an inspect failure must not surface an error,
+    // it just yields an empty config (plain form).
+    let service = MockContainerService(throwOnAction: ContainerError.commandFailed("nope"))
+    let vm = ImagesViewModel(service: service)
+
+    let config = await vm.imageConfig(for: "ghost:latest")
+
+    #expect(config.env.isEmpty)
+    #expect(config.exposedPorts.isEmpty)
+}
+
+@MainActor
 @Test func pullAccumulatesStreamLines() async throws {
     let service = MockContainerService(
         images: try ViewModelFixtures.images(),
