@@ -35,13 +35,13 @@ struct BuildView: View {
     /// Image tag for the built image, e.g. `myapp:latest`.
     @State private var tag: String = ""
 
-    /// Which file importer is currently presented, if any. A SINGLE importer is
-    /// used for both targets: SwiftUI only honors one `.fileImporter` per view,
-    /// so two stacked importers shadow each other (the first never opens).
-    @State private var activeImporter: ImporterKind?
-
-    /// The two things this view can import.
-    private enum ImporterKind { case dockerfile, context }
+    /// Whether each file importer is presented. Each `.fileImporter` is attached
+    /// to its OWN row view (not stacked on one view, which would shadow), and
+    /// each driven by a plain bool — a single shared importer with a computed
+    /// binding raced: the dismiss niled the target before onCompletion read it,
+    /// so the picked path was dropped.
+    @State private var showDockerfilePicker = false
+    @State private var showContextPicker = false
 
     /// Whether the Run sheet (seeded with the built image) is presented.
     @State private var isRunSheetPresented = false
@@ -76,9 +76,15 @@ struct BuildView: View {
                 filePickerRow(
                     placeholder: "Choose a Dockerfile…",
                     path: dockerfilePath,
-                    systemImage: "doc.text"
-                ) {
-                    activeImporter = .dockerfile
+                    systemImage: "doc.text",
+                    isPresented: $showDockerfilePicker,
+                    allowedContentTypes: [.item]
+                ) { url in
+                    dockerfilePath = url.path
+                    // Default the context to the Dockerfile's directory if unset.
+                    if contextPath.isEmpty {
+                        contextPath = url.deletingLastPathComponent().path
+                    }
                 }
             }
 
@@ -86,9 +92,11 @@ struct BuildView: View {
                 filePickerRow(
                     placeholder: "Choose a context directory…",
                     path: contextPath,
-                    systemImage: "folder"
-                ) {
-                    activeImporter = .context
+                    systemImage: "folder",
+                    isPresented: $showContextPicker,
+                    allowedContentTypes: [.folder]
+                ) { url in
+                    contextPath = url.path
                 }
             }
 
@@ -103,38 +111,19 @@ struct BuildView: View {
             }
         }
         .formStyle(.grouped)
-        .fileImporter(
-            isPresented: Binding(
-                get: { activeImporter != nil },
-                set: { if !$0 { activeImporter = nil } }
-            ),
-            allowedContentTypes: activeImporter == .context ? [.folder] : [.item],
-            allowsMultipleSelection: false
-        ) { result in
-            let target = activeImporter
-            defer { activeImporter = nil }
-            guard case .success(let urls) = result, let url = urls.first else { return }
-            switch target {
-            case .dockerfile:
-                dockerfilePath = url.path
-                // Default the context to the Dockerfile's directory if unset.
-                if contextPath.isEmpty {
-                    contextPath = url.deletingLastPathComponent().path
-                }
-            case .context:
-                contextPath = url.path
-            case nil:
-                break
-            }
-        }
     }
 
-    /// One labelled picker row: a path/placeholder label plus a Choose button.
+    /// One labelled picker row: a path/placeholder label, a Choose button, and
+    /// its OWN `.fileImporter` (attached here, on a distinct view per row, so the
+    /// two importers never shadow each other). `onPick` receives the chosen URL
+    /// directly — no shared state to race on.
     private func filePickerRow(
         placeholder: String,
         path: String,
         systemImage: String,
-        choose: @escaping () -> Void
+        isPresented: Binding<Bool>,
+        allowedContentTypes: [UTType],
+        onPick: @escaping (URL) -> Void
     ) -> some View {
         HStack {
             Image(systemName: systemImage)
@@ -142,10 +131,19 @@ struct BuildView: View {
             Text(path.isEmpty ? placeholder : path)
                 .foregroundStyle(path.isEmpty ? .secondary : .primary)
                 .lineLimit(1)
-                .truncationMode(.head)
+                .truncationMode(.middle)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Button("Choose…", action: choose)
+            Button("Choose…") { isPresented.wrappedValue = true }
                 .disabled(isRunning)
+        }
+        .fileImporter(
+            isPresented: isPresented,
+            allowedContentTypes: allowedContentTypes,
+            allowsMultipleSelection: false
+        ) { result in
+            if case .success(let urls) = result, let url = urls.first {
+                onPick(url)
+            }
         }
     }
 
