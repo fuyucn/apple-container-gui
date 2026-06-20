@@ -151,6 +151,83 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     ]])
 }
 
+@Test func runWithSingleVolumeAppendsBindMountArgv() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 0, stdout: "id\n", stderr: ""))
+    let service = makeService(mock)
+
+    let spec = RunSpec(
+        image: "alpine:latest",
+        volumes: [VolumeMount(hostPath: "/Users/x/data", containerPath: "/data", readOnly: false)]
+    )
+    _ = try await service.run(spec)
+
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "run", "-d",
+        "-v", "/Users/x/data:/data",
+        "alpine:latest",
+    ]])
+}
+
+@Test func runWithReadOnlyVolumeAppendsRoSuffix() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 0, stdout: "id\n", stderr: ""))
+    let service = makeService(mock)
+
+    let spec = RunSpec(
+        image: "alpine:latest",
+        volumes: [VolumeMount(hostPath: "/Users/x/data", containerPath: "/data", readOnly: true)]
+    )
+    _ = try await service.run(spec)
+
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "run", "-d",
+        "-v", "/Users/x/data:/data:ro",
+        "alpine:latest",
+    ]])
+}
+
+@Test func runWithMultipleVolumesEachGetDashV() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 0, stdout: "id\n", stderr: ""))
+    let service = makeService(mock)
+
+    let spec = RunSpec(
+        image: "alpine:latest",
+        volumes: [
+            VolumeMount(hostPath: "/Users/x/data", containerPath: "/data", readOnly: false),
+            VolumeMount(hostPath: "/Users/x/cfg", containerPath: "/etc/app", readOnly: true),
+        ]
+    )
+    _ = try await service.run(spec)
+
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "run", "-d",
+        "-v", "/Users/x/data:/data",
+        "-v", "/Users/x/cfg:/etc/app:ro",
+        "alpine:latest",
+    ]])
+}
+
+@Test func runEmitsVolumesAfterEnvAndPortsBeforeImage() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 0, stdout: "id\n", stderr: ""))
+    let service = makeService(mock)
+
+    let spec = RunSpec(
+        image: "alpine:latest",
+        detached: false,
+        ports: [PortMapping(hostPort: 8080, containerPort: 80)],
+        env: ["FOO": "bar"],
+        volumes: [VolumeMount(hostPath: "/Users/x/data", containerPath: "/data")]
+    )
+    _ = try await service.run(spec)
+
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "run",
+        "-e", "FOO=bar",
+        "-p", "8080:80",
+        "-v", "/Users/x/data:/data",
+        "alpine:latest",
+    ]])
+}
+
 @Test func runThrowsCommandFailedOnNonZeroExit() async throws {
     let mock = MockCommandRunner(result: .init(exitCode: 125, stdout: "", stderr: "no such image"))
     let service = makeService(mock)

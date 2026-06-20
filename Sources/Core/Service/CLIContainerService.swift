@@ -79,6 +79,10 @@ public struct CLIContainerService: ContainerService {
         for port in spec.ports {
             args.append(contentsOf: ["-p", "\(port.hostPort):\(port.containerPort)"])
         }
+        for volume in spec.volumes {
+            let spec = "\(volume.hostPath):\(volume.containerPath)" + (volume.readOnly ? ":ro" : "")
+            args.append(contentsOf: ["-v", spec])
+        }
         if let cpus = spec.cpus { args.append(contentsOf: ["-c", String(cpus)]) }
         if let mem = spec.memoryMiB { args.append(contentsOf: ["-m", String(mem)]) }
         args.append(spec.image)

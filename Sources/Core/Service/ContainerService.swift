@@ -35,6 +35,21 @@ public struct PortMapping: Sendable, Equatable {
     }
 }
 
+/// A single bind-mount: maps an absolute `hostPath` to a `containerPath`
+/// (`-v host:container`, with `:ro` appended when `readOnly`). Lets stateful
+/// services persist to a host directory.
+public struct VolumeMount: Sendable, Equatable {
+    public let hostPath: String
+    public let containerPath: String
+    public let readOnly: Bool
+
+    public init(hostPath: String, containerPath: String, readOnly: Bool = false) {
+        self.hostPath = hostPath
+        self.containerPath = containerPath
+        self.readOnly = readOnly
+    }
+}
+
 /// Desired configuration for creating + running a new container, translated by
 /// `CLIContainerService.run` into `container run` argv. Only `image` is
 /// required; everything else is optional and omitted from argv when empty/nil.
@@ -50,6 +65,8 @@ public struct RunSpec: Sendable {
     /// Environment variables (`-e K=V`). Emitted in sorted key order so argv is
     /// deterministic.
     public let env: [String: String]
+    /// Bind mounts (`-v host:container[:ro]`). Emitted in the order supplied.
+    public let volumes: [VolumeMount]
     /// Optional command + args to run in the container, after the image.
     public let command: [String]
     /// Optional CPU count (`-c`).
@@ -63,6 +80,7 @@ public struct RunSpec: Sendable {
         detached: Bool = true,
         ports: [PortMapping] = [],
         env: [String: String] = [:],
+        volumes: [VolumeMount] = [],
         command: [String] = [],
         cpus: Int? = nil,
         memoryMiB: Int? = nil
@@ -72,6 +90,7 @@ public struct RunSpec: Sendable {
         self.detached = detached
         self.ports = ports
         self.env = env
+        self.volumes = volumes
         self.command = command
         self.cpus = cpus
         self.memoryMiB = memoryMiB

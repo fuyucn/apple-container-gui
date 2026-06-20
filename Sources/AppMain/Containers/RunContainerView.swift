@@ -32,7 +32,13 @@ struct RunContainerView: View {
     @State private var detached: Bool = true
     @State private var ports: [PortRow] = []
     @State private var envVars: [EnvRow] = []
+    @State private var volumes: [VolumeRow] = []
     @State private var command: String = ""
+
+    /// Index of the volume row whose host path the directory importer is filling,
+    /// or nil when the importer is closed. A single `.fileImporter` keyed by row
+    /// index avoids the "only one importer per view" limitation.
+    @State private var pickingVolumeIndex: Int?
 
     /// True while a run is in flight, to disable the form + show progress.
     @State private var isRunning = false
@@ -47,6 +53,7 @@ struct RunContainerView: View {
                 optionsSection
                 portsSection
                 envSection
+                volumesSection
                 commandSection
                 if let runError {
                     Section {
@@ -70,6 +77,21 @@ struct RunContainerView: View {
             }
             // Populate the image suggestion menu if a source was provided.
             await imagesViewModel?.refresh()
+        }
+        .fileImporter(
+            isPresented: Binding(
+                get: { pickingVolumeIndex != nil },
+                set: { if !$0 { pickingVolumeIndex = nil } }
+            ),
+            allowedContentTypes: [.folder]
+        ) { result in
+            defer { pickingVolumeIndex = nil }
+            guard
+                let index = pickingVolumeIndex,
+                volumes.indices.contains(index),
+                case let .success(url) = result
+            else { return }
+            volumes[index].host = url.path
         }
     }
 
@@ -160,6 +182,49 @@ struct RunContainerView: View {
         }
     }
 
+    private var volumesSection: some View {
+        Section {
+            ForEach(Array($volumes.enumerated()), id: \.element.id) { index, $row in
+                VStack(spacing: 6) {
+                    HStack {
+                        TextField("Host path (absolute)", text: $row.host)
+                            .textFieldStyle(.roundedBorder)
+                        Button {
+                            pickingVolumeIndex = index
+                        } label: {
+                            Image(systemName: "folder")
+                        }
+                        .buttonStyle(.borderless)
+                        .help("Choose a host directory")
+                    }
+                    HStack {
+                        Text(":")
+                        TextField("Container path", text: $row.container)
+                            .textFieldStyle(.roundedBorder)
+                        Toggle("Read-only", isOn: $row.readOnly)
+                            .toggleStyle(.checkbox)
+                            .fixedSize()
+                        Button(role: .destructive) {
+                            volumes.removeAll { $0.id == row.id }
+                        } label: {
+                            Image(systemName: "minus.circle.fill")
+                        }
+                        .buttonStyle(.borderless)
+                    }
+                }
+            }
+            Button {
+                volumes.append(VolumeRow())
+            } label: {
+                Label("Add Volume", systemImage: "plus")
+            }
+        } header: {
+            Text("Volumes")
+        } footer: {
+            Text("host-path : container-path — bind mounts for persistent data.")
+        }
+    }
+
     private var commandSection: some View {
         Section {
             TextField("Command (optional)", text: $command)
@@ -244,6 +309,13 @@ struct RunContainerView: View {
             return PortMapping(hostPort: host, containerPort: container)
         }
 
+        let mounts: [VolumeMount] = volumes.compactMap { row in
+            let host = row.host.trimmingCharacters(in: .whitespaces)
+            let container = row.container.trimmingCharacters(in: .whitespaces)
+            guard !host.isEmpty, !container.isEmpty else { return nil }
+            return VolumeMount(hostPath: host, containerPath: container, readOnly: row.readOnly)
+        }
+
         let commandParts = command
             .split(whereSeparator: \.isWhitespace)
             .map(String.init)
@@ -254,6 +326,7 @@ struct RunContainerView: View {
             detached: detached,
             ports: mappings,
             env: env,
+            volumes: mounts,
             command: commandParts
         )
     }
@@ -274,6 +347,14 @@ private struct EnvRow: Identifiable {
     let id = UUID()
     var key: String = ""
     var value: String = ""
+}
+
+/// One editable volume (bind-mount) row.
+private struct VolumeRow: Identifiable {
+    let id = UUID()
+    var host: String = ""
+    var container: String = ""
+    var readOnly: Bool = false
 }
 
 // MARK: - Preview
