@@ -46,11 +46,20 @@ struct BuildView: View {
         VStack(spacing: 0) {
             header
             Divider()
-            form
-            Divider()
-            logArea
-            Divider()
-            footer
+            // Side-by-side: configuration + action on the left, the build output
+            // console on the right, so the form stays fully visible while logs
+            // stream (a draggable divider lets the user rebalance).
+            HSplitView {
+                VStack(spacing: 0) {
+                    form
+                    Divider()
+                    footer
+                }
+                .frame(minWidth: 340, idealWidth: 400)
+
+                logArea
+                    .frame(minWidth: 320)
+            }
         }
         .navigationTitle("Build Image")
         // NOTE: deliberately no `.onDisappear { cancel() }`. The build runs in
@@ -144,7 +153,6 @@ struct BuildView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(maxHeight: 320)
     }
 
     /// One labelled picker row: an icon, a bold label with the chosen path (or a
