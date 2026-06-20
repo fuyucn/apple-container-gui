@@ -18,6 +18,15 @@ struct ImageListView: View {
     /// Whether the Pull Image sheet is presented.
     @State private var isPresentingPull = false
 
+    /// Whether the "Prune Unused" confirmation dialog is presented.
+    @State private var isConfirmingPrune = false
+
+    /// The image reference currently being tagged (drives the Tag sheet), or nil.
+    @State private var tagSource: ImageRef?
+
+    /// The image reference currently being pushed (drives the Push sheet), or nil.
+    @State private var pushReference: ImageRef?
+
     var body: some View {
         content
             .navigationTitle("Images")
@@ -32,14 +41,39 @@ struct ImageListView: View {
                 }
                 ToolbarItem {
                     Button {
+                        isConfirmingPrune = true
+                    } label: {
+                        Label("Prune Unused", systemImage: "trash.slash")
+                    }
+                }
+                ToolbarItem {
+                    Button {
                         isPresentingPull = true
                     } label: {
                         Label("Pull Image", systemImage: "plus")
                     }
                 }
             }
+            .confirmationDialog(
+                "Remove all unused images?",
+                isPresented: $isConfirmingPrune,
+                titleVisibility: .visible
+            ) {
+                Button("Prune Unused", role: .destructive) {
+                    Task { await viewModel.prune() }
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This deletes every image not referenced by a container. This cannot be undone.")
+            }
             .sheet(isPresented: $isPresentingPull) {
                 PullImageView(viewModel: viewModel)
+            }
+            .sheet(item: $tagSource) { source in
+                TagImageView(viewModel: viewModel, source: source.ref)
+            }
+            .sheet(item: $pushReference) { reference in
+                PushImageView(viewModel: viewModel, reference: reference.ref)
             }
             // Refresh both when the view first appears AND whenever it reappears
             // after a section switch. `.task` alone proved unreliable inside the
@@ -78,6 +112,17 @@ struct ImageListView: View {
     private func row(for image: ContainerImage) -> some View {
         ImageRow(image: image)
             .contextMenu {
+                Button {
+                    tagSource = ImageRef(ref: image.name)
+                } label: {
+                    Label("Tag…", systemImage: "tag")
+                }
+                Button {
+                    pushReference = ImageRef(ref: image.name)
+                } label: {
+                    Label("Push…", systemImage: "square.and.arrow.up")
+                }
+                Divider()
                 Button(role: .destructive) {
                     Task { await viewModel.removeImage(image.name) }
                 } label: {
@@ -92,6 +137,14 @@ struct ImageListView: View {
                 }
             }
     }
+}
+
+/// A wrapper making an image reference `Identifiable` so it can drive the
+/// `.sheet(item:)` presentations for Tag and Push (a per-row reference value,
+/// not an index). The reference string itself is the identity.
+private struct ImageRef: Identifiable {
+    let ref: String
+    var id: String { ref }
 }
 
 /// A single image row: repository (name without tag) as the headline, the tag as

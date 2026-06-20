@@ -15,6 +15,12 @@ public final class ImagesViewModel {
     /// Whether a pull is currently in progress.
     public private(set) var isPulling = false
 
+    /// Accumulated progress lines from the most recent `push`.
+    public private(set) var pushLog: [String] = []
+
+    /// Whether a push is currently in progress.
+    public private(set) var isPushing = false
+
     /// The most recent error surfaced by a refresh, action, or pull.
     public private(set) var lastError: String?
 
@@ -54,6 +60,48 @@ public final class ImagesViewModel {
             return try await service.imageConfig(ref)
         } catch {
             return ImageConfig()
+        }
+    }
+
+    /// Remove all unused images (`image prune`), then refresh.
+    public func prune() async {
+        do {
+            try await service.pruneImages()
+            lastError = nil
+        } catch {
+            lastError = String(describing: error)
+        }
+        await refresh()
+    }
+
+    /// Create a new reference `newRef` for the existing image `source`
+    /// (`image tag`), then refresh so the new tag appears.
+    public func tag(source: String, newRef: String) async {
+        do {
+            try await service.tagImage(source: source, newRef: newRef)
+            lastError = nil
+        } catch {
+            lastError = String(describing: error)
+        }
+        await refresh()
+    }
+
+    /// Push an image, accumulating each streamed progress line into `pushLog`.
+    /// Mirrors `pull`: clears the log, flips `isPushing`, and surfaces any error
+    /// via `lastError`. Does not refresh the local image list (a push does not
+    /// change it).
+    public func push(ref: String) async {
+        pushLog = []
+        isPushing = true
+        lastError = nil
+        defer { isPushing = false }
+
+        do {
+            for try await line in service.pushImage(ref) {
+                pushLog.append(line)
+            }
+        } catch {
+            lastError = String(describing: error)
         }
     }
 

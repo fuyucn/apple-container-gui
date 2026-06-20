@@ -143,6 +143,16 @@ public protocol ContainerService: Sendable {
     /// Delete an image by reference (or id/digest).
     func removeImage(_ id: String) async throws
 
+    /// Remove all unused (dangling) images (`image prune`).
+    func pruneImages() async throws
+
+    /// Create a new reference `newRef` for the existing image `source`
+    /// (`image tag <source> <newRef>`).
+    func tagImage(source: String, newRef: String) async throws
+
+    /// Push an image by reference, streaming progress lines as they arrive.
+    func pushImage(_ ref: String) -> AsyncThrowingStream<String, Error>
+
     /// All volumes via `volume list --format json`.
     func listVolumes() async throws -> [ContainerVolume]
 

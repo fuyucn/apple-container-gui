@@ -33,6 +33,18 @@ enum ImagePreviewData {
         ])
     }
 
+    /// A service whose `pushImage` stream yields a few canned progress lines
+    /// then finishes — drives the `PushImageView` progress preview. (Reuses the
+    /// `pullLines` seam, which `ImagePreviewService.pushImage` streams too.)
+    static var pushingService: any ContainerService {
+        ImagePreviewService(images: images, pullLines: [
+            "Pushing docker.io/library/redis:alpine",
+            "Pushing layer sha256:abc123… 12.4 MB",
+            "Pushing layer sha256:def456… 3.1 MB",
+            "Done.",
+        ])
+    }
+
     // MARK: - JSON
 
     private static let alpineJSON = """
@@ -113,6 +125,15 @@ private struct ImagePreviewService: ContainerService {
         }
     }
     func removeImage(_ id: String) async throws {}
+    func pruneImages() async throws {}
+    func tagImage(source: String, newRef: String) async throws {}
+    func pushImage(_ ref: String) -> AsyncThrowingStream<String, Error> {
+        let lines = pullLines
+        return AsyncThrowingStream { continuation in
+            for line in lines { continuation.yield(line) }
+            continuation.finish()
+        }
+    }
     func listVolumes() async throws -> [ContainerVolume] { [] }
     func createVolume(name: String, size: String?, labels: [String: String]) async throws {}
     func removeVolume(_ name: String) async throws {}

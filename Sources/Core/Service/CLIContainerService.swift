@@ -128,6 +128,18 @@ public struct CLIContainerService: ContainerService {
         stream(["image", "pull", ref])
     }
 
+    public func pruneImages() async throws {
+        _ = try await runChecked(["image", "prune"])
+    }
+
+    public func tagImage(source: String, newRef: String) async throws {
+        _ = try await runChecked(["image", "tag", source, newRef])
+    }
+
+    public func pushImage(_ ref: String) -> AsyncThrowingStream<String, Error> {
+        stream(["image", "push", ref])
+    }
+
     // MARK: - Volumes
 
     public func listVolumes() async throws -> [ContainerVolume] {

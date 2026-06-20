@@ -330,6 +330,68 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     }
 }
 
+@Test func pruneImagesInvokesExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.pruneImages()
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "image", "prune"]])
+}
+
+@Test func pruneImagesThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "prune failed"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("prune failed")) {
+        try await service.pruneImages()
+    }
+}
+
+@Test func tagImageInvokesExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.tagImage(source: "alpine:latest", newRef: "registry.local/alpine:pinned")
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "image", "tag",
+        "alpine:latest", "registry.local/alpine:pinned",
+    ]])
+}
+
+@Test func tagImageThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "no such image"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("no such image")) {
+        try await service.tagImage(source: "ghost", newRef: "ghost:tagged")
+    }
+}
+
+@Test func pushImageStreamYieldsProgressInOrderWithArgv() async throws {
+    let mock = MockCommandRunner(streamLines: ["Pushing layer", "Pushing 50%", "Pushed"])
+    let service = makeService(mock)
+
+    var received: [String] = []
+    for try await line in service.pushImage("registry.local/alpine:pinned") {
+        received.append(line)
+    }
+
+    #expect(received == ["Pushing layer", "Pushing 50%", "Pushed"])
+    #expect(mock.calls == [["/opt/homebrew/bin/container", "image", "push", "registry.local/alpine:pinned"]])
+}
+
+@Test func pushImageStreamErrorPathSurfaces() async throws {
+    let mock = MockCommandRunner(
+        streamLines: ["Pushing layer"],
+        streamError: ContainerError.commandFailed("denied")
+    )
+    let service = makeService(mock)
+
+    var received: [String] = []
+    await #expect(throws: ContainerError.commandFailed("denied")) {
+        for try await line in service.pushImage("registry.local/alpine:pinned") {
+            received.append(line)
+        }
+    }
+    #expect(received == ["Pushing layer"])
+}
+
 // MARK: - Volumes
 
 @Test func listVolumesInvokesExactArgvAndDecodes() async throws {

@@ -88,6 +88,9 @@ private struct NetworkPreviewService: ContainerService {
         AsyncThrowingStream { $0.finish() }
     }
     func removeImage(_ id: String) async throws {}
+    func pruneImages() async throws {}
+    func tagImage(source: String, newRef: String) async throws {}
+    func pushImage(_ ref: String) -> AsyncThrowingStream<String, Error> { AsyncThrowingStream { $0.finish() } }
     func listVolumes() async throws -> [ContainerVolume] { [] }
     func createVolume(name: String, size: String?, labels: [String: String]) async throws {}
     func removeVolume(_ name: String) async throws {}

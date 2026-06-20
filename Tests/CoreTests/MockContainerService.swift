@@ -47,6 +47,9 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _createdNetworks: [(name: String, isInternal: Bool, subnet: String?, labels: [String: String])] = []
     private var _removedNetworkNames: [String] = []
     private var _pulledRefs: [String] = []
+    private var _pruneImagesCount = 0
+    private var _tagImageCalls: [(source: String, newRef: String)] = []
+    private var _pushedRefs: [String] = []
     private var _imageConfigRefs: [String] = []
     private var _buildInvocations: [(dockerfile: String, context: String, tag: String)] = []
     private var _logsInvocations: [(id: String, follow: Bool)] = []
@@ -107,6 +110,9 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var createNetworkCalls: [(name: String, isInternal: Bool, subnet: String?, labels: [String: String])] { withLock { _createdNetworks } }
     var removeNetworkCalls: [String] { withLock { _removedNetworkNames } }
     var pullCalls: [String] { withLock { _pulledRefs } }
+    var pruneImagesCalls: Int { withLock { _pruneImagesCount } }
+    var tagImageCalls: [(source: String, newRef: String)] { withLock { _tagImageCalls } }
+    var pushCalls: [String] { withLock { _pushedRefs } }
     var imageConfigCalls: [String] { withLock { _imageConfigRefs } }
     var buildInvocations: [(dockerfile: String, context: String, tag: String)] { withLock { _buildInvocations } }
     var logsInvocations: [(id: String, follow: Bool)] { withLock { _logsInvocations } }
@@ -162,6 +168,21 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     func removeImage(_ id: String) async throws {
         if let e = throwOnAction { throw e }
         withLock { _removedImageIDs.append(id) }
+    }
+
+    func pruneImages() async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _pruneImagesCount += 1 }
+    }
+
+    func tagImage(source: String, newRef: String) async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _tagImageCalls.append((source, newRef)) }
+    }
+
+    func pushImage(_ ref: String) -> AsyncThrowingStream<String, Error> {
+        withLock { _pushedRefs.append(ref) }
+        return makeStream()
     }
 
     func listVolumes() async throws -> [ContainerVolume] {
