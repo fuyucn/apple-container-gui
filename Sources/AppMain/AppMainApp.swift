@@ -21,6 +21,7 @@ struct AppMainApp: App {
     @State private var containersViewModel: ContainersViewModel
     @State private var imagesViewModel: ImagesViewModel
     @State private var volumesViewModel: VolumesViewModel
+    @State private var networksViewModel: NetworksViewModel
     @State private var appViewModel: AppViewModel
     @State private var logsViewModel: LogsViewModel
     @State private var buildViewModel: BuildViewModel
@@ -45,6 +46,7 @@ struct AppMainApp: App {
         _containersViewModel = State(initialValue: ContainersViewModel(service: service))
         _imagesViewModel = State(initialValue: ImagesViewModel(service: service))
         _volumesViewModel = State(initialValue: VolumesViewModel(service: service))
+        _networksViewModel = State(initialValue: NetworksViewModel(service: service))
         _appViewModel = State(initialValue: AppViewModel(service: service))
         _logsViewModel = State(initialValue: LogsViewModel(service: service))
         _buildViewModel = State(initialValue: BuildViewModel(service: service))
@@ -60,6 +62,7 @@ struct AppMainApp: App {
                 containersViewModel: containersViewModel,
                 imagesViewModel: imagesViewModel,
                 volumesViewModel: volumesViewModel,
+                networksViewModel: networksViewModel,
                 appViewModel: appViewModel,
                 logsViewModel: logsViewModel,
                 buildViewModel: buildViewModel,
@@ -131,6 +134,7 @@ private struct RootGateView: View {
     @Bindable var containersViewModel: ContainersViewModel
     @Bindable var imagesViewModel: ImagesViewModel
     @Bindable var volumesViewModel: VolumesViewModel
+    @Bindable var networksViewModel: NetworksViewModel
     @Bindable var appViewModel: AppViewModel
     @Bindable var logsViewModel: LogsViewModel
     @Bindable var buildViewModel: BuildViewModel
@@ -144,6 +148,7 @@ private struct RootGateView: View {
                     containersViewModel: containersViewModel,
                     imagesViewModel: imagesViewModel,
                     volumesViewModel: volumesViewModel,
+                    networksViewModel: networksViewModel,
                     appViewModel: appViewModel,
                     logsViewModel: logsViewModel,
                     buildViewModel: buildViewModel,

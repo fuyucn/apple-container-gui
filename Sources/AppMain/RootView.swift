@@ -8,6 +8,7 @@ enum SidebarSection: String, Identifiable, CaseIterable {
     case containers
     case images
     case volumes
+    case networks
     case build
     case settings
 
@@ -19,6 +20,7 @@ enum SidebarSection: String, Identifiable, CaseIterable {
         case .containers: return "Containers"
         case .images: return "Images"
         case .volumes: return "Volumes"
+        case .networks: return "Networks"
         case .build: return "Build"
         case .settings: return "Settings"
         }
@@ -30,6 +32,7 @@ enum SidebarSection: String, Identifiable, CaseIterable {
         case .containers: return "shippingbox"
         case .images: return "square.stack.3d.up"
         case .volumes: return "externaldrive"
+        case .networks: return "network"
         case .build: return "hammer"
         case .settings: return "gearshape"
         }
@@ -48,7 +51,7 @@ enum SidebarGroup: String, Identifiable, CaseIterable {
     var sections: [SidebarSection] {
         switch self {
         case .general: return [.activityMonitor]
-        case .resources: return [.containers, .images, .volumes, .build, .settings]
+        case .resources: return [.containers, .images, .volumes, .networks, .build, .settings]
         }
     }
 }
@@ -73,6 +76,9 @@ struct RootView: View {
 
     /// View model driving the Volumes section.
     @Bindable var volumesViewModel: VolumesViewModel
+
+    /// View model driving the Networks section.
+    @Bindable var networksViewModel: NetworksViewModel
 
     /// App-level daemon state (also surfaced in the menu bar).
     @Bindable var appViewModel: AppViewModel
@@ -140,6 +146,8 @@ struct RootView: View {
             ImageListView(viewModel: imagesViewModel)
         case .volumes:
             VolumeListView(viewModel: volumesViewModel)
+        case .networks:
+            NetworkListView(viewModel: networksViewModel)
         case .build:
             BuildView(
                 viewModel: buildViewModel,
@@ -243,6 +251,7 @@ private struct PreviewEmptyService: ContainerService {
         containersViewModel: ContainersViewModel(service: service),
         imagesViewModel: ImagesViewModel(service: service),
         volumesViewModel: VolumesViewModel(service: service),
+        networksViewModel: NetworksViewModel(service: service),
         appViewModel: AppViewModel(service: service),
         logsViewModel: LogsViewModel(service: service),
         buildViewModel: BuildViewModel(service: service),
