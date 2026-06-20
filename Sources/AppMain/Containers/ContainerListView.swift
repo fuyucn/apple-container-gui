@@ -29,14 +29,104 @@ struct ContainerListView: View {
     /// Whether the "Prune Stopped" confirmation dialog is presented.
     @State private var isConfirmingPrune = false
 
+    /// Search text; filters the list by container name (id) or image reference,
+    /// case-insensitive. Empty means no name/image filtering. View-local — pure
+    /// presentation, no Core change.
+    @State private var searchText = ""
+
+    /// Which containers to show: only running, or all (running + stopped). The
+    /// view model already lists `--all`; this filters client-side.
+    @State private var scope: ListScope = .all
+
+    /// How to order the visible containers.
+    @State private var sortOrder: ListSort = .name
+
     /// How often to poll the runtime while this view is on screen.
     private let pollInterval: Duration = .seconds(3)
+
+    /// Visibility filter applied client-side over `viewModel.containers`.
+    private enum ListScope: String, CaseIterable, Identifiable {
+        case running = "Running"
+        case all = "All"
+        var id: Self { self }
+    }
+
+    /// Sort key for the visible containers.
+    private enum ListSort: String, CaseIterable, Identifiable {
+        case name = "Name"
+        case state = "State"
+        case created = "Created"
+        var id: Self { self }
+        var label: String { "Sort by \(rawValue)" }
+    }
+
+    /// `viewModel.containers` after applying the scope toggle, the search text
+    /// and the chosen sort order. Pure presentation: derives a new array, never
+    /// mutates the model. Recomputed on each render from observed state.
+    private var visibleContainers: [Container] {
+        let scoped = viewModel.containers.filter { container in
+            scope == .all || container.state == .running
+        }
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let filtered = query.isEmpty
+            ? scoped
+            : scoped.filter { container in
+                container.id.localizedCaseInsensitiveContains(query)
+                    || container.imageReference.localizedCaseInsensitiveContains(query)
+            }
+        return filtered.sorted(by: ordering)
+    }
+
+    /// Comparator for `sortOrder`. Name and image use a localized,
+    /// case-insensitive compare; state groups Running first then Stopped/Unknown;
+    /// created sorts newest first by the runtime's `startedDate` string
+    /// (ISO8601 sorts correctly lexically; missing dates sort last).
+    private func ordering(_ a: Container, _ b: Container) -> Bool {
+        switch sortOrder {
+        case .name:
+            return a.id.localizedCaseInsensitiveCompare(b.id) == .orderedAscending
+        case .state:
+            let rankA = stateRank(a.state), rankB = stateRank(b.state)
+            if rankA != rankB { return rankA < rankB }
+            return a.id.localizedCaseInsensitiveCompare(b.id) == .orderedAscending
+        case .created:
+            let dateA = a.status.startedDate ?? ""
+            let dateB = b.status.startedDate ?? ""
+            if dateA != dateB { return dateA > dateB }
+            return a.id.localizedCaseInsensitiveCompare(b.id) == .orderedAscending
+        }
+    }
+
+    /// Sort rank for `.state`: Running before everything else.
+    private func stateRank(_ state: RunState) -> Int {
+        switch state {
+        case .running: return 0
+        case .stopped: return 1
+        case .unknown: return 2
+        }
+    }
 
     var body: some View {
         content
             .navigationTitle("Containers")
             .frame(minWidth: 280)
+            .searchable(text: $searchText, placement: .sidebar, prompt: "Filter by name or image")
             .toolbar {
+                ToolbarItem {
+                    Picker("Show", selection: $scope) {
+                        ForEach(ListScope.allCases) { Text($0.rawValue).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                ToolbarItem {
+                    Menu {
+                        Picker("Sort", selection: $sortOrder) {
+                            ForEach(ListSort.allCases) { Text($0.label).tag($0) }
+                        }
+                    } label: {
+                        Label("Sort", systemImage: "arrow.up.arrow.down")
+                    }
+                }
                 ToolbarItem {
                     Button {
                         Task { await viewModel.refresh() }
@@ -104,10 +194,12 @@ struct ContainerListView: View {
     private var content: some View {
         if viewModel.containers.isEmpty {
             emptyState
+        } else if visibleContainers.isEmpty {
+            noMatchesState
         } else {
             List(selection: $selectedID) {
-                let running = viewModel.containers.filter { $0.state == .running }
-                let stopped = viewModel.containers.filter { $0.state != .running }
+                let running = visibleContainers.filter { $0.state == .running }
+                let stopped = visibleContainers.filter { $0.state != .running }
 
                 if !running.isEmpty {
                     Section("Running") {
@@ -134,6 +226,21 @@ struct ContainerListView: View {
                 viewModel.lastError == nil
                     ? "No containers to show yet."
                     : "Could not reach the container runtime. Make sure the service is running."
+            )
+        )
+    }
+
+    /// Shown when there *are* containers but the current search/scope hides them
+    /// all — distinct from the no-containers state so the user knows the filter,
+    /// not the runtime, is responsible.
+    private var noMatchesState: some View {
+        ContentUnavailableView(
+            "No Matches",
+            systemImage: "line.3.horizontal.decrease.circle",
+            description: Text(
+                searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    ? "No containers match the current filter."
+                    : "No containers match “\(searchText)”."
             )
         )
     }
