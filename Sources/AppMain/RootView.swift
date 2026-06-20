@@ -7,6 +7,7 @@ enum SidebarSection: String, Identifiable, CaseIterable {
     case activityMonitor
     case containers
     case images
+    case volumes
     case build
     case settings
 
@@ -17,6 +18,7 @@ enum SidebarSection: String, Identifiable, CaseIterable {
         case .activityMonitor: return "Activity Monitor"
         case .containers: return "Containers"
         case .images: return "Images"
+        case .volumes: return "Volumes"
         case .build: return "Build"
         case .settings: return "Settings"
         }
@@ -27,6 +29,7 @@ enum SidebarSection: String, Identifiable, CaseIterable {
         case .activityMonitor: return "chart.line.uptrend.xyaxis"
         case .containers: return "shippingbox"
         case .images: return "square.stack.3d.up"
+        case .volumes: return "externaldrive"
         case .build: return "hammer"
         case .settings: return "gearshape"
         }
@@ -45,7 +48,7 @@ enum SidebarGroup: String, Identifiable, CaseIterable {
     var sections: [SidebarSection] {
         switch self {
         case .general: return [.activityMonitor]
-        case .resources: return [.containers, .images, .build, .settings]
+        case .resources: return [.containers, .images, .volumes, .build, .settings]
         }
     }
 }
@@ -67,6 +70,9 @@ struct RootView: View {
 
     /// View model supplying local images to the Run form's image picker.
     @Bindable var imagesViewModel: ImagesViewModel
+
+    /// View model driving the Volumes section.
+    @Bindable var volumesViewModel: VolumesViewModel
 
     /// App-level daemon state (also surfaced in the menu bar).
     @Bindable var appViewModel: AppViewModel
@@ -132,6 +138,8 @@ struct RootView: View {
             containersSection
         case .images:
             ImageListView(viewModel: imagesViewModel)
+        case .volumes:
+            VolumeListView(viewModel: volumesViewModel)
         case .build:
             BuildView(
                 viewModel: buildViewModel,
@@ -231,6 +239,7 @@ private struct PreviewEmptyService: ContainerService {
     return RootView(
         containersViewModel: ContainersViewModel(service: service),
         imagesViewModel: ImagesViewModel(service: service),
+        volumesViewModel: VolumesViewModel(service: service),
         appViewModel: AppViewModel(service: service),
         logsViewModel: LogsViewModel(service: service),
         buildViewModel: BuildViewModel(service: service),
