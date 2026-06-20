@@ -64,6 +64,14 @@ struct BuildView: View {
                 initialImage: viewModel.builtImageTag
             )
         }
+        // A finished build produces a new image; refresh the shared images view
+        // model so the Images section reflects it immediately (it's the same
+        // instance shown there).
+        .onChange(of: viewModel.status) { _, newStatus in
+            if newStatus == .succeeded {
+                Task { await imagesViewModel.refresh() }
+            }
+        }
     }
 
     // MARK: - Header
