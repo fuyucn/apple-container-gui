@@ -49,6 +49,41 @@ private enum FixtureError: Error { case notFound(String) }
     #expect(c.configuration.networks.compactMap(\.network) == ["default"])
 }
 
+/// The live `container list --all --format json` (v1.0.0) emits
+/// `configuration.publishedPorts` as objects with host/container port pairs plus
+/// extra keys (`count`, `hostAddress`, `proto`). The model must decode the pairs
+/// leniently and surface them via the `publishedPorts` accessor.
+@Test func decodesPublishedPortsFromLiveFixture() throws {
+    let data = try loadFixture("container-list-live.json")
+    let containers = try JSONDecoder().decode([Container].self, from: data)
+
+    let c = try #require(containers.first { $0.id == "acg-demo-web" })
+    let ports = c.publishedPorts
+    #expect(ports.count == 1)
+    let p = try #require(ports.first)
+    #expect(p.hostPort == 8080)
+    #expect(p.containerPort == 80)
+}
+
+/// A container with no published ports (the `container-list.json` fixture has an
+/// empty `publishedPorts` array) surfaces an empty list, not nil.
+@Test func decodesEmptyPublishedPorts() throws {
+    let data = try loadFixture("container-list.json")
+    let containers = try JSONDecoder().decode([Container].self, from: data)
+    let c = try #require(containers.first)
+    #expect(c.publishedPorts.isEmpty)
+}
+
+/// A container whose JSON omits `publishedPorts` entirely (older/leaner shape)
+/// must still decode, surfacing an empty list.
+@Test func toleratesMissingPublishedPorts() throws {
+    let json = """
+    [{"id":"x","configuration":{"image":{"reference":"r","descriptor":{"digest":"d","mediaType":"m","size":1}},"resources":{"cpus":1,"memoryInBytes":2},"platform":{"architecture":"arm64","os":"linux"},"networks":[]},"status":{"state":"running","networks":[]}}]
+    """.data(using: .utf8)!
+    let containers = try JSONDecoder().decode([Container].self, from: json)
+    #expect(containers.first?.publishedPorts.isEmpty == true)
+}
+
 @Test func unknownContainerStateDecodesToUnknown() throws {
     let json = """
     [{"id":"x","configuration":{"image":{"reference":"r","descriptor":{"digest":"d","mediaType":"m","size":1}},"resources":{"cpus":1,"memoryInBytes":2},"platform":{"architecture":"arm64","os":"linux"},"networks":[]},"status":{"state":"weird-future-state","networks":[]}}]

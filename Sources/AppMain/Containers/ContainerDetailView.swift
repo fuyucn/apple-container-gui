@@ -138,6 +138,16 @@ struct ContainerDetailView: View {
                 )
             }
 
+            if container.state == .running && !container.publishedPorts.isEmpty {
+                Section("Published Ports") {
+                    ForEach(container.publishedPorts, id: \.hostPort) { port in
+                        LabeledContent("\(port.hostPort) → \(port.containerPort)") {
+                            Link("localhost:\(port.hostPort)", destination: URL(string: "http://localhost:\(port.hostPort)")!)
+                        }
+                    }
+                }
+            }
+
             Section("Networks") {
                 if container.status.networks.isEmpty {
                     Text("No active interfaces.")

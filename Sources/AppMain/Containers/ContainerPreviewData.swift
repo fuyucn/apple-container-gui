@@ -38,7 +38,8 @@ enum ContainerPreviewData {
         },
         "resources": { "cpus": 4, "memoryInBytes": 2147483648 },
         "platform": { "architecture": "arm64", "os": "linux" },
-        "networks": [ { "network": "default" } ]
+        "networks": [ { "network": "default" } ],
+        "publishedPorts": [ { "hostPort": 8080, "containerPort": 80, "hostAddress": "0.0.0.0", "proto": "tcp", "count": 1 } ]
       },
       "status": {
         "state": "running",
