@@ -10,23 +10,30 @@ The app shells out to the real `container` CLI and parses its `--format json` ou
 
 ## Screenshots
 
-> Screenshots are placeholders. Run the app and drop real captures into `docs/screenshots/`, then update the links below.
+> **Maintainer note:** capture the screens below into `docs/screenshots/` to
+> populate this section. Easiest way — run, focus the app, then for each view:
+> `screencapture -w docs/screenshots/<name>.png` (click the window when the
+> camera cursor appears), or press `⌘⇧4` then `Space` and click the window.
 
-| Containers | Container detail (Logs) | Images |
+| Containers | Images | Build |
 | --- | --- | --- |
-| ![Containers list](docs/screenshots/containers.png) | ![Container detail with live logs](docs/screenshots/detail-logs.png) | ![Images list](docs/screenshots/images.png) |
+| ![Containers](docs/screenshots/containers.png) | ![Images](docs/screenshots/images.png) | ![Build](docs/screenshots/build.png) |
 
-| In-app terminal | Setup (full-auto install) |
-| --- | --- |
-| ![In-app terminal](docs/screenshots/terminal.png) | ![Setup flow](docs/screenshots/setup.png) |
+| Container detail (Logs / Terminal) | Activity Monitor | Settings |
+| --- | --- | --- |
+| ![Container detail](docs/screenshots/detail.png) | ![Activity Monitor](docs/screenshots/activity.png) | ![Settings](docs/screenshots/settings.png) |
 
 ## Features
 
-- **Containers** — list, create/run, start, stop, and delete containers.
-- **Tabbed container detail** — Details, live streaming **Logs**, and JSON **Inspect**, plus an in-app interactive **Terminal** attached to the container.
-- **Images** — list local images and **pull** new ones.
-- **Build** — build images from a Dockerfile/context.
-- **Daemon control** — start the `container` daemon and surface its status.
+- **Containers** — searchable/sortable list (running/all); create & run (image, name, ports, env, volumes, CPU/memory, command, plus an Advanced section: `--rm`, `--read-only`, `--init`, user, workdir, entrypoint, labels, env-file, cap-add/drop, network, platform); start, graceful **stop** (custom signal + timeout), force **kill** (signal picker), **delete** (graceful / force / delete-all), **prune** stopped, **export** filesystem to tar, and **copy files** in/out (`cp`).
+- **Tabbed container detail** — **Details** (with clickable published ports that open in the browser), live streaming **Logs** (tail-N selector + VM boot log), JSON **Inspect**, and an interactive **Terminal** (`exec -i -t`).
+- **Images** — master-detail list grouped **In Use / Idle / Dangling** with total size; **pull** (streamed), **delete**, **prune**, **tag**, **push** (streamed), **save**/**load** tar; per-image detail with **Info** (config, env, platform) and a **Terminal** debug shell; context menu (Copy Tag/ID, Export, Debug Shell, …).
+- **Build** — pick a Dockerfile + context with an auto-suggested editable tag; side-by-side streamed build log; an Advanced section (`--build-arg`, `--target`, `--no-cache`, `--pull`, labels, platform, CPU/memory); **Run the built image** in one click.
+- **Volumes** — list, create (size, labels), delete, prune.
+- **Networks** — list, create (internal, subnet), delete (the builtin `default` is protected).
+- **Activity Monitor** — live per-container CPU% / memory / network / disk table with Swift Charts sparklines.
+- **Settings** — appearance (theme), confirm-before-delete, Activity Monitor poll interval, default Run resources, a **Disk Usage** panel (per-category size + reclaim/prune), a **System** pane (daemon start/stop + version, builder lifecycle, read-only VM resources), and a `container` binary-path override.
+- **Menu bar** — daemon status dot + Start Service.
 - **Guided setup** — a launch-time readiness check gates the app:
   - *Semi-auto:* detects a missing binary or stopped daemon and offers to start the daemon / points you at install instructions.
   - *Full-auto:* downloads the latest signed installer `.pkg` (with progress), verifies its digest and code signature against a pinned Apple Team ID, installs it, starts the daemon, and re-checks until ready.
