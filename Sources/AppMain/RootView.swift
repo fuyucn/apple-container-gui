@@ -138,7 +138,7 @@ struct RootView: View {
             .frame(minWidth: 180)
         } detail: {
             sectionView(for: selection)
-                .frame(minWidth: 480, minHeight: 360)
+                .frame(minWidth: 480, maxWidth: .infinity, minHeight: 360, maxHeight: .infinity, alignment: .top)
         }
         .preferredColorScheme(preferredScheme)
         .task {

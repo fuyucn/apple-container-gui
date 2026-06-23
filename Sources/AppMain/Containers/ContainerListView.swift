@@ -123,7 +123,7 @@ struct ContainerListView: View {
         content
             .navigationTitle("Containers")
             .frame(minWidth: 280)
-            .searchable(text: $searchText, placement: .sidebar, prompt: "Filter by name or image")
+            .searchable(text: $searchText, placement: .automatic, prompt: "Filter by name or image")
             .toolbar {
                 ToolbarItem {
                     Picker("Show", selection: $scope) {

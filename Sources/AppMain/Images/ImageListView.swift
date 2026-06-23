@@ -71,7 +71,7 @@ struct ImageListView: View {
         content
             .navigationTitle("Images")
             .frame(minWidth: 280)
-            .searchable(text: $searchText, placement: .sidebar, prompt: "Filter by name")
+            .searchable(text: $searchText, placement: .automatic, prompt: "Filter by name")
             .toolbar {
                 ToolbarItem {
                     Menu {
