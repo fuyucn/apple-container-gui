@@ -99,6 +99,15 @@ struct RootView: View {
     /// the `container exec` invocation from Core.
     let service: any ContainerService
 
+    /// Persisted app preferences, injected from `AppMainApp`. Drives the
+    /// Settings pane, the window color scheme, the Activity Monitor poll cadence,
+    /// the Run sheet defaults, and the confirm-before-delete gating.
+    @Bindable var settings: AppSettings
+
+    /// The `container` binary path the app resolved at launch (composed in
+    /// `AppMainApp`), shown read-only in Settings' Advanced section.
+    let resolvedBinaryPath: String?
+
     @State private var selection: SidebarSection? = .containers
 
     /// Selected container id, driving the detail column for the Containers
@@ -128,10 +137,21 @@ struct RootView: View {
             sectionView(for: selection)
                 .frame(minWidth: 480, minHeight: 360)
         }
+        .preferredColorScheme(preferredScheme)
         .task {
             // Surface daemon status as soon as the window appears so the menu
             // bar dot and any empty states reflect reality.
             await appViewModel.refreshDaemonStatus()
+        }
+    }
+
+    /// The SwiftUI `ColorScheme` to force on the window content, or `nil` to
+    /// defer to the system appearance.
+    private var preferredScheme: ColorScheme? {
+        switch settings.colorScheme {
+        case .system: return nil
+        case .light: return .light
+        case .dark: return .dark
         }
     }
 
@@ -144,7 +164,10 @@ struct RootView: View {
     private func sectionView(for section: SidebarSection?) -> some View {
         switch section {
         case .activityMonitor:
-            ActivityMonitorView(viewModel: activityMonitorViewModel)
+            ActivityMonitorView(
+                viewModel: activityMonitorViewModel,
+                pollInterval: .seconds(settings.activityPollIntervalSeconds)
+            )
         case .containers:
             containersSection
         case .images:
@@ -160,11 +183,7 @@ struct RootView: View {
                 imagesViewModel: imagesViewModel
             )
         case .settings:
-            ContentUnavailableView(
-                "Settings",
-                systemImage: SidebarSection.settings.systemImage,
-                description: Text("Settings arrive in a later milestone.")
-            )
+            SettingsView(settings: settings, resolvedBinaryPath: resolvedBinaryPath)
         case nil:
             ContentUnavailableView(
                 "Select a section",
@@ -181,6 +200,7 @@ struct RootView: View {
             ContainerListView(
                 viewModel: containersViewModel,
                 imagesViewModel: imagesViewModel,
+                settings: settings,
                 selectedID: $selectedContainerID
             )
             .frame(minWidth: 280, idealWidth: 340)
@@ -208,7 +228,8 @@ struct RootView: View {
             ImageListView(
                 viewModel: imagesViewModel,
                 selectedID: $selectedImageID,
-                service: service
+                service: service,
+                settings: settings
             )
             .frame(minWidth: 280, idealWidth: 340)
 
@@ -302,7 +323,9 @@ private struct PreviewEmptyService: ContainerService {
         logsViewModel: LogsViewModel(service: service),
         buildViewModel: BuildViewModel(service: service),
         activityMonitorViewModel: ActivityMonitorViewModel(service: service),
-        service: service
+        service: service,
+        settings: AppSettings(defaults: UserDefaults(suiteName: "preview.root")!),
+        resolvedBinaryPath: "/opt/homebrew/opt/container/bin/container"
     )
 }
 #endif

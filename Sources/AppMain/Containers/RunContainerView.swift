@@ -19,6 +19,10 @@ struct RunContainerView: View {
     /// empty) the image field is plain free text.
     var imagesViewModel: ImagesViewModel?
 
+    /// App preferences, used to prefill the CPU/memory fields with the user's
+    /// configured defaults on first appearance.
+    var settings: AppSettings?
+
     /// Optional image reference to prefill the image field with (e.g. a freshly
     /// built tag), seeded into `image` on first appearance when it is still empty.
     var initialImage: String? = nil
@@ -34,6 +38,8 @@ struct RunContainerView: View {
     @State private var envVars: [EnvRow] = []
     @State private var volumes: [VolumeRow] = []
     @State private var command: String = ""
+    @State private var cpus: Int?
+    @State private var memoryMiB: Int?
 
     /// Index of the volume row whose host path the directory importer is filling,
     /// or nil when the importer is closed. A single `.fileImporter` keyed by row
@@ -55,6 +61,7 @@ struct RunContainerView: View {
             Form {
                 imageSection
                 optionsSection
+                resourcesSection
                 portsSection
                 envSection
                 volumesSection
@@ -78,6 +85,13 @@ struct RunContainerView: View {
             // already typed something, so reopening never clobbers input.
             if image.isEmpty, let initialImage, !initialImage.isEmpty {
                 image = initialImage
+            }
+            // Seed CPU/memory from the user's configured defaults, only when the
+            // user has not already entered a value (and only before the one-time
+            // prefill has run, so reopening never re-seeds).
+            if !didPrefill, let settings {
+                if cpus == nil { cpus = settings.defaultRunCPUs }
+                if memoryMiB == nil { memoryMiB = settings.defaultRunMemoryMiB }
             }
             // Populate the image suggestion menu if a source was provided.
             await imagesViewModel?.refresh()
@@ -128,6 +142,27 @@ struct RunContainerView: View {
             TextField("Name (optional)", text: $name)
                 .textFieldStyle(.roundedBorder)
             Toggle("Run detached", isOn: $detached)
+        }
+    }
+
+    private var resourcesSection: some View {
+        Section {
+            LabeledContent("CPUs") {
+                TextField("auto", value: $cpus, format: .number)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(maxWidth: 120)
+                    .multilineTextAlignment(.trailing)
+            }
+            LabeledContent("Memory (MiB)") {
+                TextField("auto", value: $memoryMiB, format: .number)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(maxWidth: 120)
+                    .multilineTextAlignment(.trailing)
+            }
+        } header: {
+            Text("Resources")
+        } footer: {
+            Text("Leave blank to let the runtime decide. Prefilled from Settings defaults.")
         }
     }
 
@@ -366,7 +401,9 @@ struct RunContainerView: View {
             ports: mappings,
             env: env,
             volumes: mounts,
-            command: commandParts
+            command: commandParts,
+            cpus: cpus,
+            memoryMiB: memoryMiB
         )
     }
 }

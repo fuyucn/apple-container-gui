@@ -15,8 +15,9 @@ import Core
 struct ActivityMonitorView: View {
     @Bindable var viewModel: ActivityMonitorViewModel
 
-    /// Polling cadence; 2s matches the task spec and keeps deltas meaningful.
-    private static let pollInterval: Duration = .seconds(2)
+    /// Polling cadence, supplied by the caller from `AppSettings`. Defaults to
+    /// 2s, which keeps cumulative-counter deltas meaningful.
+    var pollInterval: Duration = .seconds(2)
 
     /// Sentinel id for the synthetic aggregate row in the `Table` selection.
     private static let aggregateID = "__aggregate__"
@@ -30,7 +31,7 @@ struct ActivityMonitorView: View {
             .navigationTitle("Activity Monitor")
             .frame(minWidth: 280)
             .task {
-                viewModel.startPolling(interval: Self.pollInterval)
+                viewModel.startPolling(interval: pollInterval)
             }
             .onDisappear {
                 viewModel.stopPolling()

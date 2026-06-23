@@ -31,18 +31,29 @@ struct AppMainApp: App {
     /// so its `check()` Task and state survive scene/view re-creation.
     @State private var setupCoordinator: SetupCoordinator
 
+    /// Persisted app preferences, composed once and injected into the views that
+    /// need it (Settings, the window color scheme, Activity Monitor cadence, Run
+    /// defaults, confirm-before-delete gating).
+    @State private var settings: AppSettings
+
     /// The shared service, threaded to the terminal tab so it can resolve the
     /// `container exec` invocation from Core rather than hand-building argv.
     private let service: any ContainerService
 
+    /// The CLI used to resolve the binary path readout shown in Settings.
+    private let cli: ContainerCLI
+
     init() {
         // Compose dependency injection once: a real CLI-backed service over a
-        // process runner. `ContainerCLI` auto-discovers the binary (no override),
-        // so this works wherever `container` is installed — and degrades to
-        // empty states (never crashes) when it is not.
+        // process runner. The binary-path override comes from persisted
+        // settings; `ContainerCLI` auto-discovers when it is nil. NOTE: this is
+        // read once at launch, so changing the override in Settings requires an
+        // app relaunch to take effect (acceptable for v1).
+        let settings = AppSettings()
         let runner = ProcessCommandRunner()
-        let cli = ContainerCLI(runner: runner, overridePath: nil)
+        let cli = ContainerCLI(runner: runner, overridePath: settings.containerBinaryPathOverride)
         let service = CLIContainerService(runner: runner, cli: cli)
+        _settings = State(initialValue: settings)
         _containersViewModel = State(initialValue: ContainersViewModel(service: service))
         _imagesViewModel = State(initialValue: ImagesViewModel(service: service))
         _volumesViewModel = State(initialValue: VolumesViewModel(service: service))
@@ -53,6 +64,7 @@ struct AppMainApp: App {
         _activityMonitorViewModel = State(initialValue: ActivityMonitorViewModel(service: service))
         _setupCoordinator = State(initialValue: SetupCoordinator(service: service, cli: cli))
         self.service = service
+        self.cli = cli
     }
 
     var body: some Scene {
@@ -67,7 +79,9 @@ struct AppMainApp: App {
                 logsViewModel: logsViewModel,
                 buildViewModel: buildViewModel,
                 activityMonitorViewModel: activityMonitorViewModel,
-                service: service
+                service: service,
+                settings: settings,
+                cli: cli
             )
         }
 
@@ -140,6 +154,11 @@ private struct RootGateView: View {
     @Bindable var buildViewModel: BuildViewModel
     @Bindable var activityMonitorViewModel: ActivityMonitorViewModel
     let service: any ContainerService
+    @Bindable var settings: AppSettings
+    let cli: ContainerCLI
+
+    /// The binary path resolved at launch, surfaced read-only in Settings.
+    @State private var resolvedBinaryPath: String?
 
     var body: some View {
         Group {
@@ -153,7 +172,9 @@ private struct RootGateView: View {
                     logsViewModel: logsViewModel,
                     buildViewModel: buildViewModel,
                     activityMonitorViewModel: activityMonitorViewModel,
-                    service: service
+                    service: service,
+                    settings: settings,
+                    resolvedBinaryPath: resolvedBinaryPath
                 )
             } else {
                 SetupView(coordinator: setupCoordinator)
@@ -164,6 +185,7 @@ private struct RootGateView: View {
             // the coordinator maps to .missingBinary / .daemonStopped and the
             // app never touches Process directly.
             await setupCoordinator.check()
+            resolvedBinaryPath = await cli.resolveBinaryPath()
         }
     }
 }

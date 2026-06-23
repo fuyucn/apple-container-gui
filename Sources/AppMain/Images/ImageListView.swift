@@ -33,6 +33,10 @@ struct ImageListView: View {
     /// itself never shells out.)
     let service: any ContainerService
 
+    /// App preferences. Drives whether the destructive Prune action confirms
+    /// first.
+    var settings: AppSettings?
+
     /// Whether the Pull Image sheet is presented.
     @State private var isPresentingPull = false
 
@@ -87,7 +91,11 @@ struct ImageListView: View {
                 }
                 ToolbarItem {
                     Button {
-                        isConfirmingPrune = true
+                        if settings?.confirmBeforeDelete ?? true {
+                            isConfirmingPrune = true
+                        } else {
+                            Task { await viewModel.prune() }
+                        }
                     } label: {
                         Label("Prune Unused", systemImage: "trash.slash")
                     }

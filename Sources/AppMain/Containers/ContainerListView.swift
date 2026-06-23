@@ -19,6 +19,10 @@ struct ContainerListView: View {
     /// through to `RunContainerView`; the list itself never reads it.
     var imagesViewModel: ImagesViewModel?
 
+    /// App preferences. Drives whether destructive actions confirm first and
+    /// seeds the Run sheet's CPU/memory defaults.
+    var settings: AppSettings?
+
     /// Selected container id, owned by `RootView` so its detail column can show
     /// the matching `ContainerDetailView`.
     @Binding var selectedID: Container.ID?
@@ -100,6 +104,12 @@ struct ContainerListView: View {
         }
     }
 
+    /// Whether destructive actions confirm first. Defaults to true when no
+    /// settings store is injected (previews), matching the store's own default.
+    private var confirmBeforeDelete: Bool {
+        settings?.confirmBeforeDelete ?? true
+    }
+
     /// Sort rank for `.state`: Running before everything else.
     private func stateRank(_ state: RunState) -> Int {
         switch state {
@@ -146,7 +156,11 @@ struct ContainerListView: View {
                 }
                 ToolbarItem {
                     Button(role: .destructive) {
-                        isConfirmingDeleteAll = true
+                        if confirmBeforeDelete {
+                            isConfirmingDeleteAll = true
+                        } else {
+                            Task { await viewModel.deleteAll() }
+                        }
                     } label: {
                         Label("Delete All", systemImage: "trash")
                     }
@@ -186,7 +200,8 @@ struct ContainerListView: View {
             .sheet(isPresented: $isPresentingRun) {
                 RunContainerView(
                     viewModel: viewModel,
-                    imagesViewModel: imagesViewModel
+                    imagesViewModel: imagesViewModel,
+                    settings: settings
                 )
             }
             .task {
