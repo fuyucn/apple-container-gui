@@ -63,6 +63,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _logsInvocations: [(id: String, follow: Bool, boot: Bool, tail: Int?)] = []
     private var _imageShellRefs: [String] = []
     private var _saveImageCalls: [(ref: String, path: String)] = []
+    private var _loadImageCalls: [String] = []
 
     init(
         containers: [Container] = [],
@@ -137,6 +138,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var logsInvocations: [(id: String, follow: Bool, boot: Bool, tail: Int?)] { withLock { _logsInvocations } }
     var imageShellRefs: [String] { withLock { _imageShellRefs } }
     var saveImageCalls: [(ref: String, path: String)] { withLock { _saveImageCalls } }
+    var loadImageCalls: [String] { withLock { _loadImageCalls } }
 
     // MARK: - ContainerService
 
@@ -239,6 +241,11 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     func saveImage(_ ref: String, to path: String) async throws {
         if let e = throwOnAction { throw e }
         withLock { _saveImageCalls.append((ref, path)) }
+    }
+
+    func loadImage(from path: String) async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _loadImageCalls.append(path) }
     }
 
     func listVolumes() async throws -> [ContainerVolume] {

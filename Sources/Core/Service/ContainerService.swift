@@ -195,6 +195,13 @@ public protocol ContainerService: Sendable {
     /// overrides it to shell out and the test mock overrides it to record calls.
     func saveImage(_ ref: String, to path: String) async throws
 
+    /// Load (import) an image from an OCI/Docker tar archive at `path`
+    /// (`image load --input <path>`), the inverse of `saveImage`. A no-op default
+    /// extension impl below lets preview/stub conformers inherit it unchanged;
+    /// `CLIContainerService` overrides it to shell out and the test mock overrides
+    /// it to record calls.
+    func loadImage(from path: String) async throws
+
     /// All volumes via `volume list --format json`.
     func listVolumes() async throws -> [ContainerVolume]
 
@@ -329,6 +336,11 @@ extension ContainerService {
     /// not shell out. `CLIContainerService` overrides this with the real
     /// `image save` invocation; the test mock overrides it to record the call.
     public func saveImage(_ ref: String, to path: String) async throws {}
+
+    /// No-op default `loadImage` for conformers (mocks/preview services) that do
+    /// not shell out. `CLIContainerService` overrides this with the real
+    /// `image load` invocation; the test mock overrides it to record the call.
+    public func loadImage(from path: String) async throws {}
 
     /// Default `copyToContainer` for conformers (preview/stub services) that do
     /// not shell out: throws `binaryNotFound`. `CLIContainerService` overrides it

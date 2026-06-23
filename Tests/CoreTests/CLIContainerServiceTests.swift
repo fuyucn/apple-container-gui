@@ -517,6 +517,34 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     }
 }
 
+@Test func saveImageInvokesExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.saveImage("docker.io/library/alpine:latest", to: "/tmp/alpine.tar")
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "image", "save",
+        "--output", "/tmp/alpine.tar", "docker.io/library/alpine:latest",
+    ]])
+}
+
+@Test func loadImageInvokesExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.loadImage(from: "/tmp/alpine.tar")
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "image", "load",
+        "--input", "/tmp/alpine.tar",
+    ]])
+}
+
+@Test func loadImageThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "no such file"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("no such file")) {
+        try await service.loadImage(from: "/tmp/ghost.tar")
+    }
+}
+
 @Test func pushImageStreamYieldsProgressInOrderWithArgv() async throws {
     let mock = MockCommandRunner(streamLines: ["Pushing layer", "Pushing 50%", "Pushed"])
     let service = makeService(mock)

@@ -182,6 +182,10 @@ public struct CLIContainerService: ContainerService {
         _ = try await runChecked(["image", "save", "--output", path, ref])
     }
 
+    public func loadImage(from path: String) async throws {
+        _ = try await runChecked(["image", "load", "--input", path])
+    }
+
     // MARK: - Volumes
 
     public func listVolumes() async throws -> [ContainerVolume] {

@@ -102,6 +102,13 @@ struct ImageListView: View {
                 }
                 ToolbarItem {
                     Button {
+                        presentLoadPanel()
+                    } label: {
+                        Label("Load Image", systemImage: "square.and.arrow.down")
+                    }
+                }
+                ToolbarItem {
+                    Button {
                         isPresentingPull = true
                     } label: {
                         Label("Pull Image", systemImage: "plus")
@@ -337,6 +344,19 @@ struct ImageListView: View {
         panel.isExtensionHidden = false
         guard panel.runModal() == .OK, let url = panel.url else { return }
         Task { await viewModel.exportImage(ref: image.name, to: url.path) }
+    }
+
+    /// Present an `NSOpenPanel` to pick a `.tar` archive, then load (import) the
+    /// image from it via the view model (which refreshes so it appears).
+    private func presentLoadPanel() {
+        let panel = NSOpenPanel()
+        panel.title = "Load Image"
+        panel.allowedContentTypes = [UTType(filenameExtension: "tar") ?? .data]
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        Task { await viewModel.loadImage(from: url.path) }
     }
 
     /// A debug-shell sheet hosting the throwaway-container terminal for `ref`.

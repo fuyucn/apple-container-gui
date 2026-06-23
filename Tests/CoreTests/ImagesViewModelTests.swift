@@ -103,6 +103,38 @@ import Foundation
 }
 
 @MainActor
+@Test func loadImageCallsServiceWithPathThenRefreshes() async throws {
+    let service = MockContainerService(images: try ViewModelFixtures.images())
+    let vm = ImagesViewModel(service: service)
+
+    await vm.loadImage(from: "/tmp/alpine.tar")
+
+    #expect(service.loadImageCalls == ["/tmp/alpine.tar"])
+    // Refresh runs after the load so the imported image appears.
+    #expect(service.listImagesCalls == 1)
+    #expect(vm.images.count == 1)
+    #expect(vm.lastError == nil)
+}
+
+@MainActor
+@Test func loadImageOnErrorStillRefreshes() async throws {
+    // As with prune/tag/removeImage: a failed load is followed by a refresh
+    // which resets lastError on success. Assert the load was followed by a
+    // refresh regardless of the action failing.
+    let service = MockContainerService(
+        images: try ViewModelFixtures.images(),
+        throwOnAction: ContainerError.commandFailed("bad archive")
+    )
+    let vm = ImagesViewModel(service: service)
+
+    await vm.loadImage(from: "/tmp/ghost.tar")
+
+    // The mock throws before recording, so loadImageCalls stays empty; the
+    // meaningful behavior is that a failed action is still followed by a refresh.
+    #expect(service.listImagesCalls == 1)
+}
+
+@MainActor
 @Test func pullAccumulatesStreamLines() async throws {
     let service = MockContainerService(
         images: try ViewModelFixtures.images(),

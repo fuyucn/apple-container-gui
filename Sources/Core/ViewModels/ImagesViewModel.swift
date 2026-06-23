@@ -90,6 +90,19 @@ public final class ImagesViewModel {
         }
     }
 
+    /// Load (import) an image from a tar archive at `path` (`image load`), then
+    /// refresh so the imported image appears in the list. The inverse of
+    /// `exportImage`; errors are captured into `lastError`.
+    public func loadImage(from path: String) async {
+        do {
+            try await service.loadImage(from: path)
+            lastError = nil
+        } catch {
+            lastError = String(describing: error)
+        }
+        await refresh()
+    }
+
     /// Remove all unused images (`image prune`), then refresh.
     public func prune() async {
         do {
