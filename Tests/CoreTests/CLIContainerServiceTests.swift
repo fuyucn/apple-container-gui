@@ -374,6 +374,56 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     }
 }
 
+// MARK: - copy (host <-> container)
+
+@Test func copyToContainerInvokesExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.copyToContainer(
+        localPath: "/Users/x/app.conf",
+        containerId: "acg-demo-web",
+        containerPath: "/etc/app.conf"
+    )
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "copy",
+        "/Users/x/app.conf", "acg-demo-web:/etc/app.conf",
+    ]])
+}
+
+@Test func copyToContainerThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "no such container"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("no such container")) {
+        try await service.copyToContainer(
+            localPath: "/tmp/x", containerId: "ghost", containerPath: "/tmp/x"
+        )
+    }
+}
+
+@Test func copyFromContainerInvokesExactArgv() async throws {
+    let mock = MockCommandRunner()
+    let service = makeService(mock)
+    try await service.copyFromContainer(
+        containerId: "acg-demo-web",
+        containerPath: "/var/log/app.log",
+        localPath: "/Users/x/app.log"
+    )
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "copy",
+        "acg-demo-web:/var/log/app.log", "/Users/x/app.log",
+    ]])
+}
+
+@Test func copyFromContainerThrowsCommandFailedOnNonZeroExit() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 1, stdout: "", stderr: "no such file"))
+    let service = makeService(mock)
+    await #expect(throws: ContainerError.commandFailed("no such file")) {
+        try await service.copyFromContainer(
+            containerId: "ghost", containerPath: "/tmp/x", localPath: "/tmp/x"
+        )
+    }
+}
+
 // MARK: - 3.4 listImages / removeImage
 
 @Test func listImagesInvokesExactArgvAndDecodes() async throws {

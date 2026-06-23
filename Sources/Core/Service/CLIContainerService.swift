@@ -118,6 +118,18 @@ public struct CLIContainerService: ContainerService {
         _ = try await runChecked(["export", "--output", path, id])
     }
 
+    public func copyToContainer(localPath: String, containerId: String, containerPath: String) async throws {
+        // `copy <localPath> <id>:<containerPath>` — the destination is the
+        // container side, formatted as `<id>:<path>`.
+        _ = try await runChecked(["copy", localPath, "\(containerId):\(containerPath)"])
+    }
+
+    public func copyFromContainer(containerId: String, containerPath: String, localPath: String) async throws {
+        // `copy <id>:<containerPath> <localPath>` — the source is the container
+        // side, formatted as `<id>:<path>`.
+        _ = try await runChecked(["copy", "\(containerId):\(containerPath)", localPath])
+    }
+
     public func stats(_ ids: [String]) async throws -> [ContainerStats] {
         var args = ["stats", "--no-stream", "--format", "json"]
         args.append(contentsOf: ids)

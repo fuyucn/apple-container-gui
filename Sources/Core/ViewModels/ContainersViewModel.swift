@@ -102,6 +102,30 @@ public final class ContainersViewModel {
         }
     }
 
+    /// Copy a host file/folder into a container. Does not refresh the list (a
+    /// copy does not change container state); errors are captured into
+    /// `lastError`.
+    public func copyToContainer(localPath: String, containerId: String, containerPath: String) async {
+        do {
+            try await service.copyToContainer(localPath: localPath, containerId: containerId, containerPath: containerPath)
+            lastError = nil
+        } catch {
+            lastError = String(describing: error)
+        }
+    }
+
+    /// Copy a file/folder out of a container onto the host. Does not refresh the
+    /// list (a copy does not change container state); errors are captured into
+    /// `lastError`.
+    public func copyFromContainer(containerId: String, containerPath: String, localPath: String) async {
+        do {
+            try await service.copyFromContainer(containerId: containerId, containerPath: containerPath, localPath: localPath)
+            lastError = nil
+        } catch {
+            lastError = String(describing: error)
+        }
+    }
+
     private func perform(_ action: () async throws -> Void) async {
         do {
             try await action()

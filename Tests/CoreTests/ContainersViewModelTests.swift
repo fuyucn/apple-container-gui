@@ -224,6 +224,73 @@ import Foundation
 }
 
 @MainActor
+@Test func copyToContainerCallsServiceWithPaths() async throws {
+    let service = MockContainerService(containers: try ViewModelFixtures.containers())
+    let vm = ContainersViewModel(service: service)
+
+    await vm.copyToContainer(
+        localPath: "/Users/x/app.conf",
+        containerId: "fixture-demo",
+        containerPath: "/etc/app.conf"
+    )
+
+    #expect(service.copyToContainerCalls.count == 1)
+    #expect(service.copyToContainerCalls.first?.localPath == "/Users/x/app.conf")
+    #expect(service.copyToContainerCalls.first?.containerId == "fixture-demo")
+    #expect(service.copyToContainerCalls.first?.containerPath == "/etc/app.conf")
+    // A copy does not change container state, so the list is not refreshed.
+    #expect(service.listContainersCalls == 0)
+    #expect(vm.lastError == nil)
+}
+
+@MainActor
+@Test func copyToContainerSurfacesError() async throws {
+    let service = MockContainerService(
+        containers: try ViewModelFixtures.containers(),
+        throwOnAction: ContainerError.commandFailed("no such container")
+    )
+    let vm = ContainersViewModel(service: service)
+
+    await vm.copyToContainer(localPath: "/tmp/x", containerId: "ghost", containerPath: "/tmp/x")
+
+    #expect(service.copyToContainerCalls.isEmpty)
+    #expect(vm.lastError != nil)
+}
+
+@MainActor
+@Test func copyFromContainerCallsServiceWithPaths() async throws {
+    let service = MockContainerService(containers: try ViewModelFixtures.containers())
+    let vm = ContainersViewModel(service: service)
+
+    await vm.copyFromContainer(
+        containerId: "fixture-demo",
+        containerPath: "/var/log/app.log",
+        localPath: "/Users/x/app.log"
+    )
+
+    #expect(service.copyFromContainerCalls.count == 1)
+    #expect(service.copyFromContainerCalls.first?.containerId == "fixture-demo")
+    #expect(service.copyFromContainerCalls.first?.containerPath == "/var/log/app.log")
+    #expect(service.copyFromContainerCalls.first?.localPath == "/Users/x/app.log")
+    #expect(service.listContainersCalls == 0)
+    #expect(vm.lastError == nil)
+}
+
+@MainActor
+@Test func copyFromContainerSurfacesError() async throws {
+    let service = MockContainerService(
+        containers: try ViewModelFixtures.containers(),
+        throwOnAction: ContainerError.commandFailed("no such file")
+    )
+    let vm = ContainersViewModel(service: service)
+
+    await vm.copyFromContainer(containerId: "ghost", containerPath: "/tmp/x", localPath: "/tmp/x")
+
+    #expect(service.copyFromContainerCalls.isEmpty)
+    #expect(vm.lastError != nil)
+}
+
+@MainActor
 @Test func startPollingThenStopPollingLeavesNoRunningTask() async throws {
     let service = MockContainerService(containers: try ViewModelFixtures.containers())
     let vm = ContainersViewModel(service: service)

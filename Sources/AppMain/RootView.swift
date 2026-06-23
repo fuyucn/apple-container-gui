@@ -214,7 +214,7 @@ struct RootView: View {
 
             Group {
                 if let container = selectedContainer {
-                    ContainerDetailView(container: container, logsViewModel: logsViewModel, service: service)
+                    ContainerDetailView(container: container, viewModel: containersViewModel, logsViewModel: logsViewModel, service: service)
                 } else {
                     ContentUnavailableView(
                         "No Selection",

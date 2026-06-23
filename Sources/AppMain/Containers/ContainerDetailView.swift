@@ -18,6 +18,10 @@ import Core
 struct ContainerDetailView: View {
     let container: Container
 
+    /// Containers view model, owned by the host (`RootView`). Drives the
+    /// copy-in / copy-out file transfer actions.
+    @Bindable var viewModel: ContainersViewModel
+
     /// Log view model, owned by the host (`RootView`) so its streaming `Task`
     /// survives view re-creation while the Logs tab is shown.
     @Bindable var logsViewModel: LogsViewModel
@@ -37,6 +41,13 @@ struct ContainerDetailView: View {
     }
 
     @State private var selectedTab: Tab = .details
+
+    /// Host file/folder picked for a copy-INTO transfer, paired with the sheet
+    /// that asks for its container destination path. Non-nil while the sheet is up.
+    @State private var copyInSource: PickedURL?
+
+    /// Whether the copy-OUT sheet (which asks for a container source path) is up.
+    @State private var isPresentingCopyOut = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -68,6 +79,21 @@ struct ContainerDetailView: View {
         }
         .onDisappear {
             logsViewModel.stop()
+        }
+        // Copy INTO: a host file/folder was picked; ask for its destination path.
+        .sheet(item: $copyInSource) { picked in
+            CopyIntoContainerView(
+                viewModel: viewModel,
+                containerId: container.id,
+                source: picked.url
+            )
+        }
+        // Copy FROM: ask for a container source path, then pick a host destination.
+        .sheet(isPresented: $isPresentingCopyOut) {
+            CopyFromContainerView(
+                viewModel: viewModel,
+                containerId: container.id
+            )
         }
     }
 
@@ -114,6 +140,22 @@ struct ContainerDetailView: View {
         }
     }
 
+    // MARK: - Copy into container
+
+    /// Present an `NSOpenPanel` to choose a host file or folder, then surface the
+    /// destination-path sheet (`copyInSource` drives `.sheet(item:)`). Panel-only
+    /// here; the CLI invocation lives in the sheet + VM.
+    private func presentCopyInPicker() {
+        let panel = NSOpenPanel()
+        panel.title = "Copy Into Container"
+        panel.prompt = "Choose"
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = false
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        copyInSource = PickedURL(url: url)
+    }
+
     // MARK: - Details tab
 
     private var detailsTab: some View {
@@ -126,6 +168,19 @@ struct ContainerDetailView: View {
                 }
                 if let started = container.status.startedDate {
                     LabeledContent("Started", value: started)
+                }
+            }
+
+            Section("Files") {
+                Button {
+                    presentCopyInPicker()
+                } label: {
+                    Label("Copy File Into Container…", systemImage: "square.and.arrow.down")
+                }
+                Button {
+                    isPresentingCopyOut = true
+                } label: {
+                    Label("Copy From Container…", systemImage: "square.and.arrow.up")
                 }
             }
 
@@ -205,6 +260,135 @@ struct ContainerDetailView: View {
     }
 }
 
+/// Identifiable wrapper so a picked host `URL` can drive `.sheet(item:)`.
+private struct PickedURL: Identifiable {
+    let url: URL
+    var id: String { url.path }
+}
+
+// MARK: - Copy file transfer sheets
+
+/// Sheet for copying a host file/folder INTO a container. The host source is
+/// already chosen (shown read-only); the user types the destination container
+/// path (defaulting to `/`). Logic-free: the CLI invocation lives in the VM.
+@MainActor
+private struct CopyIntoContainerView: View {
+    @Bindable var viewModel: ContainersViewModel
+    let containerId: String
+    let source: URL
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var destination: String = "/"
+
+    private var trimmedDestination: String {
+        destination.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Form {
+                Section("Source (host)") {
+                    LabeledContent("File", value: source.lastPathComponent)
+                    LabeledContent("Path") {
+                        Text(source.path)
+                            .font(.system(.body, design: .monospaced))
+                            .textSelection(.enabled)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
+                }
+                Section("Destination (container)") {
+                    TextField("Container Path", text: $destination, prompt: Text("/path/in/container"))
+                        .textFieldStyle(.roundedBorder)
+                }
+            }
+            .formStyle(.grouped)
+
+            Divider()
+
+            HStack {
+                Spacer()
+                Button("Cancel") { dismiss() }
+                    .keyboardShortcut(.cancelAction)
+                Button("Copy") {
+                    let dest = trimmedDestination
+                    let containerId = containerId
+                    let local = source.path
+                    Task {
+                        await viewModel.copyToContainer(localPath: local, containerId: containerId, containerPath: dest)
+                    }
+                    dismiss()
+                }
+                .keyboardShortcut(.defaultAction)
+                .disabled(trimmedDestination.isEmpty)
+            }
+            .padding()
+        }
+        .frame(minWidth: 420, minHeight: 280)
+    }
+}
+
+/// Sheet for copying a file/folder FROM a container onto the host. The user types
+/// the container source path; pressing Copy presents an `NSSavePanel` to pick the
+/// host destination, then invokes the VM. Logic-free apart from the panel.
+@MainActor
+private struct CopyFromContainerView: View {
+    @Bindable var viewModel: ContainersViewModel
+    let containerId: String
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var source: String = "/"
+
+    private var trimmedSource: String {
+        source.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Form {
+                Section("Source (container)") {
+                    TextField("Container Path", text: $source, prompt: Text("/path/in/container"))
+                        .textFieldStyle(.roundedBorder)
+                }
+            }
+            .formStyle(.grouped)
+
+            Divider()
+
+            HStack {
+                Spacer()
+                Button("Cancel") { dismiss() }
+                    .keyboardShortcut(.cancelAction)
+                Button("Copy…") {
+                    presentDestinationPanel()
+                }
+                .keyboardShortcut(.defaultAction)
+                .disabled(trimmedSource.isEmpty)
+            }
+            .padding()
+        }
+        .frame(minWidth: 420, minHeight: 200)
+    }
+
+    /// Present an `NSSavePanel` to choose where to write the copied-out item on
+    /// the host, then invoke the VM. The default name is the source's last path
+    /// component.
+    private func presentDestinationPanel() {
+        let src = trimmedSource
+        let panel = NSSavePanel()
+        panel.title = "Copy From Container"
+        panel.nameFieldStringValue = (src as NSString).lastPathComponent.isEmpty
+            ? "copied-item" : (src as NSString).lastPathComponent
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        let containerId = containerId
+        let local = url.path
+        Task {
+            await viewModel.copyFromContainer(containerId: containerId, containerPath: src, localPath: local)
+        }
+        dismiss()
+    }
+}
+
 // MARK: - Inspect tab
 
 /// Read-only, monospaced, scrollable view of the container's configuration as
@@ -246,6 +430,7 @@ private struct InspectView: View {
     NavigationStack {
         ContainerDetailView(
             container: ContainerPreviewData.runningContainer,
+            viewModel: ContainersViewModel(service: ContainerPreviewData.populatedService),
             logsViewModel: LogsViewModel(service: ContainerPreviewData.populatedService),
             service: ContainerPreviewData.populatedService
         )

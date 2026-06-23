@@ -43,6 +43,8 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _runSpecs: [RunSpec] = []
     private var _pruneContainersCount = 0
     private var _exportCalls: [(id: String, path: String)] = []
+    private var _copyToContainerCalls: [(localPath: String, containerId: String, containerPath: String)] = []
+    private var _copyFromContainerCalls: [(containerId: String, containerPath: String, localPath: String)] = []
     private var _statsCalls: [[String]] = []
     private var _removedImageIDs: [String] = []
     private var _listVolumesCount = 0
@@ -115,6 +117,8 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var runSpecs: [RunSpec] { withLock { _runSpecs } }
     var pruneContainersCalls: Int { withLock { _pruneContainersCount } }
     var exportCalls: [(id: String, path: String)] { withLock { _exportCalls } }
+    var copyToContainerCalls: [(localPath: String, containerId: String, containerPath: String)] { withLock { _copyToContainerCalls } }
+    var copyFromContainerCalls: [(containerId: String, containerPath: String, localPath: String)] { withLock { _copyFromContainerCalls } }
     var statsCalls: [[String]] { withLock { _statsCalls } }
     var removeImageCalls: [String] { withLock { _removedImageIDs } }
     var listVolumesCalls: Int { withLock { _listVolumesCount } }
@@ -178,6 +182,16 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     func exportContainer(_ id: String, to path: String) async throws {
         if let e = throwOnAction { throw e }
         withLock { _exportCalls.append((id, path)) }
+    }
+
+    func copyToContainer(localPath: String, containerId: String, containerPath: String) async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _copyToContainerCalls.append((localPath, containerId, containerPath)) }
+    }
+
+    func copyFromContainer(containerId: String, containerPath: String, localPath: String) async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _copyFromContainerCalls.append((containerId, containerPath, localPath)) }
     }
 
     func stats(_ ids: [String]) async throws -> [ContainerStats] {

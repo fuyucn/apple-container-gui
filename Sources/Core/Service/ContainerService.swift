@@ -146,6 +146,20 @@ public protocol ContainerService: Sendable {
     /// (`export --output <path> <id>`).
     func exportContainer(_ id: String, to path: String) async throws
 
+    /// Copy a host file/folder INTO a container
+    /// (`copy <localPath> <containerId>:<containerPath>`). A default extension
+    /// impl below throws `binaryNotFound` so preview/stub conformers inherit it
+    /// unchanged; `CLIContainerService` overrides it to shell out and the test
+    /// mock overrides it to record the call.
+    func copyToContainer(localPath: String, containerId: String, containerPath: String) async throws
+
+    /// Copy a file/folder OUT of a container onto the host
+    /// (`copy <containerId>:<containerPath> <localPath>`). A default extension
+    /// impl below throws `binaryNotFound` so preview/stub conformers inherit it
+    /// unchanged; `CLIContainerService` overrides it to shell out and the test
+    /// mock overrides it to record the call.
+    func copyFromContainer(containerId: String, containerPath: String, localPath: String) async throws
+
     /// Resource-usage snapshots via `stats --no-stream --format json [<id>...]`.
     /// Passing an empty `ids` array samples all running containers. Each element
     /// is a CUMULATIVE-counter snapshot; callers derive rates from deltas.
@@ -315,6 +329,20 @@ extension ContainerService {
     /// not shell out. `CLIContainerService` overrides this with the real
     /// `image save` invocation; the test mock overrides it to record the call.
     public func saveImage(_ ref: String, to path: String) async throws {}
+
+    /// Default `copyToContainer` for conformers (preview/stub services) that do
+    /// not shell out: throws `binaryNotFound`. `CLIContainerService` overrides it
+    /// with the real `copy` invocation; the test mock overrides it to record.
+    public func copyToContainer(localPath: String, containerId: String, containerPath: String) async throws {
+        throw ContainerError.binaryNotFound
+    }
+
+    /// Default `copyFromContainer` for conformers (preview/stub services) that do
+    /// not shell out: throws `binaryNotFound`. `CLIContainerService` overrides it
+    /// with the real `copy` invocation; the test mock overrides it to record.
+    public func copyFromContainer(containerId: String, containerPath: String, localPath: String) async throws {
+        throw ContainerError.binaryNotFound
+    }
 
     /// Default debug-shell invocation builder for conformers (mocks/preview
     /// services) that don't resolve a real binary. Uses the canonical relative
