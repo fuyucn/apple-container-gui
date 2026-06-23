@@ -230,6 +230,13 @@ public struct CLIContainerService: ContainerService {
         return stream(args)
     }
 
+    // MARK: - Disk usage
+
+    public func systemDF() async throws -> DiskUsage {
+        let result = try await runChecked(["system", "df", "--format", "json"])
+        return try decode(DiskUsage.self, from: result.stdout)
+    }
+
     // MARK: - Daemon
 
     public func daemonStatus() async throws -> DaemonStatus {

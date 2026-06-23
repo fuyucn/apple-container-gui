@@ -22,6 +22,7 @@ struct AppMainApp: App {
     @State private var imagesViewModel: ImagesViewModel
     @State private var volumesViewModel: VolumesViewModel
     @State private var networksViewModel: NetworksViewModel
+    @State private var diskUsageViewModel: DiskUsageViewModel
     @State private var appViewModel: AppViewModel
     @State private var logsViewModel: LogsViewModel
     @State private var buildViewModel: BuildViewModel
@@ -58,6 +59,7 @@ struct AppMainApp: App {
         _imagesViewModel = State(initialValue: ImagesViewModel(service: service))
         _volumesViewModel = State(initialValue: VolumesViewModel(service: service))
         _networksViewModel = State(initialValue: NetworksViewModel(service: service))
+        _diskUsageViewModel = State(initialValue: DiskUsageViewModel(service: service))
         _appViewModel = State(initialValue: AppViewModel(service: service))
         _logsViewModel = State(initialValue: LogsViewModel(service: service))
         _buildViewModel = State(initialValue: BuildViewModel(service: service))
@@ -75,6 +77,7 @@ struct AppMainApp: App {
                 imagesViewModel: imagesViewModel,
                 volumesViewModel: volumesViewModel,
                 networksViewModel: networksViewModel,
+                diskUsageViewModel: diskUsageViewModel,
                 appViewModel: appViewModel,
                 logsViewModel: logsViewModel,
                 buildViewModel: buildViewModel,
@@ -149,6 +152,7 @@ private struct RootGateView: View {
     @Bindable var imagesViewModel: ImagesViewModel
     @Bindable var volumesViewModel: VolumesViewModel
     @Bindable var networksViewModel: NetworksViewModel
+    @Bindable var diskUsageViewModel: DiskUsageViewModel
     @Bindable var appViewModel: AppViewModel
     @Bindable var logsViewModel: LogsViewModel
     @Bindable var buildViewModel: BuildViewModel
@@ -168,6 +172,7 @@ private struct RootGateView: View {
                     imagesViewModel: imagesViewModel,
                     volumesViewModel: volumesViewModel,
                     networksViewModel: networksViewModel,
+                    diskUsageViewModel: diskUsageViewModel,
                     appViewModel: appViewModel,
                     logsViewModel: logsViewModel,
                     buildViewModel: buildViewModel,

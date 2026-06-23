@@ -24,6 +24,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _networks: [ContainerNetwork]
     private var _imageConfig: ImageConfig?
     private var _daemonStatus: DaemonStatus
+    private var _diskUsage: DiskUsage?
     private let streamLines: [String]
     private let streamError: Error?
     private let throwOnAction: Error?
@@ -32,6 +33,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _listContainersCount = 0
     private var _listImagesCount = 0
     private var _daemonStatusCount = 0
+    private var _systemDFCount = 0
     private var _startedDaemonCount = 0
     private var _startedIDs: [String] = []
     private var _stoppedCalls: [(id: String, signal: String?, timeout: Int?)] = []
@@ -68,6 +70,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         networks: [ContainerNetwork] = [],
         imageConfig: ImageConfig? = nil,
         daemonStatus: DaemonStatus = DaemonStatus(state: .stopped, appRoot: nil, installRoot: nil),
+        diskUsage: DiskUsage? = nil,
         streamLines: [String] = [],
         streamError: Error? = nil,
         throwOnAction: Error? = nil
@@ -79,6 +82,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         self._networks = networks
         self._imageConfig = imageConfig
         self._daemonStatus = daemonStatus
+        self._diskUsage = diskUsage
         self.streamLines = streamLines
         self.streamError = streamError
         self.throwOnAction = throwOnAction
@@ -101,6 +105,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var listContainersCalls: Int { withLock { _listContainersCount } }
     var listImagesCalls: Int { withLock { _listImagesCount } }
     var daemonStatusCalls: Int { withLock { _daemonStatusCount } }
+    var systemDFCalls: Int { withLock { _systemDFCount } }
     var startDaemonCalls: Int { withLock { _startedDaemonCount } }
     var startCalls: [String] { withLock { _startedIDs } }
     var stopCalls: [(id: String, signal: String?, timeout: Int?)] { withLock { _stoppedCalls } }
@@ -262,6 +267,15 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
 
     func daemonStatus() async throws -> DaemonStatus {
         withLock { _daemonStatusCount += 1; return _daemonStatus }
+    }
+
+    func systemDF() async throws -> DiskUsage {
+        if let e = throwOnAction { throw e }
+        let zero = DiskUsage.Category(active: 0, reclaimable: 0, sizeInBytes: 0, total: 0)
+        return withLock {
+            _systemDFCount += 1
+            return _diskUsage ?? DiskUsage(containers: zero, images: zero, volumes: zero)
+        }
     }
 
     func startDaemon() async throws {

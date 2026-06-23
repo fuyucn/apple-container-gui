@@ -213,6 +213,14 @@ public protocol ContainerService: Sendable {
     /// (boot defaults false, tail nil) lives in the extension below.
     func logs(_ id: String, follow: Bool, boot: Bool, tail: Int?) -> AsyncThrowingStream<String, Error>
 
+    /// Disk-usage totals via `system df --format json` (Docker-Desktop-style
+    /// breakdown). Requires the daemon to be running; on an XPC/daemon error the
+    /// CLI exits non-zero and this throws `commandFailed`, so callers degrade
+    /// gracefully. A default extension impl below lets preview/stub conformers
+    /// inherit a zeroed value; `CLIContainerService` overrides it to shell out
+    /// and the test mock overrides it to return a seeded value.
+    func systemDF() async throws -> DiskUsage
+
     /// Current daemon status via `system status`.
     func daemonStatus() async throws -> DaemonStatus
 
@@ -291,6 +299,16 @@ extension ContainerService {
         var args = ["exec", "-i", "-t", id]
         args.append(contentsOf: command)
         return ProcessInvocation(executable: "container", arguments: args)
+    }
+
+    /// Default `systemDF` for conformers (mocks/preview services) that do not
+    /// shell out: returns a zeroed breakdown so previews render an empty Disk
+    /// Usage panel. `CLIContainerService` overrides this with the real
+    /// `system df --format json` invocation; the test mock overrides it to
+    /// return a seeded value.
+    public func systemDF() async throws -> DiskUsage {
+        let zero = DiskUsage.Category(active: 0, reclaimable: 0, sizeInBytes: 0, total: 0)
+        return DiskUsage(containers: zero, images: zero, volumes: zero)
     }
 
     /// No-op default `saveImage` for conformers (mocks/preview services) that do

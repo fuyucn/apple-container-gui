@@ -80,6 +80,9 @@ struct RootView: View {
     /// View model driving the Networks section.
     @Bindable var networksViewModel: NetworksViewModel
 
+    /// View model driving the Disk Usage panel in Settings.
+    @Bindable var diskUsageViewModel: DiskUsageViewModel
+
     /// App-level daemon state (also surfaced in the menu bar).
     @Bindable var appViewModel: AppViewModel
 
@@ -183,7 +186,11 @@ struct RootView: View {
                 imagesViewModel: imagesViewModel
             )
         case .settings:
-            SettingsView(settings: settings, resolvedBinaryPath: resolvedBinaryPath)
+            SettingsView(
+                settings: settings,
+                diskUsageViewModel: diskUsageViewModel,
+                resolvedBinaryPath: resolvedBinaryPath
+            )
         case nil:
             ContentUnavailableView(
                 "Select a section",
@@ -319,6 +326,7 @@ private struct PreviewEmptyService: ContainerService {
         imagesViewModel: ImagesViewModel(service: service),
         volumesViewModel: VolumesViewModel(service: service),
         networksViewModel: NetworksViewModel(service: service),
+        diskUsageViewModel: DiskUsageViewModel(service: service),
         appViewModel: AppViewModel(service: service),
         logsViewModel: LogsViewModel(service: service),
         buildViewModel: BuildViewModel(service: service),
