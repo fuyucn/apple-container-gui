@@ -41,6 +41,25 @@ struct RunContainerView: View {
     @State private var cpus: Int?
     @State private var memoryMiB: Int?
 
+    // MARK: - Advanced options state
+
+    @State private var advancedExpanded = false
+    @State private var autoRemove = false
+    @State private var readOnly = false
+    @State private var useInit = false
+    @State private var user: String = ""
+    @State private var workdir: String = ""
+    @State private var entrypoint: String = ""
+    @State private var network: String = ""
+    @State private var platform: String = ""
+    @State private var envFile: String = ""
+    @State private var labels: [LabelRow] = []
+    @State private var capAdds: [CapRow] = []
+    @State private var capDrops: [CapRow] = []
+
+    /// True while the env-file importer is open.
+    @State private var pickingEnvFile = false
+
     /// Index of the volume row whose host path the directory importer is filling,
     /// or nil when the importer is closed. A single `.fileImporter` keyed by row
     /// index avoids the "only one importer per view" limitation.
@@ -66,6 +85,7 @@ struct RunContainerView: View {
                 envSection
                 volumesSection
                 commandSection
+                advancedSection
                 if let runError {
                     Section {
                         Label(runError, systemImage: "exclamationmark.triangle")
@@ -111,6 +131,14 @@ struct RunContainerView: View {
                 case let .success(url) = result
             else { return }
             volumes[index].host = url.path
+        }
+        .fileImporter(
+            isPresented: $pickingEnvFile,
+            allowedContentTypes: [.data, .text, .plainText]
+        ) { result in
+            if case let .success(url) = result {
+                envFile = url.path
+            }
         }
     }
 
@@ -276,6 +304,102 @@ struct RunContainerView: View {
         }
     }
 
+    private var advancedSection: some View {
+        Section {
+            DisclosureGroup("Advanced", isExpanded: $advancedExpanded) {
+                Toggle("Remove on exit (--rm)", isOn: $autoRemove)
+                Toggle("Read-only root filesystem", isOn: $readOnly)
+                Toggle("Run init process (--init)", isOn: $useInit)
+
+                LabeledContent("User") {
+                    TextField("name|uid[:gid]", text: $user)
+                        .textFieldStyle(.roundedBorder)
+                }
+                LabeledContent("Working dir") {
+                    TextField("/path", text: $workdir)
+                        .textFieldStyle(.roundedBorder)
+                }
+                LabeledContent("Entrypoint") {
+                    TextField("override", text: $entrypoint)
+                        .textFieldStyle(.roundedBorder)
+                }
+                LabeledContent("Network") {
+                    TextField("name", text: $network)
+                        .textFieldStyle(.roundedBorder)
+                }
+                LabeledContent("Platform") {
+                    TextField("os/arch", text: $platform)
+                        .textFieldStyle(.roundedBorder)
+                }
+
+                HStack {
+                    TextField("Env-file path", text: $envFile)
+                        .textFieldStyle(.roundedBorder)
+                    Button {
+                        pickingEnvFile = true
+                    } label: {
+                        Image(systemName: "doc")
+                    }
+                    .buttonStyle(.borderless)
+                    .help("Choose an env file")
+                }
+
+                labelsEditor
+                capEditor(title: "Add Capabilities", rows: $capAdds, addTitle: "Add cap-add")
+                capEditor(title: "Drop Capabilities", rows: $capDrops, addTitle: "Add cap-drop")
+            }
+        }
+    }
+
+    private var labelsEditor: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Labels").font(.caption).foregroundStyle(.secondary)
+            ForEach($labels) { $row in
+                HStack {
+                    TextField("KEY", text: $row.key)
+                        .textFieldStyle(.roundedBorder)
+                    Text("=")
+                    TextField("value", text: $row.value)
+                        .textFieldStyle(.roundedBorder)
+                    Button(role: .destructive) {
+                        labels.removeAll { $0.id == row.id }
+                    } label: {
+                        Image(systemName: "minus.circle.fill")
+                    }
+                    .buttonStyle(.borderless)
+                }
+            }
+            Button {
+                labels.append(LabelRow())
+            } label: {
+                Label("Add Label", systemImage: "plus")
+            }
+        }
+    }
+
+    private func capEditor(title: String, rows: Binding<[CapRow]>, addTitle: String) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title).font(.caption).foregroundStyle(.secondary)
+            ForEach(rows) { $row in
+                HStack {
+                    TextField("CAP_NET_RAW or ALL", text: $row.value)
+                        .textFieldStyle(.roundedBorder)
+                    Button(role: .destructive) {
+                        rows.wrappedValue.removeAll { $0.id == row.id }
+                    } label: {
+                        Image(systemName: "minus.circle.fill")
+                    }
+                    .buttonStyle(.borderless)
+                }
+            }
+            Button {
+                rows.wrappedValue.append(CapRow())
+            } label: {
+                Label(addTitle, systemImage: "plus")
+            }
+        }
+    }
+
     private var footer: some View {
         HStack {
             Spacer()
@@ -394,6 +518,27 @@ struct RunContainerView: View {
             .split(whereSeparator: \.isWhitespace)
             .map(String.init)
 
+        var labelDict: [String: String] = [:]
+        for row in labels {
+            let key = row.key.trimmingCharacters(in: .whitespaces)
+            guard !key.isEmpty else { continue }
+            labelDict[key] = row.value
+        }
+
+        let addCaps = capAdds
+            .map { $0.value.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        let dropCaps = capDrops
+            .map { $0.value.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+
+        let trimmedUser = user.trimmingCharacters(in: .whitespaces)
+        let trimmedWorkdir = workdir.trimmingCharacters(in: .whitespaces)
+        let trimmedEntrypoint = entrypoint.trimmingCharacters(in: .whitespaces)
+        let trimmedNetwork = network.trimmingCharacters(in: .whitespaces)
+        let trimmedPlatform = platform.trimmingCharacters(in: .whitespaces)
+        let trimmedEnvFile = envFile.trimmingCharacters(in: .whitespaces)
+
         return RunSpec(
             image: trimmedImage,
             name: trimmedName.isEmpty ? nil : trimmedName,
@@ -403,7 +548,19 @@ struct RunContainerView: View {
             volumes: mounts,
             command: commandParts,
             cpus: cpus,
-            memoryMiB: memoryMiB
+            memoryMiB: memoryMiB,
+            autoRemove: autoRemove,
+            readOnly: readOnly,
+            useInit: useInit,
+            user: trimmedUser.isEmpty ? nil : trimmedUser,
+            workdir: trimmedWorkdir.isEmpty ? nil : trimmedWorkdir,
+            entrypoint: trimmedEntrypoint.isEmpty ? nil : trimmedEntrypoint,
+            labels: labelDict,
+            envFile: trimmedEnvFile.isEmpty ? nil : trimmedEnvFile,
+            capAdd: addCaps,
+            capDrop: dropCaps,
+            network: trimmedNetwork.isEmpty ? nil : trimmedNetwork,
+            platform: trimmedPlatform.isEmpty ? nil : trimmedPlatform
         )
     }
 }
@@ -431,6 +588,19 @@ private struct VolumeRow: Identifiable {
     var host: String = ""
     var container: String = ""
     var readOnly: Bool = false
+}
+
+/// One editable label (`--label k=v`) row.
+private struct LabelRow: Identifiable {
+    let id = UUID()
+    var key: String = ""
+    var value: String = ""
+}
+
+/// One editable capability (`--cap-add`/`--cap-drop`) row.
+private struct CapRow: Identifiable {
+    let id = UUID()
+    var value: String = ""
 }
 
 // MARK: - Preview

@@ -74,6 +74,42 @@ public struct RunSpec: Sendable {
     /// Optional memory in MiB (`-m`).
     public let memoryMiB: Int?
 
+    // MARK: - Advanced options (Phase 3)
+    //
+    // All optional and omitted from argv when nil/false/empty, so existing
+    // callers and tests keep compiling. Emitted in a deterministic order after
+    // the existing -e/-p/-v/-c/-m flags and before the image (see
+    // `CLIContainerService.run`).
+
+    /// Remove the container after it stops (`--rm`).
+    public let autoRemove: Bool
+    /// Mount the root filesystem read-only (`--read-only`).
+    public let readOnly: Bool
+    /// Run an init process inside the container that forwards signals and reaps
+    /// processes (`--init`).
+    public let useInit: Bool
+    /// Override the process user (`-u`/`--user`, format `name|uid[:gid]`).
+    public let user: String?
+    /// Initial working directory inside the container (`-w`/`--workdir`).
+    public let workdir: String?
+    /// Override the image entrypoint (`--entrypoint`).
+    public let entrypoint: String?
+    /// Container labels (`-l`/`--label k=v`). Emitted in sorted key order so
+    /// argv is deterministic.
+    public let labels: [String: String]
+    /// Path to a file of environment variables (`--env-file`).
+    public let envFile: String?
+    /// Linux capabilities to add (`--cap-add`), one flag each, in the order
+    /// supplied.
+    public let capAdd: [String]
+    /// Linux capabilities to drop (`--cap-drop`), one flag each, in the order
+    /// supplied.
+    public let capDrop: [String]
+    /// Attach to a named network (`--network`).
+    public let network: String?
+    /// Platform for a multi-platform image (`--platform`, format `os/arch`).
+    public let platform: String?
+
     public init(
         image: String,
         name: String? = nil,
@@ -83,7 +119,19 @@ public struct RunSpec: Sendable {
         volumes: [VolumeMount] = [],
         command: [String] = [],
         cpus: Int? = nil,
-        memoryMiB: Int? = nil
+        memoryMiB: Int? = nil,
+        autoRemove: Bool = false,
+        readOnly: Bool = false,
+        useInit: Bool = false,
+        user: String? = nil,
+        workdir: String? = nil,
+        entrypoint: String? = nil,
+        labels: [String: String] = [:],
+        envFile: String? = nil,
+        capAdd: [String] = [],
+        capDrop: [String] = [],
+        network: String? = nil,
+        platform: String? = nil
     ) {
         self.image = image
         self.name = name
@@ -94,6 +142,18 @@ public struct RunSpec: Sendable {
         self.command = command
         self.cpus = cpus
         self.memoryMiB = memoryMiB
+        self.autoRemove = autoRemove
+        self.readOnly = readOnly
+        self.useInit = useInit
+        self.user = user
+        self.workdir = workdir
+        self.entrypoint = entrypoint
+        self.labels = labels
+        self.envFile = envFile
+        self.capAdd = capAdd
+        self.capDrop = capDrop
+        self.network = network
+        self.platform = platform
     }
 }
 

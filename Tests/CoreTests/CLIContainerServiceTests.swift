@@ -331,6 +331,74 @@ private func makeService(_ mock: MockCommandRunner) -> CLIContainerService {
     ]])
 }
 
+@Test func runWithFullyPopulatedAdvancedSpecBuildsExactArgvInOrder() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 0, stdout: "adv1\n", stderr: ""))
+    let service = makeService(mock)
+
+    let spec = RunSpec(
+        image: "alpine:latest",
+        name: "adv",
+        detached: false,
+        ports: [PortMapping(hostPort: 8080, containerPort: 80)],
+        env: ["FOO": "bar"],
+        volumes: [VolumeMount(hostPath: "/Users/x/data", containerPath: "/data")],
+        command: ["sh", "-c", "echo hi"],
+        cpus: 2,
+        memoryMiB: 512,
+        autoRemove: true,
+        readOnly: true,
+        useInit: true,
+        user: "1000:1000",
+        workdir: "/app",
+        entrypoint: "/entry.sh",
+        labels: ["team": "core", "app": "demo"],
+        envFile: "/Users/x/.env",
+        capAdd: ["NET_ADMIN", "SYS_TIME"],
+        capDrop: ["MKNOD"],
+        network: "mynet",
+        platform: "linux/arm64"
+    )
+    let id = try await service.run(spec)
+
+    // Advanced flags emitted after -e/-p/-v/-c/-m, before image, in declared
+    // order; labels sorted by key (app before team).
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "run",
+        "--name", "adv",
+        "-e", "FOO=bar",
+        "-p", "8080:80",
+        "-v", "/Users/x/data:/data",
+        "-c", "2", "-m", "512",
+        "--rm",
+        "--read-only",
+        "--init",
+        "--user", "1000:1000",
+        "--workdir", "/app",
+        "--entrypoint", "/entry.sh",
+        "--label", "app=demo", "--label", "team=core",
+        "--env-file", "/Users/x/.env",
+        "--cap-add", "NET_ADMIN", "--cap-add", "SYS_TIME",
+        "--cap-drop", "MKNOD",
+        "--network", "mynet",
+        "--platform", "linux/arm64",
+        "alpine:latest",
+        "sh", "-c", "echo hi",
+    ]])
+    #expect(id == "adv1")
+}
+
+@Test func runWithMinimalSpecOmitsAllAdvancedFlags() async throws {
+    let mock = MockCommandRunner(result: .init(exitCode: 0, stdout: "min\n", stderr: ""))
+    let service = makeService(mock)
+
+    // Regression: a spec with no advanced fields still produces the old argv.
+    _ = try await service.run(RunSpec(image: "nginx:alpine", name: "web"))
+
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "run", "-d", "--name", "web", "nginx:alpine",
+    ]])
+}
+
 @Test func runThrowsCommandFailedOnNonZeroExit() async throws {
     let mock = MockCommandRunner(result: .init(exitCode: 125, stdout: "", stderr: "no such image"))
     let service = makeService(mock)

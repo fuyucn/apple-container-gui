@@ -103,6 +103,23 @@ public struct CLIContainerService: ContainerService {
         }
         if let cpus = spec.cpus { args.append(contentsOf: ["-c", String(cpus)]) }
         if let mem = spec.memoryMiB { args.append(contentsOf: ["-m", String(mem)]) }
+        // Advanced options (Phase 3), in a deterministic order after the
+        // existing -e/-p/-v/-c/-m flags and before the image.
+        if spec.autoRemove { args.append("--rm") }
+        if spec.readOnly { args.append("--read-only") }
+        if spec.useInit { args.append("--init") }
+        if let user = spec.user { args.append(contentsOf: ["--user", user]) }
+        if let workdir = spec.workdir { args.append(contentsOf: ["--workdir", workdir]) }
+        if let entrypoint = spec.entrypoint { args.append(contentsOf: ["--entrypoint", entrypoint]) }
+        // Sorted keys → deterministic argv.
+        for key in spec.labels.keys.sorted() {
+            args.append(contentsOf: ["--label", "\(key)=\(spec.labels[key]!)"])
+        }
+        if let envFile = spec.envFile { args.append(contentsOf: ["--env-file", envFile]) }
+        for cap in spec.capAdd { args.append(contentsOf: ["--cap-add", cap]) }
+        for cap in spec.capDrop { args.append(contentsOf: ["--cap-drop", cap]) }
+        if let network = spec.network { args.append(contentsOf: ["--network", network]) }
+        if let platform = spec.platform { args.append(contentsOf: ["--platform", platform]) }
         args.append(spec.image)
         args.append(contentsOf: spec.command)
 
