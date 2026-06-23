@@ -19,6 +19,10 @@ struct SettingsView: View {
     /// the per-category reclaim (prune) actions.
     @Bindable var diskUsageViewModel: DiskUsageViewModel
 
+    /// Drives the System section: daemon status + version, builder lifecycle,
+    /// and read-only VM resource properties.
+    @Bindable var systemViewModel: SystemViewModel
+
     /// The binary path the app resolved at launch (composed in `AppMainApp`),
     /// shown read-only so the user can see what the override is — or is not —
     /// pointing at. `nil` renders as "not found".
@@ -28,10 +32,21 @@ struct SettingsView: View {
     /// dialog when `confirmBeforeDelete` is on.
     @State private var pendingReclaim: DiskCategory?
 
+    /// Whether the builder-delete confirmation dialog is showing (gated by
+    /// `confirmBeforeDelete`).
+    @State private var pendingBuilderDelete = false
+
+    /// Editable CPUs/memory for starting the builder. Empty → runtime default.
+    @State private var builderCPUsText = ""
+    @State private var builderMemoryText = ""
+
     var body: some View {
         Form {
             appearanceSection
             behaviorSection
+            daemonSection
+            builderSection
+            resourcesSection
             diskUsageSection
             activitySection
             defaultsSection
@@ -40,8 +55,27 @@ struct SettingsView: View {
         .formStyle(.grouped)
         .navigationTitle("Settings")
         .frame(minWidth: 460)
-        .task { await diskUsageViewModel.refresh() }
-        .onAppear { Task { await diskUsageViewModel.refresh() } }
+        .task {
+            await diskUsageViewModel.refresh()
+            await systemViewModel.refresh()
+        }
+        .onAppear {
+            Task { await diskUsageViewModel.refresh() }
+            Task { await systemViewModel.refresh() }
+        }
+        .confirmationDialog(
+            "Delete the builder?",
+            isPresented: $pendingBuilderDelete,
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                pendingBuilderDelete = false
+                Task { await systemViewModel.deleteBuilder() }
+            }
+            Button("Cancel", role: .cancel) { pendingBuilderDelete = false }
+        } message: {
+            Text("This removes the buildkit builder container. It will be recreated on the next build.")
+        }
         .confirmationDialog(
             "Reclaim \(pendingReclaim?.label ?? "")?",
             isPresented: Binding(
@@ -140,6 +174,184 @@ struct SettingsView: View {
         case .images: await diskUsageViewModel.reclaimImages()
         case .containers: await diskUsageViewModel.reclaimContainers()
         case .volumes: await diskUsageViewModel.reclaimVolumes()
+        }
+    }
+
+    // MARK: - System: Daemon
+
+    private var daemonSection: some View {
+        Section {
+            LabeledContent("Status") {
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(daemonRunning ? Color.green : Color.secondary)
+                        .frame(width: 8, height: 8)
+                    Text(daemonStateLabel)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            if !systemViewModel.versions.isEmpty {
+                ForEach(systemViewModel.versions, id: \.appName) { version in
+                    LabeledContent(version.appName) {
+                        Text(version.version)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                    }
+                }
+            }
+            HStack {
+                Button("Start") {
+                    Task { await systemViewModel.startDaemon() }
+                }
+                .disabled(daemonRunning)
+                Button("Stop") {
+                    Task { await systemViewModel.stopDaemon() }
+                }
+                .disabled(!daemonRunning)
+            }
+        } header: {
+            HStack {
+                Text("Daemon")
+                Spacer()
+                Button {
+                    Task { await systemViewModel.refresh() }
+                } label: {
+                    Label("Refresh", systemImage: "arrow.clockwise")
+                }
+                .buttonStyle(.borderless)
+                .labelStyle(.iconOnly)
+            }
+        } footer: {
+            Text("The `container` system service. Stopping it halts all containers.")
+        }
+    }
+
+    private var daemonRunning: Bool {
+        systemViewModel.daemonStatus?.state == .running
+    }
+
+    private var daemonStateLabel: String {
+        switch systemViewModel.daemonStatus?.state {
+        case .running: return "Running"
+        case .stopped: return "Stopped"
+        case .unknown: return "Unknown"
+        case nil: return "Loading…"
+        }
+    }
+
+    // MARK: - System: Builder
+
+    private var builderSection: some View {
+        Section {
+            LabeledContent("Status") {
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(builderRunning ? Color.green : Color.secondary)
+                        .frame(width: 8, height: 8)
+                    Text(builderRunning ? "Running" : "Stopped")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            if let builder = systemViewModel.builderStatus, builder.isRunning {
+                if let cpus = builder.cpus {
+                    LabeledContent("CPUs") {
+                        Text("\(cpus)").foregroundStyle(.secondary).monospacedDigit()
+                    }
+                }
+                if let memory = builder.memoryDescription {
+                    LabeledContent("Memory") {
+                        Text(memory).foregroundStyle(.secondary).monospacedDigit()
+                    }
+                }
+                if let image = builder.image {
+                    LabeledContent("Image") {
+                        Text(image)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                            .textSelection(.enabled)
+                    }
+                }
+            } else {
+                LabeledContent("CPUs") {
+                    TextField("auto", text: $builderCPUsText)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(maxWidth: 120)
+                        .multilineTextAlignment(.trailing)
+                }
+                LabeledContent("Memory") {
+                    TextField("auto (e.g. 4g)", text: $builderMemoryText)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(maxWidth: 140)
+                        .multilineTextAlignment(.trailing)
+                }
+            }
+            HStack {
+                Button("Start") {
+                    Task { await systemViewModel.startBuilder(cpus: parsedBuilderCPUs, memory: parsedBuilderMemory) }
+                }
+                .disabled(builderRunning)
+                Button("Stop") {
+                    Task { await systemViewModel.stopBuilder() }
+                }
+                .disabled(!builderRunning)
+                Button("Delete", role: .destructive) {
+                    if settings.confirmBeforeDelete {
+                        pendingBuilderDelete = true
+                    } else {
+                        Task { await systemViewModel.deleteBuilder() }
+                    }
+                }
+            }
+        } header: {
+            Text("Builder")
+        } footer: {
+            Text("The buildkit container that runs `container build`. CPUs/Memory apply when starting a stopped builder.")
+        }
+    }
+
+    private var builderRunning: Bool {
+        systemViewModel.builderStatus?.isRunning ?? false
+    }
+
+    private var parsedBuilderCPUs: Int? {
+        Int(builderCPUsText.trimmingCharacters(in: .whitespaces))
+    }
+
+    private var parsedBuilderMemory: String? {
+        let trimmed = builderMemoryText.trimmingCharacters(in: .whitespaces)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    // MARK: - System: Resources (read-only)
+
+    private var resourcesSection: some View {
+        Section {
+            if let props = systemViewModel.properties {
+                resourceRow("Build CPUs", props.buildCPUs.map(String.init))
+                resourceRow("Build Memory", props.buildMemory)
+                resourceRow("Container CPUs", props.containerCPUs.map(String.init))
+                resourceRow("Container Memory", props.containerMemory)
+            } else {
+                LabeledContent("Resources") {
+                    Text("Loading…").foregroundStyle(.secondary)
+                }
+            }
+        } header: {
+            Text("VM Resources")
+        } footer: {
+            Text("Read-only defaults reported by `system property list`. Allocated to build and container VMs.")
+        }
+    }
+
+    @ViewBuilder
+    private func resourceRow(_ label: String, _ value: String?) -> some View {
+        LabeledContent(label) {
+            Text(value ?? "—")
+                .foregroundStyle(.secondary)
+                .monospacedDigit()
         }
     }
 
@@ -267,6 +479,7 @@ struct SettingsView: View {
         SettingsView(
             settings: AppSettings(defaults: UserDefaults(suiteName: "preview.settings")!),
             diskUsageViewModel: DiskUsageViewModel(service: service),
+            systemViewModel: SystemViewModel(service: service),
             resolvedBinaryPath: "/opt/homebrew/opt/container/bin/container"
         )
     }

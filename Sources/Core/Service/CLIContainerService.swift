@@ -281,6 +281,44 @@ public struct CLIContainerService: ContainerService {
         _ = try await runChecked(["system", "start", "--enable-kernel-install"])
     }
 
+    public func stopDaemon() async throws {
+        _ = try await runChecked(["system", "stop"])
+    }
+
+    public func systemVersion() async throws -> [SystemVersion] {
+        let result = try await runChecked(["system", "version", "--format", "json"])
+        return try SystemVersion.parse(json: result.stdout)
+    }
+
+    public func systemProperties() async throws -> SystemProperties {
+        // `system property list` emits TOML; there is NO --format json and no
+        // write path on a default install (verified against container v1.0.0).
+        let result = try await runChecked(["system", "property", "list"])
+        return SystemProperties(parsingTOML: result.stdout)
+    }
+
+    // MARK: - Builder
+
+    public func builderStatus() async throws -> BuilderStatus {
+        let result = try await runChecked(["builder", "status", "--format", "json"])
+        return try BuilderStatus(parsingJSON: result.stdout)
+    }
+
+    public func builderStart(cpus: Int?, memory: String?) async throws {
+        var args = ["builder", "start"]
+        if let cpus { args.append(contentsOf: ["-c", String(cpus)]) }
+        if let memory { args.append(contentsOf: ["-m", memory]) }
+        _ = try await runChecked(args)
+    }
+
+    public func builderStop() async throws {
+        _ = try await runChecked(["builder", "stop"])
+    }
+
+    public func builderDelete() async throws {
+        _ = try await runChecked(["builder", "delete", "-f"])
+    }
+
     // MARK: - Build
 
     public func build(dockerfile: String, context: String, tag: String, options: BuildOptions) -> AsyncThrowingStream<String, Error> {

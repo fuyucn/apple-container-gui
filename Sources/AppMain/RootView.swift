@@ -83,6 +83,10 @@ struct RootView: View {
     /// View model driving the Disk Usage panel in Settings.
     @Bindable var diskUsageViewModel: DiskUsageViewModel
 
+    /// View model driving the System pane in Settings (daemon, builder, VM
+    /// resources, version).
+    @Bindable var systemViewModel: SystemViewModel
+
     /// App-level daemon state (also surfaced in the menu bar).
     @Bindable var appViewModel: AppViewModel
 
@@ -189,6 +193,7 @@ struct RootView: View {
             SettingsView(
                 settings: settings,
                 diskUsageViewModel: diskUsageViewModel,
+                systemViewModel: systemViewModel,
                 resolvedBinaryPath: resolvedBinaryPath
             )
         case nil:
@@ -327,6 +332,7 @@ private struct PreviewEmptyService: ContainerService {
         volumesViewModel: VolumesViewModel(service: service),
         networksViewModel: NetworksViewModel(service: service),
         diskUsageViewModel: DiskUsageViewModel(service: service),
+        systemViewModel: SystemViewModel(service: service),
         appViewModel: AppViewModel(service: service),
         logsViewModel: LogsViewModel(service: service),
         buildViewModel: BuildViewModel(service: service),

@@ -355,6 +355,47 @@ public protocol ContainerService: Sendable {
     /// Start the daemon / install the kernel via `system start`.
     func startDaemon() async throws
 
+    /// Stop the daemon via `system stop`. A default extension impl below throws
+    /// `binaryNotFound` so preview/stub conformers inherit it unchanged;
+    /// `CLIContainerService` overrides it to shell out and the test mock
+    /// overrides it to record the call.
+    func stopDaemon() async throws
+
+    /// Component versions via `system version --format json` (e.g. `container`
+    /// and `container-apiserver`). A default extension impl below returns an
+    /// empty array so preview/stub conformers inherit it unchanged;
+    /// `CLIContainerService` overrides it to shell out and decode.
+    func systemVersion() async throws -> [SystemVersion]
+
+    /// Read-only VM resource configuration via `system property list` (TOML).
+    /// A default extension impl below returns empty properties so preview/stub
+    /// conformers inherit it unchanged; `CLIContainerService` overrides it to
+    /// shell out and parse the TOML.
+    func systemProperties() async throws -> SystemProperties
+
+    /// Builder (`buildkit`) container status via `builder status --format json`.
+    /// A default extension impl below returns `.stopped` so preview/stub
+    /// conformers inherit it unchanged; `CLIContainerService` overrides it to
+    /// shell out and decode.
+    func builderStatus() async throws -> BuilderStatus
+
+    /// Start the builder container via `builder start [-c <cpus>] [-m <mem>]`.
+    /// `cpus`/`memory` are omitted when nil. A default extension impl below
+    /// throws `binaryNotFound`; `CLIContainerService` overrides it to shell out
+    /// and the test mock overrides it to record the call.
+    func builderStart(cpus: Int?, memory: String?) async throws
+
+    /// Stop the builder container via `builder stop`. A default extension impl
+    /// below throws `binaryNotFound`; `CLIContainerService` overrides it to
+    /// shell out and the test mock overrides it to record the call.
+    func builderStop() async throws
+
+    /// Delete the builder container via `builder delete -f` (force, so it
+    /// removes a running builder too). A default extension impl below throws
+    /// `binaryNotFound`; `CLIContainerService` overrides it to shell out and the
+    /// test mock overrides it to record the call.
+    func builderDelete() async throws
+
     /// Build an image, streaming build log lines as they arrive. `options`
     /// carries the advanced flags (`--build-arg/--target/--no-cache/--pull/
     /// --label/--platform/-c/-m`); an empty `BuildOptions()` reproduces the
@@ -483,6 +524,57 @@ extension ContainerService {
     /// binary path.
     public func imageShellInvocation(ref: String) async throws -> ProcessInvocation {
         ProcessInvocation(executable: "container", arguments: ["run", "--rm", "-i", "-t", ref, "sh"])
+    }
+
+    /// Default `stopDaemon` for conformers (preview/stub services) that do not
+    /// shell out: throws `binaryNotFound`. `CLIContainerService` overrides it
+    /// with the real `system stop` invocation; the test mock records the call.
+    public func stopDaemon() async throws {
+        throw ContainerError.binaryNotFound
+    }
+
+    /// Default `systemVersion` for conformers (preview/stub services) that do
+    /// not shell out: returns an empty array. `CLIContainerService` overrides it
+    /// with the real `system version --format json` invocation.
+    public func systemVersion() async throws -> [SystemVersion] { [] }
+
+    /// Default `systemProperties` for conformers (preview/stub services) that do
+    /// not shell out: returns empty properties. `CLIContainerService` overrides
+    /// it with the real `system property list` invocation.
+    public func systemProperties() async throws -> SystemProperties {
+        SystemProperties(sections: [:])
+    }
+
+    /// Default `builderStatus` for conformers (preview/stub services) that do
+    /// not shell out: returns `.stopped`. `CLIContainerService` overrides it
+    /// with the real `builder status --format json` invocation; the test mock
+    /// overrides it to return a seeded value.
+    public func builderStatus() async throws -> BuilderStatus { .stopped }
+
+    /// Default `builderStart` for conformers (preview/stub services) that do not
+    /// shell out: throws `binaryNotFound`. `CLIContainerService` overrides it
+    /// with the real `builder start` invocation; the test mock records the call.
+    public func builderStart(cpus: Int?, memory: String?) async throws {
+        throw ContainerError.binaryNotFound
+    }
+
+    /// Convenience: start the builder with the runtime's default resources.
+    public func builderStart() async throws {
+        try await builderStart(cpus: nil, memory: nil)
+    }
+
+    /// Default `builderStop` for conformers (preview/stub services) that do not
+    /// shell out: throws `binaryNotFound`. `CLIContainerService` overrides it
+    /// with the real `builder stop` invocation; the test mock records the call.
+    public func builderStop() async throws {
+        throw ContainerError.binaryNotFound
+    }
+
+    /// Default `builderDelete` for conformers (preview/stub services) that do not
+    /// shell out: throws `binaryNotFound`. `CLIContainerService` overrides it
+    /// with the real `builder delete -f` invocation; the test mock records it.
+    public func builderDelete() async throws {
+        throw ContainerError.binaryNotFound
     }
 
     /// Default config lookup for conformers (mocks/preview services) that do not

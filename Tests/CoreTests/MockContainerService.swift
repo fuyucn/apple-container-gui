@@ -25,6 +25,9 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _imageConfig: ImageConfig?
     private var _daemonStatus: DaemonStatus
     private var _diskUsage: DiskUsage?
+    private var _versions: [SystemVersion]
+    private var _properties: SystemProperties?
+    private var _builderStatus: BuilderStatus
     private let streamLines: [String]
     private let streamError: Error?
     private let throwOnAction: Error?
@@ -35,6 +38,13 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _daemonStatusCount = 0
     private var _systemDFCount = 0
     private var _startedDaemonCount = 0
+    private var _stoppedDaemonCount = 0
+    private var _systemVersionCount = 0
+    private var _systemPropertiesCount = 0
+    private var _builderStatusCount = 0
+    private var _builderStartCalls: [(cpus: Int?, memory: String?)] = []
+    private var _builderStopCount = 0
+    private var _builderDeleteCount = 0
     private var _startedIDs: [String] = []
     private var _stoppedCalls: [(id: String, signal: String?, timeout: Int?)] = []
     private var _killedCalls: [(id: String, signal: String?)] = []
@@ -74,6 +84,9 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         imageConfig: ImageConfig? = nil,
         daemonStatus: DaemonStatus = DaemonStatus(state: .stopped, appRoot: nil, installRoot: nil),
         diskUsage: DiskUsage? = nil,
+        versions: [SystemVersion] = [],
+        properties: SystemProperties? = nil,
+        builderStatus: BuilderStatus = .stopped,
         streamLines: [String] = [],
         streamError: Error? = nil,
         throwOnAction: Error? = nil
@@ -86,6 +99,9 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         self._imageConfig = imageConfig
         self._daemonStatus = daemonStatus
         self._diskUsage = diskUsage
+        self._versions = versions
+        self._properties = properties
+        self._builderStatus = builderStatus
         self.streamLines = streamLines
         self.streamError = streamError
         self.throwOnAction = throwOnAction
@@ -110,6 +126,13 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var daemonStatusCalls: Int { withLock { _daemonStatusCount } }
     var systemDFCalls: Int { withLock { _systemDFCount } }
     var startDaemonCalls: Int { withLock { _startedDaemonCount } }
+    var stopDaemonCalls: Int { withLock { _stoppedDaemonCount } }
+    var systemVersionCalls: Int { withLock { _systemVersionCount } }
+    var systemPropertiesCalls: Int { withLock { _systemPropertiesCount } }
+    var builderStatusCalls: Int { withLock { _builderStatusCount } }
+    var builderStartCalls: [(cpus: Int?, memory: String?)] { withLock { _builderStartCalls } }
+    var builderStopCalls: Int { withLock { _builderStopCount } }
+    var builderDeleteCalls: Int { withLock { _builderDeleteCount } }
     var startCalls: [String] { withLock { _startedIDs } }
     var stopCalls: [(id: String, signal: String?, timeout: Int?)] { withLock { _stoppedCalls } }
     var killCalls: [(id: String, signal: String?)] { withLock { _killedCalls } }
@@ -302,6 +325,44 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     func startDaemon() async throws {
         if let e = throwOnAction { throw e }
         withLock { _startedDaemonCount += 1 }
+    }
+
+    func stopDaemon() async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _stoppedDaemonCount += 1 }
+    }
+
+    func systemVersion() async throws -> [SystemVersion] {
+        if let e = throwOnAction { throw e }
+        return withLock { _systemVersionCount += 1; return _versions }
+    }
+
+    func systemProperties() async throws -> SystemProperties {
+        if let e = throwOnAction { throw e }
+        return withLock {
+            _systemPropertiesCount += 1
+            return _properties ?? SystemProperties(sections: [:])
+        }
+    }
+
+    func builderStatus() async throws -> BuilderStatus {
+        if let e = throwOnAction { throw e }
+        return withLock { _builderStatusCount += 1; return _builderStatus }
+    }
+
+    func builderStart(cpus: Int?, memory: String?) async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _builderStartCalls.append((cpus, memory)) }
+    }
+
+    func builderStop() async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _builderStopCount += 1 }
+    }
+
+    func builderDelete() async throws {
+        if let e = throwOnAction { throw e }
+        withLock { _builderDeleteCount += 1 }
     }
 
     func build(dockerfile: String, context: String, tag: String, options: BuildOptions) -> AsyncThrowingStream<String, Error> {
