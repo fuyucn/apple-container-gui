@@ -283,11 +283,26 @@ public struct CLIContainerService: ContainerService {
 
     // MARK: - Build
 
-    public func build(dockerfile: String, context: String, tag: String) -> AsyncThrowingStream<String, Error> {
+    public func build(dockerfile: String, context: String, tag: String, options: BuildOptions) -> AsyncThrowingStream<String, Error> {
         var args = ["build"]
         if !tag.isEmpty {
             args.append(contentsOf: ["--tag", tag])
         }
+        // Advanced options (Phase 3), in a deterministic order after --tag and
+        // before --file <dockerfile> <context>. Map keys are sorted so argv is
+        // stable. Verified against `container build --help` (container v1.0.0).
+        for key in options.buildArgs.keys.sorted() {
+            args.append(contentsOf: ["--build-arg", "\(key)=\(options.buildArgs[key]!)"])
+        }
+        if let target = options.target { args.append(contentsOf: ["--target", target]) }
+        if options.noCache { args.append("--no-cache") }
+        if options.pull { args.append("--pull") }
+        for key in options.labels.keys.sorted() {
+            args.append(contentsOf: ["--label", "\(key)=\(options.labels[key]!)"])
+        }
+        if let platform = options.platform { args.append(contentsOf: ["--platform", platform]) }
+        if let cpus = options.cpus { args.append(contentsOf: ["-c", String(cpus)]) }
+        if let mem = options.memoryMiB { args.append(contentsOf: ["-m", String(mem)]) }
         args.append(contentsOf: ["--file", dockerfile, context])
         return stream(args)
     }

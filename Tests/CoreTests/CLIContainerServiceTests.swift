@@ -1014,6 +1014,54 @@ private actor Counter {
     #expect(received == ["STEP 1/3"])
 }
 
+@Test func buildStreamEmptyOptionsReproducesPlainArgv() async throws {
+    let mock = MockCommandRunner(streamLines: ["STEP 1/1"])
+    let service = makeService(mock)
+
+    for try await _ in service.build(dockerfile: "Dockerfile", context: ".", tag: "myapp:latest", options: BuildOptions()) {}
+
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "build",
+        "--tag", "myapp:latest",
+        "--file", "Dockerfile", ".",
+    ]])
+}
+
+@Test func buildStreamPopulatedOptionsAppendsFlagsInOrder() async throws {
+    let mock = MockCommandRunner(streamLines: ["STEP 1/1"])
+    let service = makeService(mock)
+
+    let options = BuildOptions(
+        buildArgs: ["VERSION": "1.0", "ARCH": "arm64"],
+        target: "runtime",
+        noCache: true,
+        pull: true,
+        labels: ["org.opencontainers.image.source": "repo", "maintainer": "me"],
+        platform: "linux/arm64",
+        cpus: 4,
+        memoryMiB: 2048
+    )
+    for try await _ in service.build(dockerfile: "build/Dockerfile", context: "ctx", tag: "app:1", options: options) {}
+
+    #expect(mock.calls == [[
+        "/opt/homebrew/bin/container", "build",
+        "--tag", "app:1",
+        // build args, sorted by key
+        "--build-arg", "ARCH=arm64",
+        "--build-arg", "VERSION=1.0",
+        "--target", "runtime",
+        "--no-cache",
+        "--pull",
+        // labels, sorted by key
+        "--label", "maintainer=me",
+        "--label", "org.opencontainers.image.source=repo",
+        "--platform", "linux/arm64",
+        "-c", "4",
+        "-m", "2048",
+        "--file", "build/Dockerfile", "ctx",
+    ]])
+}
+
 // MARK: - Interactive exec (terminal)
 
 @Test func execInvocationBuildsInteractivePtyArgv() async throws {

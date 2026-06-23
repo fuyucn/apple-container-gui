@@ -59,7 +59,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     private var _tagImageCalls: [(source: String, newRef: String)] = []
     private var _pushedRefs: [String] = []
     private var _imageConfigRefs: [String] = []
-    private var _buildInvocations: [(dockerfile: String, context: String, tag: String)] = []
+    private var _buildInvocations: [(dockerfile: String, context: String, tag: String, options: BuildOptions)] = []
     private var _logsInvocations: [(id: String, follow: Bool, boot: Bool, tail: Int?)] = []
     private var _imageShellRefs: [String] = []
     private var _saveImageCalls: [(ref: String, path: String)] = []
@@ -134,7 +134,7 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
     var tagImageCalls: [(source: String, newRef: String)] { withLock { _tagImageCalls } }
     var pushCalls: [String] { withLock { _pushedRefs } }
     var imageConfigCalls: [String] { withLock { _imageConfigRefs } }
-    var buildInvocations: [(dockerfile: String, context: String, tag: String)] { withLock { _buildInvocations } }
+    var buildInvocations: [(dockerfile: String, context: String, tag: String, options: BuildOptions)] { withLock { _buildInvocations } }
     var logsInvocations: [(id: String, follow: Bool, boot: Bool, tail: Int?)] { withLock { _logsInvocations } }
     var imageShellRefs: [String] { withLock { _imageShellRefs } }
     var saveImageCalls: [(ref: String, path: String)] { withLock { _saveImageCalls } }
@@ -304,8 +304,8 @@ final class MockContainerService: ContainerService, @unchecked Sendable {
         withLock { _startedDaemonCount += 1 }
     }
 
-    func build(dockerfile: String, context: String, tag: String) -> AsyncThrowingStream<String, Error> {
-        withLock { _buildInvocations.append((dockerfile, context, tag)) }
+    func build(dockerfile: String, context: String, tag: String, options: BuildOptions) -> AsyncThrowingStream<String, Error> {
+        withLock { _buildInvocations.append((dockerfile, context, tag, options)) }
         return makeStream()
     }
 

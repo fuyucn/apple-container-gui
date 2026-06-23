@@ -46,13 +46,13 @@ public final class BuildViewModel {
     /// Run a build, resetting the log, streaming each line into `logLines`, and
     /// transitioning `status` to `.succeeded` on clean completion or `.failed`
     /// on stream error.
-    public func build(dockerfile: String, context: String, tag: String) async {
+    public func build(dockerfile: String, context: String, tag: String, options: BuildOptions = .init()) async {
         logLines = []
         status = .running
         builtImageTag = nil
 
         do {
-            for try await line in service.build(dockerfile: dockerfile, context: context, tag: tag) {
+            for try await line in service.build(dockerfile: dockerfile, context: context, tag: tag, options: options) {
                 logLines.append(line)
             }
             builtImageTag = Self.resolveTag(requested: tag, logLines: logLines)
@@ -67,7 +67,7 @@ public final class BuildViewModel {
     /// Each streamed line is appended to `logLines`; clean completion →
     /// `.succeeded`, an error → `.failed`. Cancellation leaves status unchanged
     /// (the caller drives it via `cancel()`).
-    public func start(dockerfile: String, context: String, tag: String) {
+    public func start(dockerfile: String, context: String, tag: String, options: BuildOptions = .init()) {
         streamTask?.cancel()
         logLines = []
         status = .running
@@ -76,7 +76,7 @@ public final class BuildViewModel {
         let service = self.service
         streamTask = Task { [weak self] in
             do {
-                for try await line in service.build(dockerfile: dockerfile, context: context, tag: tag) {
+                for try await line in service.build(dockerfile: dockerfile, context: context, tag: tag, options: options) {
                     if Task.isCancelled { break }
                     self?.logLines.append(line)
                 }

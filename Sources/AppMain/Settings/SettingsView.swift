@@ -309,6 +309,6 @@ private struct SettingsPreviewService: ContainerService {
     }
     func daemonStatus() async throws -> DaemonStatus { DaemonStatus(state: .running, appRoot: nil, installRoot: nil) }
     func startDaemon() async throws {}
-    func build(dockerfile: String, context: String, tag: String) -> AsyncThrowingStream<String, Error> { AsyncThrowingStream { $0.finish() } }
+    func build(dockerfile: String, context: String, tag: String, options: BuildOptions) -> AsyncThrowingStream<String, Error> { AsyncThrowingStream { $0.finish() } }
 }
 #endif

@@ -157,6 +157,53 @@ public struct RunSpec: Sendable {
     }
 }
 
+/// Advanced configuration for `container build`, translated by
+/// `CLIContainerService.build` into extra build argv. All fields are optional
+/// and omitted from argv when empty/nil/false, so an empty `BuildOptions()`
+/// reproduces the original `--tag/--file/context` invocation. Emitted in a
+/// deterministic order after `--tag` and before `--file <dockerfile> <context>`
+/// (see `CLIContainerService.build`).
+public struct BuildOptions: Sendable, Equatable {
+    /// Build-time variables (`--build-arg k=v`, repeatable). Emitted in sorted
+    /// key order so argv is deterministic.
+    public let buildArgs: [String: String]
+    /// Target build stage (`--target <stage>`).
+    public let target: String?
+    /// Do not use the build cache (`--no-cache`).
+    public let noCache: Bool
+    /// Pull the latest base image (`--pull`).
+    public let pull: Bool
+    /// Image labels (`--label k=v`, repeatable). Emitted in sorted key order so
+    /// argv is deterministic.
+    public let labels: [String: String]
+    /// Build platform (`--platform`, format `os/arch[/variant]`).
+    public let platform: String?
+    /// CPUs to allocate to the builder container (`-c`/`--cpus`).
+    public let cpus: Int?
+    /// Builder container memory in MiB (`-m`/`--memory`).
+    public let memoryMiB: Int?
+
+    public init(
+        buildArgs: [String: String] = [:],
+        target: String? = nil,
+        noCache: Bool = false,
+        pull: Bool = false,
+        labels: [String: String] = [:],
+        platform: String? = nil,
+        cpus: Int? = nil,
+        memoryMiB: Int? = nil
+    ) {
+        self.buildArgs = buildArgs
+        self.target = target
+        self.noCache = noCache
+        self.pull = pull
+        self.labels = labels
+        self.platform = platform
+        self.cpus = cpus
+        self.memoryMiB = memoryMiB
+    }
+}
+
 /// High-level operations the GUI performs against the `container` runtime.
 ///
 /// Every method is expressed in terms of domain models, never raw argv or
@@ -308,8 +355,13 @@ public protocol ContainerService: Sendable {
     /// Start the daemon / install the kernel via `system start`.
     func startDaemon() async throws
 
-    /// Build an image, streaming build log lines as they arrive.
-    func build(dockerfile: String, context: String, tag: String) -> AsyncThrowingStream<String, Error>
+    /// Build an image, streaming build log lines as they arrive. `options`
+    /// carries the advanced flags (`--build-arg/--target/--no-cache/--pull/
+    /// --label/--platform/-c/-m`); an empty `BuildOptions()` reproduces the
+    /// plain `--tag/--file/context` invocation. Swift forbids default arg values
+    /// on protocol requirements, so the `build(dockerfile:context:tag:)`
+    /// convenience (empty options) lives in the extension below.
+    func build(dockerfile: String, context: String, tag: String, options: BuildOptions) -> AsyncThrowingStream<String, Error>
 
     /// Resolve the executable + argv for an interactive `exec` session into a
     /// container, e.g. `container exec -i -t <id> sh`. The terminal UI hands the
@@ -364,6 +416,14 @@ extension ContainerService {
     /// default arg values on protocol requirements, so the default lives here).
     public func remove(_ id: String) async throws {
         try await remove(id, force: false)
+    }
+
+    /// Convenience: build with no advanced options. Keeps existing
+    /// `build(dockerfile:context:tag:)` call sites working now that the
+    /// requirement carries `options` (Swift forbids default arg values on
+    /// protocol requirements, so the default lives here as an overload).
+    public func build(dockerfile: String, context: String, tag: String) -> AsyncThrowingStream<String, Error> {
+        build(dockerfile: dockerfile, context: context, tag: tag, options: BuildOptions())
     }
 
     /// Convenience: an interactive shell (`sh`) exec invocation.

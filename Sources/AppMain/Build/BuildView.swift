@@ -42,6 +42,23 @@ struct BuildView: View {
     /// Whether the Run sheet (seeded with the built image) is presented.
     @State private var isRunSheetPresented = false
 
+    // MARK: - Advanced build options
+    //
+    // View-local UI state assembled into a `BuildOptions` at build time. These
+    // are intentionally NOT on the view model (they are advanced, transient
+    // tuning knobs rather than the core Dockerfile/context/tag inputs the build
+    // log resumes against); the view is recreated rarely while the Advanced
+    // group is open, and a started build has already captured its options.
+    @State private var advancedExpanded = false
+    @State private var buildArgs: [BuildKVRow] = []
+    @State private var labels: [BuildKVRow] = []
+    @State private var target: String = ""
+    @State private var noCache = false
+    @State private var pull = false
+    @State private var platform: String = ""
+    @State private var cpus: Int?
+    @State private var memoryMiB: Int?
+
     var body: some View {
         VStack(spacing: 0) {
             // Side-by-side: configuration + action on the left, the build output
@@ -131,8 +148,132 @@ struct BuildView: View {
             } footer: {
                 Text("Passed as --tag; leave empty to let container assign one.")
             }
+
+            advancedSection
         }
         .formStyle(.grouped)
+    }
+
+    // MARK: - Advanced options
+
+    /// A collapsible group of advanced `container build` flags, mirroring the
+    /// Run sheet's Advanced section. Logic-free: it binds straight onto view
+    /// state that `assembleOptions()` later folds into a `BuildOptions`.
+    private var advancedSection: some View {
+        Section {
+            DisclosureGroup("Advanced", isExpanded: $advancedExpanded) {
+                kvEditor(
+                    title: "Build Args",
+                    rows: $buildArgs,
+                    addTitle: "Add Build Arg"
+                )
+                kvEditor(
+                    title: "Labels",
+                    rows: $labels,
+                    addTitle: "Add Label"
+                )
+
+                LabeledContent("Target stage") {
+                    TextField("build stage", text: $target)
+                        .textFieldStyle(.roundedBorder)
+                        .disabled(isRunning)
+                }
+                LabeledContent("Platform") {
+                    TextField("os/arch", text: $platform)
+                        .textFieldStyle(.roundedBorder)
+                        .disabled(isRunning)
+                }
+
+                Toggle("No cache (--no-cache)", isOn: $noCache)
+                    .disabled(isRunning)
+                Toggle("Pull latest base image (--pull)", isOn: $pull)
+                    .disabled(isRunning)
+
+                LabeledContent("CPUs") {
+                    TextField("default", value: $cpus, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 90)
+                        .disabled(isRunning)
+                }
+                LabeledContent("Memory (MiB)") {
+                    TextField("default", value: $memoryMiB, format: .number)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 110)
+                        .disabled(isRunning)
+                }
+            }
+        } footer: {
+            Text("Extra container build flags: --build-arg, --label, --target, --platform, --no-cache, --pull, and builder -c/-m.")
+        }
+    }
+
+    /// One key=value editor block: a caption, add/remove rows, and an add button.
+    /// Used for both build args and labels, matching the Run sheet's style.
+    private func kvEditor(
+        title: String,
+        rows: Binding<[BuildKVRow]>,
+        addTitle: String
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title).font(.caption).foregroundStyle(.secondary)
+            ForEach(rows) { $row in
+                HStack {
+                    TextField("KEY", text: $row.key)
+                        .textFieldStyle(.roundedBorder)
+                    Text("=")
+                    TextField("value", text: $row.value)
+                        .textFieldStyle(.roundedBorder)
+                    Button(role: .destructive) {
+                        rows.wrappedValue.removeAll { $0.id == row.id }
+                    } label: {
+                        Image(systemName: "minus.circle.fill")
+                    }
+                    .buttonStyle(.borderless)
+                }
+            }
+            Button {
+                rows.wrappedValue.append(BuildKVRow())
+            } label: {
+                Label(addTitle, systemImage: "plus")
+            }
+        }
+        .disabled(isRunning)
+    }
+
+    /// Fold the Advanced view state into a `BuildOptions`. Pure transformation:
+    /// blank rows/fields are dropped, numeric fields pass through as-is, so an
+    /// untouched Advanced section yields an empty `BuildOptions()` and the build
+    /// argv is identical to the plain `--tag/--file/context` invocation.
+    private func assembleOptions() -> BuildOptions {
+        BuildOptions(
+            buildArgs: Self.dictionary(from: buildArgs),
+            target: Self.nonEmpty(target),
+            noCache: noCache,
+            pull: pull,
+            labels: Self.dictionary(from: labels),
+            platform: Self.nonEmpty(platform),
+            cpus: cpus,
+            memoryMiB: memoryMiB
+        )
+    }
+
+    /// Collapse KV rows into a dictionary, dropping rows with a blank key. The
+    /// last value wins on duplicate keys (CLI argv would otherwise carry both).
+    private static func dictionary(from rows: [BuildKVRow]) -> [String: String] {
+        var out: [String: String] = [:]
+        for row in rows {
+            let key = row.key.trimmingCharacters(in: .whitespaces)
+            guard !key.isEmpty else { continue }
+            out[key] = row.value
+        }
+        return out
+    }
+
+    /// A trimmed string, or nil when blank — so empty text fields drop out of
+    /// the assembled options instead of emitting empty flags.
+    private static func nonEmpty(_ text: String) -> String? {
+        let trimmed = text.trimmingCharacters(in: .whitespaces)
+        return trimmed.isEmpty ? nil : trimmed
     }
 
     /// One labelled picker row: an icon, a bold label with the chosen path (or a
@@ -338,7 +479,8 @@ struct BuildView: View {
                 viewModel.start(
                     dockerfile: viewModel.dockerfilePath,
                     context: viewModel.contextPath,
-                    tag: viewModel.tag.trimmingCharacters(in: .whitespaces)
+                    tag: viewModel.tag.trimmingCharacters(in: .whitespaces),
+                    options: assembleOptions()
                 )
             } label: {
                 if isRunning {
@@ -405,6 +547,16 @@ struct BuildView: View {
     }
 }
 
+// MARK: - Row model
+
+/// One editable key=value pair for the Advanced section's build-arg and label
+/// editors. `Identifiable` so `ForEach` can track add/remove by stable id.
+private struct BuildKVRow: Identifiable {
+    let id = UUID()
+    var key: String = ""
+    var value: String = ""
+}
+
 // MARK: - Preview
 
 // The `#Preview` macro requires the `PreviewsMacros` plugin that only ships with
@@ -448,7 +600,7 @@ private struct CannedBuildService: ContainerService {
         DaemonStatus(state: .running, appRoot: nil, installRoot: nil)
     }
     func startDaemon() async throws {}
-    func build(dockerfile: String, context: String, tag: String) -> AsyncThrowingStream<String, Error> {
+    func build(dockerfile: String, context: String, tag: String, options: BuildOptions) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in
             continuation.yield("[+] Building 0.1s")
             continuation.yield(" => [internal] load build definition from Dockerfile")
