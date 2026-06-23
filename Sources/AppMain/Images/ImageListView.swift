@@ -194,6 +194,7 @@ struct ImageListView: View {
                 Divider()
                 imageList
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
     }
 
